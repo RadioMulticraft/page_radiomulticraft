@@ -307,7 +307,7 @@ else if(hour>=10 && hour<14) show="Vormittagsprogramm";
 else if(hour>=14 && hour<18) show="Nachmittagsshow";
 else if(hour>=18 && hour<21) show="Feierabend Programm";
 else if(hour>=21 && hour<24) show="Abendshow";
-else if(hour>=0 && hour<6) show="NonStop! mit Vanessa und Michael";
+else if(hour>=0 && hour<6) show="NonStop!";
 currentShowTitle.textContent=show;
 }
 fetchCurrentSong(); setInterval(fetchCurrentSong,3000);
@@ -461,6 +461,7 @@ hamburger.addEventListener("click",()=>{document.querySelector(".sidebar").class
 </script>
 </body>
 </html>
+
 
 
 
