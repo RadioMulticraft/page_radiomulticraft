@@ -283,11 +283,20 @@ const playButton=document.getElementById('playButton');
 const volumeSlider=document.getElementById('volume');
 const currentSongSpan=document.getElementById('current-song');
 const currentShowTitle=document.getElementById("current-show-title");
-const sound=new Howl({src:[streamUrl],html5:true,format:['mp3'],volume:0.5});
+
+const sound=new Howl({
+  src:[streamUrl],
+  html5:true,
+  format:['mp3'],
+  volume:0.5
+});
+
 playButton.addEventListener('click',()=>{sound.playing()?sound.pause():sound.play();});
 volumeSlider.addEventListener('input',()=>{sound.volume(volumeSlider.value);});
-sound.on('play',()=>{playButton.textContent='⏸';});
-sound.on('pause',()=>{playButton.textContent='▶';});
+
+// Play/Pause immer weiß
+sound.on('play',()=>{playButton.textContent='⏸'; playButton.style.color="#fff";});
+sound.on('pause',()=>{playButton.textContent='▶'; playButton.style.color="#fff";});
 
 // Song Title
 async function fetchCurrentSong(retry=false){
@@ -466,3 +475,4 @@ hamburger.addEventListener("click",()=>{document.querySelector(".sidebar").class
 </script>
 </body>
 </html>
+
