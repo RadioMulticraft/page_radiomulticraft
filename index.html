@@ -140,7 +140,7 @@ footer.player {
   border-radius: 50%;
   border: none;
   background-color: #ff3b3b;
-  color: white;
+  color: #fff !important; /* Symbol immer weiß */
   font-size: 28px;
   line-height: 60px;
   text-align: center;
@@ -149,7 +149,10 @@ footer.player {
   user-select: none;
   transition: background-color 0.3s;
 }
-#playButton:hover { background-color: #e23030; }
+#playButton:hover {
+  background-color: #e23030;
+  color: #fff !important; /* Symbol bleibt weiß beim Hover */
+}
 
 #volume-wrapper {
   display: flex;
@@ -383,7 +386,6 @@ Das Rateteam wird komplett neu besetzt: Statt Palina Rojinski und Rea Garvey neh
 
 <img src="img/supportedbyfull.png" alt="support" class="centered-banner" />
 </div>`,
-
 team:`<h1>Unser Team</h1>
 <div class="team-grid">
 <div class="team-member">
@@ -475,4 +477,3 @@ hamburger.addEventListener("click",()=>{document.querySelector(".sidebar").class
 </script>
 </body>
 </html>
-
