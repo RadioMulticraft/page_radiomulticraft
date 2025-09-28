@@ -298,8 +298,17 @@ playButton.addEventListener('click',()=>{sound.playing()?sound.pause():sound.pla
 volumeSlider.addEventListener('input',()=>{sound.volume(volumeSlider.value);});
 
 // Play/Pause immer weiß
-sound.on('play',()=>{playButton.textContent='⏸'; playButton.style.color="#fff";});
-sound.on('pause',()=>{playButton.textContent='▶'; playButton.style.color="#fff";});
+sound.on('play', () => {
+  playButton.textContent = '⏸';
+  playButton.style.color = "#fff";        // Symbolfarbe weiß
+  playButton.style.backgroundColor = "#ff3b3b"; // Hintergrund bleibt rot
+});
+
+sound.on('pause', () => {
+  playButton.textContent = '▶';
+  playButton.style.color = "#fff";        // Symbolfarbe weiß
+  playButton.style.backgroundColor = "#ff3b3b"; // Hintergrund bleibt rot
+});
 
 // Song Title
 async function fetchCurrentSong(retry=false){
