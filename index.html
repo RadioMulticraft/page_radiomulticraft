@@ -149,10 +149,7 @@ footer.player {
   user-select: none;
   transition: background-color 0.3s;
 }
-#playButton:hover {
-  background-color: #e23030;
-  color: #fff !important; /* Symbol bleibt weiß beim Hover */
-}
+#playButton:hover { background-color: #e23030; color: #fff !important; }
 
 #volume-wrapper {
   display: flex;
@@ -303,14 +300,13 @@ volumeSlider.addEventListener('input',()=>{sound.volume(volumeSlider.value);});
 // Play/Pause immer weiß
 sound.on('play', () => {
   playButton.textContent = '⏸';
-  playButton.style.color = "#fff";        // Symbolfarbe weiß
-  playButton.style.backgroundColor = "#ff3b3b"; // Hintergrund bleibt rot
+  playButton.style.color = "#fff";
+  playButton.style.backgroundColor = "#ff3b3b";
 });
-
 sound.on('pause', () => {
   playButton.textContent = '▶';
-  playButton.style.color = "#fff";        // Symbolfarbe weiß
-  playButton.style.backgroundColor = "#ff3b3b"; // Hintergrund bleibt rot
+  playButton.style.color = "#fff";
+  playButton.style.backgroundColor = "#ff3b3b";
 });
 
 // Song Title
@@ -374,7 +370,6 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 <div class="card">
 
 <!-- MELDUNG A -->
-
 <img src="img/JohannesOrding.jpg" alt="JohannesOerding" class="centered-banner" />
 <h2>Johannes Oerding veröffentlicht neue Single
 "Hier gehör ich hin"</h2>
@@ -384,7 +379,6 @@ Begleitet wird die Veröffentlichung von einem Musikvideo, das die Botschaft des
 Mit dieser Single zeigt Johannes Oerding einmal mehr, warum er zu den erfolgreichsten deutschsprachigen Künstlern unserer Zeit zählt.</p>
 
 <!-- MELDUNG B -->
-
 <img src="img/MaxGiesinger.jpg" alt="Max Giesinger" class="centered-banner" />
 <h2>Max Giesinger mit neuem Album - und Bühnenpause</h2>
 <p>Max Giesinger kehrt mit seinem fünften Studioalbum „Glück auf den Straßen“ 
@@ -392,7 +386,6 @@ zu seiner musikalischen Essenz zurück. Auf Glück auf den Straßen erwarten die
 Neben CD und Vinyl erscheint das Album auch als exklusive Fanbox, die ein Ticket für eine Release-Show in Hamburg oder Karlsruhe beinhaltet</p>
 
 <!-- MELDUNG C -->
-
 <img src="img/TheVoice.jpeg" alt="The Voice" class="centered-banner" />
 <h2>"The Voice of Germany"-Staffel bringt Neuerungen mit sich</h2>
 <p>Die 15. Staffel von The Voice of Germany ist mit einigen Neuerungen gestartet und verspricht von Anfang an Spannung. 
@@ -401,7 +394,6 @@ um die besten Gesangstalente für ihre Teams zu gewinnen. Dabei sorgte Letzterer
 Dieser gezielte Einsatz des "Blocks" kommt in diesem Jahr in besonders heiklen Momenten zum Einsatz – auch während der Überzeugungsversuche der Coaches.</p>
 
 <!-- MELDUNG D -->
-
 <img src="img/MaskSinger.jpg" alt="MaskSinger" class="centered-banner" />
 <h2>"The Masked Singer" 2025</h2>
 <p>Endlich ist es offiziell: "The Masked Singer" kehrt zurück! Nach fast einem Jahr Pause startet die neue Staffel am 8. November 2025 – wie immer live am Samstagabend um 20:15 Uhr auf ProSieben und im kostenlosen Livestream auf Joyn.
@@ -437,26 +429,16 @@ team:`<h1>Unser Team</h1>
 <h3>Jenny</h3><p>Stationvoice & Moderation</p>
 </div>
 </div>`,
+
 werbung:`<h1>WERBUNG</h1>
 <img src="img/Werbungrmc.jpg" class="centered-banner">
 <img src="img/werbungtextbannerrmc.png" class="centered-banner">
 <div class="werbung-text">
 <p>Für Anfragen schreiben Sie uns eine Email an: <a href="mailto:werbung@radiomulticraft.de">werbung@radiomulticraft.de</a></p>
 </div>`,
+
 impressum:`<h1>Impressum</h1>
-
-<!-- ABSTAND -->
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<!-- ABSTAND -->
-
+<br><br><br><br><br><br><br><br><br>
 <div class="card">
 <p><strong>Radio Multicraft</strong><br>Webradio</p>
 <p><strong>Geschäftsführer:</strong><br>Michael Sander</p>
@@ -464,6 +446,7 @@ impressum:`<h1>Impressum</h1>
 <p><strong>Berufsbezeichnung:</strong> Privater Web-Hörfunksender</p>
 <p>(Angaben gemäß § 5 TMG)</p>
 </div>`,
+
 datenschutz:`<h1>Datenschutz</h1>
 
 <!-- ABSTAND -->
@@ -485,6 +468,7 @@ datenschutz:`<h1>Datenschutz</h1>
 <h2>Noch Fragen?</h2>
 <p>Falls du noch Fragen hast, schick uns einfach eine Mail an: <a href="mailto:info@radiomulticraft.de">info@radiomulticraft.de</a></p>
 </div>`,
+
 jobs:`<h1>JOBS</h1>
 <img src="img/MACH_MIT-4.webp" class="centered-banner">
 <div class="card">
@@ -506,11 +490,131 @@ loadPage("home");
 // Hamburger Toggle
 const hamburger=document.getElementById("hamburger");
 hamburger.addEventListener("click",()=>{document.querySelector(".sidebar").classList.toggle("show");});
+
+// Playlist Button & Popup
+const playlistButton = document.createElement('button');
+playlistButton.textContent = 'Playlist';
+playlistButton.style.position = 'fixed';
+playlistButton.style.top = '20px';
+playlistButton.style.right = '20px';
+playlistButton.style.zIndex = '1001';
+playlistButton.style.backgroundColor = '#ff3b3b';
+playlistButton.style.color = '#fff';
+playlistButton.style.border = 'none';
+playlistButton.style.padding = '10px 20px';
+playlistButton.style.borderRadius = '6px';
+playlistButton.style.cursor = 'pointer';
+playlistButton.style.fontWeight = '600';
+playlistButton.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
+document.body.appendChild(playlistButton);
+
+const playlistOverlay = document.createElement('div');
+playlistOverlay.style.position = 'fixed';
+playlistOverlay.style.top = '0';
+playlistOverlay.style.left = '0';
+playlistOverlay.style.width = '100vw';
+playlistOverlay.style.height = '100vh';
+playlistOverlay.style.backgroundColor = 'rgba(0,0,0,0.6)';
+playlistOverlay.style.display = 'none';
+playlistOverlay.style.zIndex = '1000';
+document.body.appendChild(playlistOverlay);
+
+const playlistPopup = document.createElement('div');
+playlistPopup.style.position = 'absolute';
+playlistPopup.style.top = '50%';
+playlistPopup.style.left = '50%';
+playlistPopup.style.transform = 'translate(-50%, -50%)';
+playlistPopup.style.backgroundColor = '#1e1e1e';
+playlistPopup.style.color = '#fff';
+playlistPopup.style.padding = '30px 40px';
+playlistPopup.style.borderRadius = '16px';
+playlistPopup.style.boxShadow = '0 20px 50px rgba(0,0,0,0.7)';
+playlistPopup.style.maxWidth = '500px';
+playlistPopup.style.width = '90%';
+playlistPopup.style.textAlign = 'center';
+playlistOverlay.appendChild(playlistPopup);
+
+const closeBtn = document.createElement('button');
+closeBtn.textContent = '✖';
+closeBtn.style.position = 'absolute';
+closeBtn.style.top = '15px';
+closeBtn.style.right = '15px';
+closeBtn.style.background = 'transparent';
+closeBtn.style.border = 'none';
+closeBtn.style.color = '#fff';
+closeBtn.style.fontSize = '22px';
+closeBtn.style.cursor = 'pointer';
+closeBtn.style.transition = 'color 0.2s';
+closeBtn.addEventListener('mouseenter', () => closeBtn.style.color = '#ff3b3b');
+closeBtn.addEventListener('mouseleave', () => closeBtn.style.color = '#fff');
+playlistPopup.appendChild(closeBtn);
+
+closeBtn.addEventListener('click', () => {
+    playlistOverlay.style.display = 'none';
+});
+
+playlistOverlay.addEventListener('click', (e) => {
+    if(e.target === playlistOverlay) playlistOverlay.style.display = 'none';
+});
+
+async function loadLastSongs() {
+    playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:20px;">Playlist</h2>';
+    playlistPopup.appendChild(closeBtn);
+    try {
+        const res = await fetch('https://api.laut.fm/station/radioms990/last_songs?_=' + Date.now());
+        const data = await res.json();
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            playlistPopup.innerHTML += '<p>Keine Songs verfügbar</p>';
+            playlistPopup.appendChild(closeBtn);
+            return;
+        }
+
+        const songContainer = document.createElement('div');
+        songContainer.style.display = 'grid';
+        songContainer.style.gridTemplateColumns = '1fr';
+        songContainer.style.gap = '12px';
+
+        data.slice(0, 10).forEach(song => {
+    const card = document.createElement('div');
+    card.style.background = 'rgba(255,59,59,0.1)';
+    card.style.padding = '12px 15px';
+    card.style.borderRadius = '10px';
+    card.style.display = 'flex';
+    card.style.alignItems = 'center';
+    card.style.transition = 'transform 0.2s, box-shadow 0.2s';
+    card.style.cursor = 'default';
+
+    card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-3px)';
+        card.style.boxShadow = '0 6px 15px rgba(255,59,59,0.4)';
+    });
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+        card.style.boxShadow = 'none';
+    });
+
+    const songText = document.createElement('span');
+    songText.textContent = `${song.artist?.name || 'Unbekannt'} - ${song.title || 'Unbekannt'}`;
+    songText.style.fontWeight = '600';
+
+    card.appendChild(songText); // Musik-Icon entfernt
+    songContainer.appendChild(card);
+});
+
+        playlistPopup.appendChild(songContainer);
+    } catch (e) {
+        playlistPopup.innerHTML += '<p>Fehler beim Laden</p>';
+        playlistPopup.appendChild(closeBtn);
+    }
+}
+
+playlistButton.addEventListener('click', () => {
+    playlistOverlay.style.display = 'block';
+    loadLastSongs();
+});
+
+
 </script>
 </body>
 </html>
-
-
-
-
-
