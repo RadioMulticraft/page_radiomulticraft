@@ -235,7 +235,7 @@ footer.player {
 </head>
 <body>
 
-<!-- ❄ Schneefall-Effekt -->
+<!-- ❄ Schneefall-Effekt nur im Dezember -->
 <style>
 .snowflake {
   position: fixed;
@@ -256,29 +256,36 @@ footer.player {
 </style>
 
 <script>
-function createSnowflake() {
-  const snowflake = document.createElement("div");
-  snowflake.classList.add("snowflake");
-  snowflake.textContent = "❄";
+document.addEventListener("DOMContentLoaded", function() {
+    const today = new Date();
+    const month = today.getMonth(); // 0 = Januar, 11 = Dezember
+    const day = today.getDate();
 
-  // Zufällige Startposition und Größe
-  const size = Math.random() * 1.2 + 0.6; 
-  snowflake.style.left = Math.random() * 100 + "vw";
-  snowflake.style.fontSize = size + "rem";
+    // Schneefall nur 1.–26. Dezember
+    const isChristmasSeason = (month === 11 && day >= 1 && day <= 26);
+    if (!isChristmasSeason) return; // Skript beenden, wenn nicht Dezember
 
-  // Unterschiedliche Fallgeschwindigkeit
-  snowflake.style.animationDuration = Math.random() * 4 + 4 + "s";
+    function createSnowflake() {
+        const snowflake = document.createElement("div");
+        snowflake.classList.add("snowflake");
+        snowflake.textContent = "❄";
 
-  document.body.appendChild(snowflake);
+        // Zufällige Startposition und Größe
+        const size = Math.random() * 1.2 + 0.6; 
+        snowflake.style.left = Math.random() * 100 + "vw";
+        snowflake.style.fontSize = size + "rem";
 
-  // Schneeflocke entfernen nach dem Fallen
-  setTimeout(() => {
-    snowflake.remove();
-  }, 8000);
-}
+        // Unterschiedliche Fallgeschwindigkeit
+        snowflake.style.animationDuration = Math.random() * 4 + 4 + "s";
 
-// Alle 200ms neue Schneeflocke
-setInterval(createSnowflake, 1500);
+        document.body.appendChild(snowflake);
+
+        setTimeout(() => snowflake.remove(), 8000);
+    }
+
+    // Alle 1500ms neue Schneeflocke
+    setInterval(createSnowflake, 1500);
+});
 </script>
 <!-- ❄ Schneefall Ende -->
 
@@ -713,6 +720,7 @@ playlistButton.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
 
 
 
