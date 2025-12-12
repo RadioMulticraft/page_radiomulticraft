@@ -202,7 +202,9 @@ footer.player {
 
 /* Hamburger Button nur mobil */
 #hamburger { display: none; }
+
 @media (max-width:768px){
+  /* Hamburger Button */
   #hamburger {
     display: block;
     position: fixed;
@@ -216,7 +218,22 @@ footer.player {
     border-radius: 6px;
     font-size: 20px;
     cursor: pointer;
+    height: 40px;
+    width: 40px;
+    text-align: center;
+    line-height: 20px;
   }
+
+  /* Logo neben Hamburger */
+  #mobile-logo {
+    position: fixed;
+    top: 15px;
+    left: 65px; /* Abstand links vom Hamburger */
+    height: 40px; /* gleiche Höhe wie Hamburger */
+    width: auto;
+    z-index: 1001;
+  }
+
   .sidebar { left:-250px; width:250px; }
   .sidebar.show { left:0; }
   main.content { margin-left:0; padding:15px; }
@@ -720,6 +737,7 @@ playlistButton.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
 
 
 
