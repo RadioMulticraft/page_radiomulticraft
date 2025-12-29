@@ -236,117 +236,7 @@ footer.player {
 <body>
 
 
-  <!-- 🎆 SILVESTER COUNTDOWN – NACH DEM 01.01. EINFACH LÖSCHEN 🎆 -->
-<div class="card" id="silvester-countdown">
-
-  <style>
-    #silvester-countdown {
-      text-align: center;
-    }
-
-    #silvester-countdown h2 {
-      color: #ff3b3b;
-      margin-bottom: 10px;
-    }
-
-    .countdown-wrap {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    .count-box {
-      background: rgba(255,59,59,0.12);
-      border: 1px solid rgba(255,59,59,0.4);
-      border-radius: 14px;
-      width: 110px;
-      padding: 15px 10px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-    }
-
-    .count-box span {
-      display: block;
-      font-size: 2.4rem;
-      font-weight: 800;
-      color: #ff3b3b;
-    }
-
-    .count-box small {
-      font-size: 0.85rem;
-      color: #fff;
-      letter-spacing: 1px;
-    }
-
-    .happy-new-year {
-      margin-top: 25px;
-      font-size: 1.3rem;
-      color: #ff3b3b;
-      animation: pulse 1.5s infinite;
-      display: none;
-    }
-  </style>
-
-  <h2>🎆 Silvester Countdown</h2>
-  <p>Noch so lange bis wir gemeinsam ins neue Jahr feiern 🎶</p>
-
-  <div class="countdown-wrap" id="countdown-timer">
-    <div class="count-box">
-      <span id="cd-days">0</span>
-      <small>Tage</small>
-    </div>
-    <div class="count-box">
-      <span id="cd-hours">0</span>
-      <small>Std</small>
-    </div>
-    <div class="count-box">
-      <span id="cd-minutes">0</span>
-      <small>Min</small>
-    </div>
-    <div class="count-box">
-      <span id="cd-seconds">0</span>
-      <small>Sek</small>
-    </div>
-  </div>
-
-  <div class="happy-new-year" id="happy2026">
-    🎉 <strong>Frohes neues Jahr!</strong><br>
-    Willkommen 2026 bei Radio Multicraft ❤️
-  </div>
-
-  <script>
-    (function () {
-      const target = new Date("January 1, 2026 00:00:00").getTime();
-
-      const d = document.getElementById("cd-days");
-      const h = document.getElementById("cd-hours");
-      const m = document.getElementById("cd-minutes");
-      const s = document.getElementById("cd-seconds");
-      const timer = document.getElementById("countdown-timer");
-      const message = document.getElementById("happy2026");
-
-      const interval = setInterval(() => {
-        const now = new Date().getTime();
-        const diff = target - now;
-
-        if (diff <= 0) {
-          clearInterval(interval);
-          timer.style.display = "none";
-          message.style.display = "block";
-          return;
-        }
-
-        d.textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
-        h.textContent = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        m.textContent = Math.floor((diff / (1000 * 60)) % 60);
-        s.textContent = Math.floor((diff / 1000) % 60);
-      }, 1000);
-    })();
-  </script>
-
-</div>
-<!-- 🎆 SILVESTER COUNTDOWN ENDE -->
+ 
 
 <!-- ❄ Schneefall-Effekt nur im Dezember -->
 <style>
@@ -865,6 +755,7 @@ playlistButton.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
 
 
 
