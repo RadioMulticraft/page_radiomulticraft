@@ -202,6 +202,7 @@ footer.player {
 
 /* Hamburger Button nur mobil */
 #hamburger { display: none; }
+
 @media (max-width:768px){
   #hamburger {
     display: block;
@@ -217,23 +218,68 @@ footer.player {
     font-size: 20px;
     cursor: pointer;
   }
+
   .sidebar { left:-250px; width:250px; }
   .sidebar.show { left:0; }
+
   main.content { margin-left:0; padding:15px; }
+
   footer.player {
-    left:0; right:0; height:70px; display:flex; align-items:center; justify-content:space-between; padding:10px 15px;
+    left:0;
+    right:0;
+    height:80px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 15px;
   }
-  #playButton { width:50px; height:50px; font-size:24px; line-height:50px; }
-  #volume-wrapper { margin-left:10px; margin-right:auto; display:flex; align-items:center; width:30px; }
+
+  #playButton {
+    width:50px;
+    height:50px;
+    font-size:24px;
+    line-height:50px;
+    flex-shrink:0;
+  }
+
+  /* 🔊 MOBILE VOLUME – FIX */
+  #volume-wrapper {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:140px;
+    margin-left:0;
+  }
+
+  #volume {
+    width:100%;
+    height:8px;
+  }
+
+  #volume::-webkit-slider-thumb {
+    width:22px;
+    height:22px;
+    margin-top:-7px;
+  }
+
+  #volume::-moz-range-thumb {
+    width:22px;
+    height:22px;
+  }
+
   .song-info { display:none; }
-  #current-show { min-width:130px; font-size:0.85rem; padding:8px 12px; }
+
+  #current-show {
+    min-width:130px;
+    font-size:0.85rem;
+    padding:8px 12px;
+  }
+
   .team-grid { grid-template-columns:1fr; gap:20px; }
+
   .card { padding:20px; margin:15px auto; }
 }
-</style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-</head>
-<body>
+
 
 
  
@@ -819,6 +865,7 @@ playlistButton.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
 
 
 
