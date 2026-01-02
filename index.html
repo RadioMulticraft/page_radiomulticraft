@@ -1079,6 +1079,27 @@ footer.player {
   .team-grid { grid-template-columns:1fr; gap:20px; }
   .card { padding:20px; margin:15px auto; }
 }
+  /* 🔊 Mobile Volume Slider – nur größer & besser bedienbar */
+@media (max-width:768px){
+  #volume-wrapper {
+    width: 120px !important;
+  }
+
+  #volume {
+    width: 100% !important;
+  }
+
+  #volume::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  #volume::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
+}
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
@@ -1668,3 +1689,4 @@ playlistButton.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
