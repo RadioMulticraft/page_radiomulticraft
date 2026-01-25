@@ -380,7 +380,7 @@ async function fetchCurrentSong(retry=false){
 try{
 const response=await fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now());
 const data=await response.json();
-if(data.artist?.name && data.title){currentSongSpan.textContent=`${data.artist.name} - ${data.title}`;}
+if(data.artist?.name && data.title){currentSongSpan.textContent=`Jetzt läuft: ${data.artist.name} - ${data.title}`;}
 else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Kein Titel verfügbar";}}
 }catch(e){if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Kein Titel verfügbar";}}
 }
@@ -844,6 +844,7 @@ playlistButton.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
 
 
 
