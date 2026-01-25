@@ -301,7 +301,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 <!-- Hamburger Button für Mobil -->
-<button id="hamburger">☰</button>
+<button id="hamburger" onclick="this.textContent = this.textContent === '☰' ? '✕' : '☰'">☰</button>
+
 
 <!-- Sidebar -->
 <nav class="sidebar">
@@ -850,4 +851,5 @@ playlistButton.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
 
