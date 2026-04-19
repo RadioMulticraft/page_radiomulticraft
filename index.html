@@ -382,8 +382,8 @@ try{
 const response=await fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now());
 const data=await response.json();
 if(data.artist?.name && data.title){currentSongSpan.textContent=`${data.artist.name} - ${data.title}`;}
-else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Kein Titel verfügbar";}}
-}catch(e){if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Kein Titel verfügbar";}}
+else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
+}catch(e){if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
 }
 
 // Aktuelle Sendung
@@ -819,7 +819,7 @@ async function loadLastSongs() {
     });
 
     const songText = document.createElement('span');
-    songText.textContent = `${song.artist?.name || 'Unbekannt'} - ${song.title || 'Unbekannt'}`;
+    songText.textContent = `${song.artist?.name || 'Dein Sound | Dein Stream'} - ${song.title || 'Dein Sound | Dein Stream'}`;
     songText.style.fontWeight = '600';
 
     card.appendChild(songText); // Musik-Icon entfernt
