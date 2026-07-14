@@ -829,7 +829,10 @@ async function loadLastSongs() {
     });
 
     const songText = document.createElement('span');
-    songText.textContent = `${song.artist?.name || 'Dein Sound | Dein Stream'} - ${song.title || 'Dein Sound | Dein Stream'}`;
+    const songArtist = song.artist?.name?.trim();
+    const songTitle = song.title?.trim();
+    const songHasValidArtist = songArtist && !/^-+$/.test(songArtist);
+    songText.textContent = songHasValidArtist && songTitle ? `${songArtist} - ${songTitle}` : (songTitle || 'Dein Sound | Dein Stream');
     songText.style.fontWeight = '600';
 
     card.appendChild(songText); // Musik-Icon entfernt
