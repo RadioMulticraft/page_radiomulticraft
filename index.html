@@ -366,7 +366,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 <!-- Hamburger Button für Mobil -->
-<button id="hamburger" onclick="this.textContent = this.textContent === '☰' ? '✕' : '☰'">☰</button>
+<button id="hamburger">☰</button>
 
 
 <!-- Sidebar -->
@@ -779,12 +779,20 @@ jobs:`<h1>JOBS</h1>
 };
 
 function loadPage(page){content.innerHTML=pages[page];}
-links.forEach(link=>{link.addEventListener("click",e=>{e.preventDefault(); loadPage(link.dataset.link);});});
+links.forEach(link=>{link.addEventListener("click",e=>{
+  e.preventDefault();
+  loadPage(link.dataset.link);
+  document.querySelector(".sidebar").classList.remove("show");
+  hamburger.textContent = "☰";
+});});
 loadPage("home");
 
 // Hamburger Toggle
 const hamburger=document.getElementById("hamburger");
-hamburger.addEventListener("click",()=>{document.querySelector(".sidebar").classList.toggle("show");});
+hamburger.addEventListener("click",()=>{
+  const isOpen = document.querySelector(".sidebar").classList.toggle("show");
+  hamburger.textContent = isOpen ? "✕" : "☰";
+});
 
 // Playlist Button & Popup
 const playlistButton = document.createElement('button');
