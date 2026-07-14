@@ -778,7 +778,7 @@ jobs:`<h1>JOBS</h1>
 </div>`
 };
 
-function loadPage(page){content.innerHTML=pages[page];}
+function loadPage(page){content.innerHTML=pages[page]; window.scrollTo({top:0, behavior:"auto"});}
 links.forEach(link=>{link.addEventListener("click",e=>{
   e.preventDefault();
   loadPage(link.dataset.link);
