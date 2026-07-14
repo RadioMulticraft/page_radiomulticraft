@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Radio Multicraft – Dein Sound | Dein Stream</title>
 <meta name="description" content="Radio Multicraft – Dein Webradio mit dem besten Mix. Jetzt kostenlos reinhören!">
 
@@ -205,24 +205,6 @@ footer.player {
 
 @keyframes marquee { 0%{transform:translateX(100%);} 100%{transform:translateX(-100%);} }
 
-/* Playlist Button (vorher inline per JS gestylt – jetzt per CSS, damit Media Queries greifen) */
-#playlistButton {
-  position: fixed;
-  top: 5px;
-  right: 20px;
-  z-index: 1001;
-  background-color: #8E0E0D;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: background-color 0.3s;
-}
-#playlistButton:hover { background-color: #a51212; }
-
 /* Hamburger Button nur mobil */
 #hamburger { display: none; }
 @media (max-width:768px){
@@ -242,51 +224,17 @@ footer.player {
   }
   .sidebar { left:-250px; width:250px; }
   .sidebar.show { left:0; }
-  main.content { margin-left:0; padding:15px; padding-top:65px; margin-bottom:120px; }
-
-  /* Player-Footer: Höhe wächst jetzt mit dem Inhalt statt ihn abzuschneiden,
-     zusätzlich Safe-Area für iPhones mit Home-Indicator */
+  main.content { margin-left:0; padding:15px; }
   footer.player {
-    left:0; right:0; height:auto; min-height:70px;
-    flex-wrap:wrap; align-items:center; justify-content:space-between;
-    padding:10px 12px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom));
-    row-gap:8px;
+    left:0; right:0; height:70px; display:flex; align-items:center; justify-content:space-between; padding:10px 15px;
   }
-  #playButton { width:46px; height:46px; font-size:22px; line-height:46px; flex-shrink:0; }
-
-  /* Lautstärkeregler passt jetzt wirklich in seinen Wrapper */
-  #volume-wrapper { margin-left:8px; margin-right:0; display:flex; align-items:center; width:auto; }
-  #volume { width:60px; }
-
+  #playButton { width:50px; height:50px; font-size:24px; line-height:50px; }
+  #volume-wrapper { margin-left:10px; margin-right:auto; display:flex; align-items:center; width:30px; }
   .song-info { display:none; }
-
-  /* Aktuelle-Sendung-Box: kompakt, einzeilig, bricht den Footer nicht mehr */
-  #current-show {
-    margin-left:0;
-    margin-bottom:0;
-    min-width:0;
-    flex:1 1 100%;
-    order:3;
-    font-size:0.8rem;
-    padding:6px 10px;
-    text-align:left;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  #current-show h4 { display:none; }
-  #current-show .on-air { margin-bottom:0; }
-
+  #current-show { min-width:130px; font-size:0.85rem; padding:8px 12px; }
   .team-grid { grid-template-columns:1fr; gap:20px; }
   .card { padding:20px; margin:15px auto; }
-
-  #playlistButton {
-    top:12px;
-    right:12px;
-    padding:8px 14px;
-    font-size:0.85rem;
-  }
+ 
 }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -777,10 +725,21 @@ loadPage("home");
 const hamburger=document.getElementById("hamburger");
 hamburger.addEventListener("click",()=>{document.querySelector(".sidebar").classList.toggle("show");});
 
-// Playlist Button & Popup (Styling jetzt komplett über CSS-Klasse #playlistButton -> reagiert auf Media Queries)
+// Playlist Button & Popup
 const playlistButton = document.createElement('button');
-playlistButton.id = 'playlistButton';
 playlistButton.textContent = 'Playlist';
+playlistButton.style.position = 'fixed';
+playlistButton.style.top = '5px';
+playlistButton.style.right = '20px';
+playlistButton.style.zIndex = '1001';
+playlistButton.style.backgroundColor = '#8E0E0D';
+playlistButton.style.color = '#fff';
+playlistButton.style.border = 'none';
+playlistButton.style.padding = '10px 20px';
+playlistButton.style.borderRadius = '6px';
+playlistButton.style.cursor = 'pointer';
+playlistButton.style.fontWeight = '600';
+playlistButton.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
 document.body.appendChild(playlistButton);
 
 const playlistOverlay = document.createElement('div');
