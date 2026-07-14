@@ -381,7 +381,11 @@ async function fetchCurrentSong(retry=false){
 try{
 const response=await fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now());
 const data=await response.json();
-if(data.artist?.name && data.title){currentSongSpan.textContent=`${data.artist.name} - ${data.title}`;}
+const artist=data.artist?.name?.trim();
+const title=data.title?.trim();
+const hasValidArtist=artist && !/^-+$/.test(artist);
+if(hasValidArtist && title){currentSongSpan.textContent=`${artist} - ${title}`;}
+else if(title){currentSongSpan.textContent=title;}
 else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
 }catch(e){if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
 }
@@ -848,10 +852,3 @@ playlistButton.addEventListener('click', () => {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
