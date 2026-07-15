@@ -381,7 +381,7 @@ footer.player {
   }
   .sidebar { left:-250px; width:250px; }
   .sidebar.show { left:0; }
-  main.content { margin-left:0; padding:15px; padding-top: 68px; margin-bottom: 130px; }
+  main.content { margin-left:0; padding:15px; padding-top: 68px; margin-bottom: 115px; }
 
   h1 { font-size: 1.9rem; margin-bottom: 14px; }
   h2 { font-size: 1.4rem; margin-bottom: 14px; }
@@ -391,60 +391,59 @@ footer.player {
   .contact-circle { width: 52px; height: 52px; font-size: 22px; }
 
   footer.player {
-    left:0; right:0; height: auto; min-height: 70px;
+    left:0; right:0; height: auto; min-height: 64px;
     display:flex; flex-wrap: wrap; align-items:center;
-    padding: 10px 12px; gap: 0 10px;
+    padding: 8px 12px; gap: 0 10px;
   }
 
-  /* Reihe 1: Cover, Songtitel (wächst), Play-Button */
+  /* Reihe 1: Cover, Songtitel (wächst) */
   .cover-wrapper {
     display: block;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     margin-right: 0;
     order: 1;
   }
-  .cover-wrapper.is-logo { padding: 6px; }
+  .cover-wrapper.is-logo { padding: 5px; }
   .song-info {
     display: block;
     order: 2;
     margin-left: 10px;
-    margin-right: 10px;
+    margin-right: 0;
     flex: 1 1 auto;
     min-width: 0;
   }
-  .marquee { font-size: 1rem; }
-  #playButton-wrapper { order: 3; width:44px; height:44px; }
-  #playButton { width:44px; height:44px; font-size:20px; line-height:44px; }
+  .marquee { font-size: 0.95rem; }
 
   /* Der Mini-Visualizer (Punkte unter dem Button) stört auf Mobil nur -> weg damit */
   #visualizer { display: none; }
 
-  /* Reihe 2: Lautstärke + aktuelle Sendung, volle Breite, sauber verteilt */
+  /* Reihe 2: Play-Button + Lautstärke links, aktuelle Sendung rechts */
   .player-secondary {
     order: 4;
     flex: 1 0 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 10px;
-    margin-top: 8px;
+    margin-top: 6px;
   }
+  #playButton-wrapper { width:40px; height:40px; }
+  #playButton { width:40px; height:40px; font-size:18px; line-height:40px; }
   #volume-wrapper { margin-left:0; }
   #volume {
-    width: 90px;
+    width: 80px;
     height: 8px;
   }
-  #volume::-webkit-slider-thumb { width: 20px; height: 20px; margin-top: -6px; }
-  #volume::-moz-range-thumb { width: 20px; height: 20px; }
+  #volume::-webkit-slider-thumb { width: 18px; height: 18px; margin-top: -5px; }
+  #volume::-moz-range-thumb { width: 18px; height: 18px; }
 
   #current-show {
-    margin-left: 0;
+    margin-left: auto;
     min-width: 0;
     flex: 0 0 auto;
-    max-width: 155px;
+    max-width: 150px;
     font-size:0.85rem;
-    padding:8px 14px;
+    padding:6px 12px;
   }
   #current-show h4 { display: none; }
   #current-show p {
@@ -461,9 +460,9 @@ footer.player {
 
 @media (max-width: 360px) {
   .contact-circle { width: 46px; height: 46px; font-size: 19px; }
-  #current-show { font-size: 0.76rem; padding: 6px 11px; max-width: 128px; }
+  #current-show { font-size: 0.76rem; padding: 5px 10px; max-width: 120px; }
   #current-show p { font-size: 0.82rem; }
-  #volume { width: 70px; }
+  #volume { width: 60px; }
 }
 
 /* Reduzierte Bewegung respektieren */
@@ -572,16 +571,16 @@ document.addEventListener("DOMContentLoaded", function() {
   <div class="cover-wrapper is-logo">
     <img id="cover-image" src="img/RMC20250918-2.png" alt="Cover" onerror="this.onerror=null;this.src='img/RMC20250918-2.png';this.closest('.cover-wrapper').classList.add('is-logo');">
   </div>
-  <div id="playButton-wrapper">
-    <button id="playButton" aria-label="Play/Pause">▶</button>
-    <div id="visualizer" aria-hidden="true">
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
-  </div>
   <div class="song-info">
     <div class="marquee"><span id="current-song">Lade Titel...</span></div>
   </div>
   <div class="player-secondary">
+    <div id="playButton-wrapper">
+      <button id="playButton" aria-label="Play/Pause">▶</button>
+      <div id="visualizer" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
     <div id="volume-wrapper">
       <i class="fas fa-volume-up volume-icon"></i>
       <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5" aria-label="Lautstärke" />
