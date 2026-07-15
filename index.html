@@ -189,6 +189,7 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
   flex-shrink: 0;
   background: #1e1e1e;
   box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+  box-sizing: border-box;
 }
 .cover-wrapper img {
   width: 100%;
@@ -196,6 +197,15 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
   object-fit: cover;
   display: block;
   transition: opacity 0.25s ease;
+}
+/* Wenn kein echtes Songcover vorhanden ist, zeigen wir stattdessen
+   das Logo formatfüllend (nicht zugeschnitten) auf rotem Markenhintergrund */
+.cover-wrapper.is-logo {
+  background: #8E0E0E;
+  padding: 9px;
+}
+.cover-wrapper.is-logo img {
+  object-fit: contain;
 }
 
 /* Player Footer */
@@ -524,8 +534,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <!-- Player -->
 <footer class="player">
-  <div class="cover-wrapper">
-    <img id="cover-image" src="img/RMC20250918-2.png" alt="Cover" onerror="this.onerror=null;this.src='img/RMC20250918-2.png';">
+  <div class="cover-wrapper is-logo">
+    <img id="cover-image" src="img/RMC20250918-2.png" alt="Cover" onerror="this.onerror=null;this.src='img/RMC20250918-2.png';this.closest('.cover-wrapper').classList.add('is-logo');">
   </div>
   <div id="playButton-wrapper">
     <button id="playButton" aria-label="Play/Pause">▶</button>
@@ -558,7 +568,13 @@ const volumeSlider=document.getElementById('volume');
 const currentSongSpan=document.getElementById('current-song');
 const currentShowTitle=document.getElementById("current-show-title");
 const coverImage=document.getElementById('cover-image');
+const coverWrapper=document.querySelector('.cover-wrapper');
 const logoFallback='img/RMC20250918-2.png';
+
+function setCoverImage(url, isLogo){
+  coverImage.src = url;
+  coverWrapper.classList.toggle('is-logo', !!isLogo);
+}
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const sound=new Howl({
@@ -618,12 +634,12 @@ else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpa
 // Cover-Bild aktualisieren, mit Fallback aufs Logo
 const artistImage = data.artist?.image || data.artist?.thumb;
 if(artistImage){
-  coverImage.src = artistImage;
+  setCoverImage(artistImage, false);
 } else {
-  coverImage.src = logoFallback;
+  setCoverImage(logoFallback, true);
 }
 }catch(e){
-  coverImage.src = logoFallback;
+  setCoverImage(logoFallback, true);
   if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}
 }
 }
