@@ -904,11 +904,11 @@ if(songKey !== lastSongKey && (hasValidArtist || title)){
 // Aktuelle Sendung
 function updateCurrentShow(){
 const now=new Date(); const hour=now.getHours(); let show="NonStop!";
-if(hour>=6 && hour<10) show="Morningshow";
-else if(hour>=10 && hour<14) show="Vormittagsprogramm";
-else if(hour>=14 && hour<18) show="Nachmittagsshow";
-else if(hour>=18 && hour<21) show="Feierabend Programm";
-else if(hour>=21 && hour<24) show="Abendshow";
+if(hour>=6 && hour<11) show="Morningshow";
+else if(hour>=11 && hour<15) show="Vormittagsprogramm";
+else if(hour>=15 && hour<19) show="Nachmittagsshow";
+else if(hour>=19 && hour<22) show="Feierabend Programm";
+else if(hour>=22 && hour<24) show="Abendshow";
 else if(hour>=0 && hour<6) show="NonStop!";
 currentShowTitle.textContent=show;
 }
