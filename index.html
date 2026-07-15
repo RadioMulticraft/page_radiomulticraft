@@ -715,6 +715,7 @@ const coverImage=document.getElementById('cover-image');
 const coverWrapper=document.querySelector('.cover-wrapper');
 const logoFallback='img/RMC20250918-2.png';
 let lastSongKey='';
+let lastMarqueeText='';
 let coverRequestId=0;
 
 function setCoverImage(url, isLogo){
@@ -875,7 +876,13 @@ const hasValidArtist=artist && !/^-+$/.test(artist);
 if(hasValidArtist && title){currentSongSpan.textContent=`${artist} - ${title}`;}
 else if(title){currentSongSpan.textContent=title;}
 else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
-updateMarqueeState();
+// Die Laufschrift nur neu starten, wenn sich der Titeltext wirklich geändert hat –
+// sonst würde sie bei jeder Abfrage (alle 3s) neu von vorne beginnen und käme
+// bei langen Titeln nie sichtbar zum Durchlaufen.
+if(currentSongSpan.textContent !== lastMarqueeText){
+  lastMarqueeText = currentSongSpan.textContent;
+  updateMarqueeState();
+}
 
 // Cover nur aktualisieren, wenn sich der Song tatsächlich geändert hat
 const songKey = `${hasValidArtist?artist:''}|${title||''}`;
@@ -887,7 +894,10 @@ if(songKey !== lastSongKey && (hasValidArtist || title)){
 }catch(e){
   setCoverImage(logoFallback, true);
   if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}
-  updateMarqueeState();
+  if(currentSongSpan.textContent !== lastMarqueeText){
+    lastMarqueeText = currentSongSpan.textContent;
+    updateMarqueeState();
+  }
 }
 }
 
