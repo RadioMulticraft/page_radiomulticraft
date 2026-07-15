@@ -381,7 +381,7 @@ footer.player {
   }
   .sidebar { left:-250px; width:250px; }
   .sidebar.show { left:0; }
-  main.content { margin-left:0; padding:15px; padding-top: 68px; margin-bottom: 115px; }
+  main.content { margin-left:0; padding:15px; padding-top: 68px; margin-bottom: 122px; }
 
   h1 { font-size: 1.9rem; margin-bottom: 14px; }
   h2 { font-size: 1.4rem; margin-bottom: 14px; }
@@ -391,20 +391,20 @@ footer.player {
   .contact-circle { width: 52px; height: 52px; font-size: 22px; }
 
   footer.player {
-    left:0; right:0; height: auto; min-height: 64px;
+    left:0; right:0; height: auto; min-height: 72px;
     display:flex; flex-wrap: wrap; align-items:center;
-    padding: 8px 12px; gap: 0 10px;
+    padding: 10px 12px; gap: 0 10px;
   }
 
   /* Reihe 1: Cover, Songtitel (wächst) */
   .cover-wrapper {
     display: block;
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     margin-right: 0;
     order: 1;
   }
-  .cover-wrapper.is-logo { padding: 5px; }
+  .cover-wrapper.is-logo { padding: 6px; }
   .song-info {
     display: block;
     order: 2;
@@ -413,25 +413,25 @@ footer.player {
     flex: 1 1 auto;
     min-width: 0;
   }
-  .marquee { font-size: 0.95rem; }
+  .marquee { font-size: 1rem; }
 
   /* Der Mini-Visualizer (Punkte unter dem Button) stört auf Mobil nur -> weg damit */
   #visualizer { display: none; }
 
-  /* Reihe 2: Play-Button + Lautstärke links, aktuelle Sendung rechts */
+  /* Reihe 2: Play-Button (gut greifbar) + Lautstärke links, aktuelle Sendung rechts */
   .player-secondary {
     order: 4;
     flex: 1 0 100%;
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 6px;
+    gap: 12px;
+    margin-top: 8px;
   }
-  #playButton-wrapper { width:40px; height:40px; }
-  #playButton { width:40px; height:40px; font-size:18px; line-height:40px; }
+  #playButton-wrapper { width:52px; height:52px; }
+  #playButton { width:52px; height:52px; font-size:24px; line-height:52px; }
   #volume-wrapper { margin-left:0; }
   #volume {
-    width: 80px;
+    width: 85px;
     height: 8px;
   }
   #volume::-webkit-slider-thumb { width: 18px; height: 18px; margin-top: -5px; }
@@ -441,7 +441,7 @@ footer.player {
     margin-left: auto;
     min-width: 0;
     flex: 0 0 auto;
-    max-width: 150px;
+    max-width: 140px;
     font-size:0.85rem;
     padding:6px 12px;
   }
@@ -460,7 +460,7 @@ footer.player {
 
 @media (max-width: 360px) {
   .contact-circle { width: 46px; height: 46px; font-size: 19px; }
-  #current-show { font-size: 0.76rem; padding: 5px 10px; max-width: 120px; }
+  #current-show { font-size: 0.76rem; padding: 5px 10px; max-width: 115px; }
   #current-show p { font-size: 0.82rem; }
   #volume { width: 60px; }
 }
