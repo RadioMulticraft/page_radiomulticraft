@@ -570,10 +570,46 @@ const currentShowTitle=document.getElementById("current-show-title");
 const coverImage=document.getElementById('cover-image');
 const coverWrapper=document.querySelector('.cover-wrapper');
 const logoFallback='img/RMC20250918-2.png';
+let lastSongKey='';
+let coverRequestId=0;
 
 function setCoverImage(url, isLogo){
   coverImage.src = url;
   coverWrapper.classList.toggle('is-logo', !!isLogo);
+}
+
+// Sucht bei iTunes ein Coverbild anhand von Interpret + Titel,
+// falls laut.fm selbst kein Bild liefert.
+async function resolveCoverViaItunes(artist, title){
+  const myRequestId = ++coverRequestId;
+  try{
+    const query = encodeURIComponent(`${artist||''} ${title||''}`.trim());
+    if(!query){ if(myRequestId===coverRequestId) setCoverImage(logoFallback, true); return; }
+    const res = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=1`);
+    const json = await res.json();
+    const artwork = json.results?.[0]?.artworkUrl100;
+    if(myRequestId!==coverRequestId) return; // Song hat sich in der Zwischenzeit schon wieder geändert
+    if(artwork){
+      setCoverImage(artwork.replace('100x100bb','600x600bb'), false);
+    } else {
+      setCoverImage(logoFallback, true);
+    }
+  }catch(e){
+    if(myRequestId===coverRequestId) setCoverImage(logoFallback, true);
+  }
+}
+
+function updateCoverForSong(artist, title, lautfmImage){
+  coverRequestId++; // laufende iTunes-Anfragen für den alten Song verwerfen
+  if(lautfmImage){
+    setCoverImage(lautfmImage, false);
+    return;
+  }
+  if(!artist && !title){
+    setCoverImage(logoFallback, true);
+    return;
+  }
+  resolveCoverViaItunes(artist, title);
 }
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -631,12 +667,12 @@ if(hasValidArtist && title){currentSongSpan.textContent=`${artist} - ${title}`;}
 else if(title){currentSongSpan.textContent=title;}
 else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
 
-// Cover-Bild aktualisieren, mit Fallback aufs Logo
-const artistImage = data.artist?.image || data.artist?.thumb;
-if(artistImage){
-  setCoverImage(artistImage, false);
-} else {
-  setCoverImage(logoFallback, true);
+// Cover nur aktualisieren, wenn sich der Song tatsächlich geändert hat
+const songKey = `${hasValidArtist?artist:''}|${title||''}`;
+if(songKey !== lastSongKey && (hasValidArtist || title)){
+  lastSongKey = songKey;
+  const lautfmImage = data.artist?.image || data.artist?.thumb;
+  updateCoverForSong(hasValidArtist?artist:null, title, lautfmImage);
 }
 }catch(e){
   setCoverImage(logoFallback, true);
