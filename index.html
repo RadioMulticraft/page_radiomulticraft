@@ -376,7 +376,7 @@ footer.player::before {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-.volume-icon { color:#fff; margin-right:8px; font-size:20px; flex-shrink: 0; }
+.volume-icon { color:#fff; margin-right:8px; font-size:20px; flex-shrink: 0; cursor: pointer; }
 
 /* Aktuelle Sendung Fenster im Player */
 #current-show {
@@ -441,84 +441,76 @@ footer.player::before {
   .contact-circles { gap: 14px; margin: 24px 0; }
   .contact-circle { width: 52px; height: 52px; font-size: 22px; }
 
+  /* === Player: eine kompakte, aufgeräumte Zeile statt zwei unruhiger Reihen ===
+     Aufbau als Grid: Cover | Titel + Sendung (übereinander) | Lautstärke | Play
+     Die Lautstärke bekommt auf Mobil nur einen Icon-Toggle (stumm/an), da ein
+     Schieberegler auf so wenig Breite ohnehin kaum präzise bedienbar ist und
+     Lautstärke auf dem Handy ganz natürlich über die Hardware-Tasten läuft. */
   footer.player {
     left:0; right:0;
-    height: auto; min-height: 76px;
-    display:flex; flex-wrap: wrap; align-items:center;
-    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
-    gap: 0 10px;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    box-shadow: 0 -6px 20px rgba(0,0,0,0.35);
-  }
-
-  /* Reihe 1: Play-Button + Lautstärke (gut greifbar, oben) */
-  .player-secondary {
-    order: 1;
-    flex: 1 0 100%;
-    display: flex;
+    height: auto;
+    display: grid;
+    grid-template-columns: 46px 1fr 40px 52px;
+    grid-template-rows: auto auto;
     align-items: center;
-    gap: 12px;
+    column-gap: 12px;
+    row-gap: 1px;
+    padding: 11px 14px calc(11px + env(safe-area-inset-bottom, 0px));
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    box-shadow: 0 -6px 24px rgba(0,0,0,0.4);
   }
-  #playButton-wrapper { width:50px; height:50px; }
-  #playButton { width:50px; height:50px; font-size:22px; line-height:50px; }
-  #volume-wrapper { margin-left:0; }
-  #volume {
-    width: 90px;
-    height: 8px;
-  }
-  #volume::-webkit-slider-thumb { width: 18px; height: 18px; margin-top: -5px; }
-  #volume::-moz-range-thumb { width: 18px; height: 18px; }
 
-  /* Der Mini-Visualizer (Punkte unter dem Button) stört auf Mobil nur -> weg damit */
-  #visualizer { display: none; }
+  .player-secondary { display: contents; }
 
-  /* Reihe 2: Cover (hinter der Lautstärke), Songtitel (wächst), aktuelle Sendung */
+  /* Cover: linksbündig, über beide Zeilen, mit dezentem Leuchtring beim Abspielen */
   .cover-wrapper {
-    display: block;
-    width: 44px;
-    height: 44px;
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 9px;
-    order: 2;
-    margin-top: 8px;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 46px;
+    height: 46px;
+    margin: 0;
+    border-radius: 11px;
+    transition: box-shadow 0.3s ease;
   }
   .cover-wrapper.is-logo { padding: 6px; }
-  .song-info {
-    order: 3;
-    margin-top: 8px;
-    margin-left: 10px;
-    margin-right: 0;
-    flex: 1 1 auto;
-    min-width: 0;
+  footer.player.is-playing .cover-wrapper {
+    box-shadow: 0 0 0 2px rgba(255,59,59,0.55), 0 4px 14px rgba(0,0,0,0.5);
   }
-  .marquee-item { font-size: 1rem; padding-right: 36px; }
 
+  /* Songtitel: obere Zeile der mittleren Spalte */
+  .song-info {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    align-self: end;
+  }
+  .marquee-item { font-size: 0.98rem; font-weight: 700; padding-right: 32px; }
+
+  /* Aktuelle Sendung: untere Zeile der mittleren Spalte, als schlankes Label */
   #current-show {
-    order: 4;
+    grid-column: 2;
+    grid-row: 2;
     display: flex;
     align-items: center;
-    gap: 7px;
-    margin-top: 8px;
-    margin-left: 10px;
-    margin-right: 0;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
     min-width: 0;
-    flex: 0 0 auto;
-    max-width: 128px;
-    font-size:0.85rem;
-    padding: 7px 12px;
-    background: rgba(255,59,59,0.14);
-    border: 1px solid rgba(255,59,59,0.4);
-    backdrop-filter: none;
+    max-width: none;
+    background: none;
+    border: none;
     box-shadow: none;
-    border-radius: 20px;
+    backdrop-filter: none;
+    border-radius: 0;
     text-align: left;
+    align-self: start;
   }
+  #current-show:hover { transform: none; box-shadow: none; }
   #current-show h4 { display: none; }
   #current-show .on-air {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     padding: 0;
     margin-bottom: 0;
     border-radius: 50%;
@@ -526,14 +518,60 @@ footer.player::before {
     text-indent: -999px;
     flex-shrink: 0;
     background: #ff3b3b;
+    box-shadow: 0 0 6px 1px rgba(255,59,59,0.7);
   }
   #current-show p {
-    font-size: 0.88rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #c9c9c9;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
   }
+
+  /* Lautstärke: Schieberegler ausblenden, kompakter Mute-Toggle statt dessen */
+  #volume-wrapper {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    margin: 0;
+    justify-content: center;
+  }
+  #volume { display: none; }
+  .volume-icon {
+    margin: 0;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    color: #f0f0f0;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .volume-icon:active,
+  .volume-icon.is-muted {
+    background: rgba(255,59,59,0.16);
+    color: #ff5c5c;
+  }
+
+  /* Play/Pause: rechts, gut greifbar */
+  #playButton-wrapper {
+    grid-column: 4;
+    grid-row: 1 / 3;
+    width: 52px;
+    height: 52px;
+    justify-self: center;
+  }
+  #playButton { width:52px; height:52px; font-size:22px; line-height:52px; }
+
+  /* Der Mini-Visualizer (Punkte unter dem Button) braucht auf Mobil zu viel Platz */
+  #visualizer { display: none; }
 
   .team-grid { grid-template-columns:1fr; gap:20px; }
   .card { padding:20px; margin:15px auto; }
@@ -541,9 +579,13 @@ footer.player::before {
 
 @media (max-width: 360px) {
   .contact-circle { width: 46px; height: 46px; font-size: 19px; }
-  #current-show { font-size: 0.76rem; padding: 5px 10px; max-width: 115px; }
-  #current-show p { font-size: 0.82rem; }
-  #volume { width: 60px; }
+  footer.player { grid-template-columns: 42px 1fr 36px 48px; column-gap: 9px; }
+  .cover-wrapper { width: 42px; height: 42px; }
+  .marquee-item { font-size: 0.9rem; }
+  #current-show p { font-size: 0.7rem; }
+  .volume-icon { width: 34px; height: 34px; font-size: 15px; }
+  #playButton-wrapper { width: 48px; height: 48px; }
+  #playButton { width: 48px; height: 48px; font-size: 20px; line-height: 48px; }
 }
 
 /* Reduzierte Bewegung respektieren */
@@ -657,7 +699,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </div>
     </div>
     <div id="volume-wrapper">
-      <i class="fas fa-volume-up volume-icon"></i>
+      <i class="fas fa-volume-up volume-icon" id="volumeIcon" role="button" tabindex="0" aria-label="Stumm schalten"></i>
       <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5" aria-label="Lautstärke" />
     </div>
   </div>
@@ -775,16 +817,48 @@ const sound=new Howl({
 
 playButton.addEventListener('click',()=>{sound.playing()?sound.pause():sound.play();});
 function syncVolumeFill(){ volumeSlider.style.setProperty('--vol', (volumeSlider.value*100)+'%'); }
-volumeSlider.addEventListener('input',()=>{sound.volume(volumeSlider.value); syncVolumeFill();});
+volumeSlider.addEventListener('input',()=>{sound.volume(volumeSlider.value); syncVolumeFill(); syncVolumeIcon();});
 syncVolumeFill();
 
+// Lautstärke-Icon: auf Mobil ersetzt es den Schieberegler als kompakter
+// Stumm/An-Schalter, auf Desktop zeigt es zusätzlich den aktuellen Pegel an.
+const volumeIcon = document.getElementById('volumeIcon');
+let lastVolume = parseFloat(volumeSlider.value) || 0.5;
+function syncVolumeIcon(){
+  const vol = parseFloat(volumeSlider.value);
+  volumeIcon.classList.toggle('is-muted', vol <= 0);
+  volumeIcon.classList.remove('fa-volume-up','fa-volume-down','fa-volume-mute');
+  if(vol <= 0) volumeIcon.classList.add('fa-volume-mute');
+  else if(vol < 0.5) volumeIcon.classList.add('fa-volume-down');
+  else volumeIcon.classList.add('fa-volume-up');
+}
+function toggleMute(){
+  const vol = parseFloat(volumeSlider.value);
+  if(vol > 0){
+    lastVolume = vol;
+    volumeSlider.value = 0;
+  } else {
+    volumeSlider.value = lastVolume > 0 ? lastVolume : 0.5;
+  }
+  sound.volume(parseFloat(volumeSlider.value));
+  syncVolumeFill();
+  syncVolumeIcon();
+}
+volumeIcon.addEventListener('click', toggleMute);
+volumeIcon.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleMute(); }
+});
+syncVolumeIcon();
+
 // Play/Pause immer weiß
+const footerPlayer = document.querySelector('footer.player');
 sound.on('play', () => {
   playButton.textContent = '⏸';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
   playButton.classList.add('is-playing');
   playButtonWrapper.classList.add('is-playing');
+  footerPlayer.classList.add('is-playing');
 });
 sound.on('pause', () => {
   playButton.textContent = '▶';
@@ -792,6 +866,7 @@ sound.on('pause', () => {
   playButton.style.backgroundColor = "#ff3b3b";
   playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
+  footerPlayer.classList.remove('is-playing');
 });
 sound.on('loaderror', () => {
   playButton.textContent = '▶';
