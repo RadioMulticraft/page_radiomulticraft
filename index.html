@@ -361,9 +361,6 @@ footer.player::before {
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
-.marquee-track:not(.scrolling) .marquee-item:first-child {
-  text-overflow: ellipsis;
-}
 .marquee-item {
   font-size: 1.2rem;
   font-weight: 730;
@@ -771,15 +768,25 @@ function updateMarqueeState(){
   songInfoBox.classList.remove('has-fade');
   currentSongClone.textContent = currentSongSpan.textContent;
 
+  // Doppeltes rAF: das erste garantiert, dass der Browser das Entfernen der
+  // "scrolling"-Klasse bereits verarbeitet hat, das zweite, dass Grid/Flex-Layout
+  // (z.B. nach einem Breakpoint-Wechsel oder direkt nach dem Laden) vollständig
+  // fertig berechnet ist, BEVOR wir die Breiten messen. Ohne das kann die Messung
+  // auf dem Handy (schmalerer Player, Grid-Layout) einen zu kleinen/veralteten
+  // Wert liefern und die Laufschrift startet nicht, obwohl der Titel abgeschnitten ist.
   requestAnimationFrame(() => {
-    const itemWidth = currentSongSpan.getBoundingClientRect().width;
-    const containerWidth = songInfoBox.getBoundingClientRect().width;
-    if(itemWidth > containerWidth - 2 && !prefersReducedMotion){
-      const duration = Math.max(itemWidth / MARQUEE_SPEED_PX_PER_SEC, MARQUEE_MIN_DURATION);
-      marqueeTrack.style.animationDuration = duration + 's';
-      marqueeTrack.classList.add('scrolling');
-      songInfoBox.classList.add('has-fade');
-    }
+    requestAnimationFrame(() => {
+      // scrollWidth/clientWidth statt getBoundingClientRect auf zwei verschiedenen
+      // Elementen - das ist robuster gegen Rundungsdifferenzen zwischen Elementen.
+      const itemWidth = currentSongSpan.scrollWidth;
+      const containerWidth = songInfoBox.clientWidth;
+      if(itemWidth > containerWidth && !prefersReducedMotion){
+        const duration = Math.max(itemWidth / MARQUEE_SPEED_PX_PER_SEC, MARQUEE_MIN_DURATION);
+        marqueeTrack.style.animationDuration = duration + 's';
+        marqueeTrack.classList.add('scrolling');
+        songInfoBox.classList.add('has-fade');
+      }
+    });
   });
 }
 
@@ -787,6 +794,22 @@ window.addEventListener('resize', () => {
   clearTimeout(marqueeResizeTimeout);
   marqueeResizeTimeout = setTimeout(updateMarqueeState, 150);
 });
+
+// Zusätzlich per ResizeObserver überwachen: manche mobile Browser feuern beim
+// Ein-/Ausblenden der Adressleiste, bei Rotation oder bei Breakpoint-Wechseln
+// kein zuverlässiges 'resize'-Event auf window. Der ResizeObserver reagiert
+// direkt auf Größenänderungen des Player-Containers selbst.
+if(window.ResizeObserver){
+  const marqueeResizeObserver = new ResizeObserver(() => {
+    clearTimeout(marqueeResizeTimeout);
+    marqueeResizeTimeout = setTimeout(updateMarqueeState, 150);
+  });
+  marqueeResizeObserver.observe(songInfoBox);
+}
+
+// Nach vollständigem Laden (Bilder, Schriften) sicherheitshalber erneut prüfen,
+// falls sich Breiten durch Web-Fonts o.ä. nachträglich noch minimal verschoben haben.
+window.addEventListener('load', updateMarqueeState);
 
 const sound=new Howl({
   src:[streamUrl],
@@ -904,13 +927,12 @@ if(songKey !== lastSongKey && (hasValidArtist || title)){
 // Aktuelle Sendung
 function updateCurrentShow(){
 const now=new Date(); const hour=now.getHours(); let show="NonStop!";
-if (hour >= 6 && hour < 8) show = "Frühsport";
-else if (hour >= 8 && hour < 11) show = "Morningshow";
-else if (hour >= 11 && hour < 15) show = "Vormittagsprogramm";
-else if (hour >= 15 && hour < 18) show = "Nachmittagsshow";
-else if (hour >= 18 && hour < 21) show = "Feierabend Programm";
-else if (hour >= 21 && hour < 24) show = "Abendshow";
-else if (hour >= 0 && hour < 6) show = "NonStop!";
+if(hour>=6 && hour<11) show="Morningshow";
+else if(hour>=11 && hour<15) show="Vormittagsprogramm";
+else if(hour>=15 && hour<19) show="Nachmittagsshow";
+else if(hour>=19 && hour<22) show="Feierabend Programm";
+else if(hour>=22 && hour<24) show="Abendshow";
+else if(hour>=0 && hour<6) show="NonStop!";
 currentShowTitle.textContent=show;
 }
 fetchCurrentSong(); setInterval(fetchCurrentSong,3000);
