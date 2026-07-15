@@ -94,6 +94,18 @@ main.content {
   padding: 20px;
   flex-grow: 1;
   margin-bottom: 100px; /* Abstand zum Player */
+  transition: opacity 0.18s ease;
+}
+
+/* Scroll-Reveal: sanftes Einblenden beim Scrollen */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-init.revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Überschriften */
@@ -182,6 +194,12 @@ footer.player {
 }
 
 /* Player Buttons */
+#playButton-wrapper {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
 #playButton {
   width: 60px; height: 60px;
   border-radius: 50%;
@@ -195,9 +213,67 @@ footer.player {
   font-weight: bold;
   user-select: none;
   transition: background-color 0.3s;
-  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 #playButton:hover { background-color: #e23030; color: #fff !important; }
+
+/* Glühender Ring, nur aktiv wenn Stream läuft */
+#playButton-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,59,59,0.55) 0%, rgba(255,59,59,0) 70%);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+#playButton-wrapper.is-playing::before {
+  opacity: 1;
+  transform: scale(1);
+  animation: glowPulse 1.8s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { opacity: 0.55; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Mini Audio-Visualizer neben/hinter dem Play-Button */
+#visualizer {
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 14px;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+#playButton-wrapper.is-playing #visualizer { opacity: 1; }
+#visualizer span {
+  width: 3px;
+  height: 4px;
+  border-radius: 2px;
+  background: #ff3b3b;
+  animation: visBar 0.9s ease-in-out infinite;
+}
+#playButton-wrapper.is-playing #visualizer span { animation-play-state: running; }
+#visualizer span:nth-child(1) { animation-duration: 0.6s; animation-delay: -0.4s; }
+#visualizer span:nth-child(2) { animation-duration: 0.8s; animation-delay: -0.1s; }
+#visualizer span:nth-child(3) { animation-duration: 0.5s; animation-delay: -0.6s; }
+#visualizer span:nth-child(4) { animation-duration: 0.9s; animation-delay: -0.3s; }
+#visualizer span:nth-child(5) { animation-duration: 0.7s; animation-delay: -0.7s; }
+@keyframes visBar {
+  0%, 100% { height: 3px; }
+  50% { height: 14px; }
+}
 
 #volume-wrapper {
   display: flex;
@@ -282,7 +358,9 @@ footer.player {
     display:flex; flex-wrap: wrap; align-items:center; justify-content:flex-start;
     padding: 10px 12px; gap: 8px 10px;
   }
+  #playButton-wrapper { width:48px; height:48px; }
   #playButton { width:48px; height:48px; font-size:22px; line-height:48px; }
+  #visualizer { bottom: -12px; height: 12px; }
   #volume-wrapper { margin-left:0; }
   #volume {
     width: 100px;
@@ -318,6 +396,17 @@ footer.player {
   #current-show { font-size: 0.76rem; padding: 6px 11px; max-width: 128px; }
   #current-show p { font-size: 0.82rem; }
   #volume { width: 80px; }
+}
+
+/* Reduzierte Bewegung respektieren */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-init { opacity: 1 !important; transform: none !important; }
 }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -412,7 +501,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <!-- Player -->
 <footer class="player">
-  <button id="playButton" aria-label="Play/Pause">▶</button>
+  <div id="playButton-wrapper">
+    <button id="playButton" aria-label="Play/Pause">▶</button>
+    <div id="visualizer" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
   <div id="volume-wrapper">
     <i class="fas fa-volume-up volume-icon"></i>
     <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5" aria-label="Lautstärke" />
@@ -432,10 +526,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <script>
 // Audio Player
 const streamUrl='https://stream.laut.fm/radioms990';
+const playButtonWrapper=document.getElementById('playButton-wrapper');
 const playButton=document.getElementById('playButton');
 const volumeSlider=document.getElementById('volume');
 const currentSongSpan=document.getElementById('current-song');
 const currentShowTitle=document.getElementById("current-show-title");
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const sound=new Howl({
   src:[streamUrl],
@@ -452,11 +548,27 @@ sound.on('play', () => {
   playButton.textContent = '⏸';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
+  if(!prefersReducedMotion) playButtonWrapper.classList.add('is-playing');
 });
 sound.on('pause', () => {
   playButton.textContent = '▶';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
+  playButtonWrapper.classList.remove('is-playing');
+});
+sound.on('loaderror', () => {
+  playButton.textContent = '▶';
+  playButtonWrapper.classList.remove('is-playing');
+  const previousShow = currentShowTitle.textContent;
+  currentShowTitle.textContent = '⚠ Stream nicht erreichbar';
+  setTimeout(() => { currentShowTitle.textContent = previousShow; }, 5000);
+});
+sound.on('playerror', () => {
+  playButton.textContent = '▶';
+  playButtonWrapper.classList.remove('is-playing');
+  const previousShow = currentShowTitle.textContent;
+  currentShowTitle.textContent = '⚠ Verbindung unterbrochen';
+  setTimeout(() => { currentShowTitle.textContent = previousShow; }, 5000);
 });
 
 // Song Title
@@ -796,7 +908,41 @@ jobs:`<h1>JOBS</h1>
 </div>`
 };
 
-function loadPage(page){content.innerHTML=pages[page]; window.scrollTo({top:0, behavior:"auto"});}
+function loadPage(page){
+  if(prefersReducedMotion){
+    content.innerHTML = pages[page];
+    window.scrollTo({top:0, behavior:"auto"});
+    initScrollReveal();
+    return;
+  }
+  content.style.opacity = 0;
+  setTimeout(()=>{
+    content.innerHTML = pages[page];
+    window.scrollTo({top:0, behavior:"auto"});
+    content.style.opacity = 1;
+    initScrollReveal();
+  }, 180);
+}
+
+// Scroll-Reveal: Karten, Banner & Team-Kacheln gleiten beim Scrollen sanft ins Bild
+let revealObserver = null;
+function initScrollReveal(){
+  if(prefersReducedMotion) return;
+  if(revealObserver) revealObserver.disconnect();
+  revealObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  const revealTargets = content.querySelectorAll('.card, .centered-banner, .team-member');
+  revealTargets.forEach(el=>{
+    el.classList.add('reveal-init');
+    revealObserver.observe(el);
+  });
+}
 links.forEach(link=>{link.addEventListener("click",e=>{
   e.preventDefault();
   loadPage(link.dataset.link);
