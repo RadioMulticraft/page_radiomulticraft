@@ -218,6 +218,16 @@ footer.player {
 }
 #playButton:hover { background-color: #e23030; color: #fff !important; }
 
+/* Kräftiger, garantiert sichtbarer Puls-Ring direkt am Button */
+#playButton.is-playing {
+  animation: playGlow 1.6s ease-in-out infinite;
+}
+@keyframes playGlow {
+  0%   { box-shadow: 0 0 0 0 rgba(255,59,59,0.9), 0 0 14px 4px rgba(255,59,59,0.7); }
+  50%  { box-shadow: 0 0 0 14px rgba(255,59,59,0), 0 0 30px 10px rgba(255,59,59,1); }
+  100% { box-shadow: 0 0 0 0 rgba(255,59,59,0.9), 0 0 14px 4px rgba(255,59,59,0.7); }
+}
+
 /* Glühender Ring, nur aktiv wenn Stream läuft */
 #playButton-wrapper::before {
   content: '';
@@ -258,10 +268,11 @@ footer.player {
 }
 #playButton-wrapper.is-playing #visualizer { opacity: 1; }
 #visualizer span {
-  width: 3px;
+  width: 4px;
   height: 4px;
   border-radius: 2px;
-  background: #ff3b3b;
+  background: #ff5c5c;
+  box-shadow: 0 0 6px 1px rgba(255,59,59,0.9);
   animation: visBar 0.9s ease-in-out infinite;
 }
 #playButton-wrapper.is-playing #visualizer span { animation-play-state: running; }
@@ -548,16 +559,21 @@ sound.on('play', () => {
   playButton.textContent = '⏸';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
-  if(!prefersReducedMotion) playButtonWrapper.classList.add('is-playing');
+  if(!prefersReducedMotion){
+    playButton.classList.add('is-playing');
+    playButtonWrapper.classList.add('is-playing');
+  }
 });
 sound.on('pause', () => {
   playButton.textContent = '▶';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
+  playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
 });
 sound.on('loaderror', () => {
   playButton.textContent = '▶';
+  playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
   const previousShow = currentShowTitle.textContent;
   currentShowTitle.textContent = '⚠ Stream nicht erreichbar';
@@ -565,6 +581,7 @@ sound.on('loaderror', () => {
 });
 sound.on('playerror', () => {
   playButton.textContent = '▶';
+  playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
   const previousShow = currentShowTitle.textContent;
   currentShowTitle.textContent = '⚠ Verbindung unterbrochen';
