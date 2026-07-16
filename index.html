@@ -919,7 +919,8 @@ if(songKey !== lastSongKey && (hasValidArtist || title)){
 // Aktuelle Sendung
 function updateCurrentShow(){
 const now=new Date(); const hour=now.getHours(); let show="NonStop!";
-if(hour>=6 && hour<11) show="Morningshow";
+if(hour>=6 && hour<8) show="Frühsport";
+else if(hour>=8 && hour<11) show="Morningshow";
 else if(hour>=11 && hour<15) show="Vormittagsprogramm";
 else if(hour>=15 && hour<19) show="Nachmittagsshow";
 else if(hour>=19 && hour<22) show="Feierabend Programm";
