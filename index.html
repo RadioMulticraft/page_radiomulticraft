@@ -361,6 +361,9 @@ footer.player::before {
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
+.marquee-track:not(.scrolling) .marquee-item:first-child {
+  text-overflow: ellipsis;
+}
 .marquee-item {
   font-size: 1.2rem;
   font-weight: 730;
@@ -768,16 +771,11 @@ function updateMarqueeState(){
   songInfoBox.classList.remove('has-fade');
   currentSongClone.textContent = currentSongSpan.textContent;
 
-  // Doppeltes rAF: das erste garantiert, dass der Browser das Entfernen der
-  // "scrolling"-Klasse bereits verarbeitet hat, das zweite, dass Grid/Flex-Layout
-  // (z.B. nach einem Breakpoint-Wechsel oder direkt nach dem Laden) vollständig
-  // fertig berechnet ist, BEVOR wir die Breiten messen. Ohne das kann die Messung
-  // auf dem Handy (schmalerer Player, Grid-Layout) einen zu kleinen/veralteten
-  // Wert liefern und die Laufschrift startet nicht, obwohl der Titel abgeschnitten ist.
+  // Doppeltes rAF: erst nach dem zweiten Frame ist das Grid-Layout
+  // (v.a. die 1fr-Spalte im mobilen Player) garantiert final berechnet,
+  // sonst wird auf Mobil teils gegen eine noch nicht fertige Breite gemessen.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      // scrollWidth/clientWidth statt getBoundingClientRect auf zwei verschiedenen
-      // Elementen - das ist robuster gegen Rundungsdifferenzen zwischen Elementen.
       const itemWidth = currentSongSpan.scrollWidth;
       const containerWidth = songInfoBox.clientWidth;
       if(itemWidth > containerWidth && !prefersReducedMotion){
@@ -790,26 +788,17 @@ function updateMarqueeState(){
   });
 }
 
-window.addEventListener('resize', () => {
+const marqueeObserver = new ResizeObserver(() => {
   clearTimeout(marqueeResizeTimeout);
   marqueeResizeTimeout = setTimeout(updateMarqueeState, 150);
 });
+marqueeObserver.observe(songInfoBox);
 
-// Zusätzlich per ResizeObserver überwachen: manche mobile Browser feuern beim
-// Ein-/Ausblenden der Adressleiste, bei Rotation oder bei Breakpoint-Wechseln
-// kein zuverlässiges 'resize'-Event auf window. Der ResizeObserver reagiert
-// direkt auf Größenänderungen des Player-Containers selbst.
-if(window.ResizeObserver){
-  const marqueeResizeObserver = new ResizeObserver(() => {
-    clearTimeout(marqueeResizeTimeout);
-    marqueeResizeTimeout = setTimeout(updateMarqueeState, 150);
-  });
-  marqueeResizeObserver.observe(songInfoBox);
+// Nach dem Laden der Schrift erneut prüfen, da sich Textbreiten dadurch
+// nachträglich verschieben können (relevant für die Lauftext-Berechnung).
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(updateMarqueeState);
 }
-
-// Nach vollständigem Laden (Bilder, Schriften) sicherheitshalber erneut prüfen,
-// falls sich Breiten durch Web-Fonts o.ä. nachträglich noch minimal verschoben haben.
-window.addEventListener('load', updateMarqueeState);
 
 const sound=new Howl({
   src:[streamUrl],
