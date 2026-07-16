@@ -569,7 +569,7 @@ footer.player::before {
 
 /* Reduzierte Bewegung respektieren */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *:not(.marquee-track):not(.marquee-track *), *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
@@ -778,7 +778,10 @@ function updateMarqueeState(){
     requestAnimationFrame(() => {
       const itemWidth = currentSongSpan.scrollWidth;
       const containerWidth = songInfoBox.clientWidth;
-      if(itemWidth > containerWidth && !prefersReducedMotion){
+      // Die Songtitel-Laufschrift läuft bewusst unabhängig von der
+      // "Bewegung reduzieren"-Einstellung, damit jeder Nutzer den vollständigen
+      // Titel sehen kann, egal auf welchem Gerät/Browser er unterwegs ist.
+      if(itemWidth > containerWidth){
         const duration = Math.max(itemWidth / MARQUEE_SPEED_PX_PER_SEC, MARQUEE_MIN_DURATION);
         marqueeTrack.style.animationDuration = duration + 's';
         marqueeTrack.classList.add('scrolling');
