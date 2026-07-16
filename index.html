@@ -672,7 +672,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <footer class="player">
   <div class="player-secondary">
     <div id="playButton-wrapper">
-      <button id="playButton" aria-label="Play/Pause">▶</button>
+      <button id="playButton" aria-label="Play/Pause"><i class="fas fa-play" id="playButtonIcon"></i></button>
       <div id="visualizer" aria-hidden="true">
         <span></span><span></span><span></span><span></span><span></span>
       </div>
@@ -705,6 +705,7 @@ document.addEventListener("DOMContentLoaded", function() {
 const streamUrl='https://stream.laut.fm/radioms990';
 const playButtonWrapper=document.getElementById('playButton-wrapper');
 const playButton=document.getElementById('playButton');
+const playButtonIcon=document.getElementById('playButtonIcon');
 const volumeSlider=document.getElementById('volume');
 const currentSongSpan=document.getElementById('current-song');
 const currentSongClone=document.getElementById('current-song-clone');
@@ -848,7 +849,7 @@ syncVolumeIcon();
 // Play/Pause immer weiß
 const footerPlayer = document.querySelector('footer.player');
 sound.on('play', () => {
-  playButton.textContent = '⏸';
+  playButtonIcon.className = 'fas fa-pause';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
   playButton.classList.add('is-playing');
@@ -856,7 +857,7 @@ sound.on('play', () => {
   footerPlayer.classList.add('is-playing');
 });
 sound.on('pause', () => {
-  playButton.textContent = '▶';
+  playButtonIcon.className = 'fas fa-play';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
   playButton.classList.remove('is-playing');
@@ -864,7 +865,7 @@ sound.on('pause', () => {
   footerPlayer.classList.remove('is-playing');
 });
 sound.on('loaderror', () => {
-  playButton.textContent = '▶';
+  playButtonIcon.className = 'fas fa-play';
   playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
   const previousShow = currentShowTitle.textContent;
@@ -872,7 +873,7 @@ sound.on('loaderror', () => {
   setTimeout(() => { currentShowTitle.textContent = previousShow; }, 5000);
 });
 sound.on('playerror', () => {
-  playButton.textContent = '▶';
+  playButtonIcon.className = 'fas fa-play';
   playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
   const previousShow = currentShowTitle.textContent;
@@ -919,8 +920,7 @@ if(songKey !== lastSongKey && (hasValidArtist || title)){
 // Aktuelle Sendung
 function updateCurrentShow(){
 const now=new Date(); const hour=now.getHours(); let show="NonStop!";
-if(hour>=6 && hour<8) show="Frühsport";
-else if(hour>=8 && hour<11) show="Morningshow";
+if(hour>=6 && hour<11) show="Morningshow";
 else if(hour>=11 && hour<15) show="Vormittagsprogramm";
 else if(hour>=15 && hour<19) show="Nachmittagsshow";
 else if(hour>=19 && hour<22) show="Feierabend Programm";
@@ -951,12 +951,12 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
   </a>
 
   <!-- WhatsApp -->
-  <a href="https://wa.me/" target="_blank" title="WhatsApp Nachricht senden" class="contact-circle">
+  <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" title="WhatsApp Nachricht senden" class="contact-circle">
     <i class="fab fa-whatsapp"></i>
   </a>
 
   <!-- Instagram -->
-  <a href="https://www.instagram.com/radiomulticraft.de/" target="_blank" title="Instagram" class="contact-circle">
+  <a href="https://www.instagram.com/radiomulticraft.de/" target="_blank" rel="noopener noreferrer" title="Instagram" class="contact-circle">
     <i class="fab fa-instagram"></i>
   </a>
 
@@ -981,7 +981,7 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 
 <!-- KALENDER -->
 
-<a href="https:///" target="_blank">
+<a href="https:///" target="_blank" rel="noopener noreferrer">
     <img src="img/KalenderRMC.png" alt="Kalender" class="centered-banner" loading="lazy">
 </a>
 
