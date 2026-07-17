@@ -721,18 +721,72 @@ let coverRequestId=0;
 let lastMediaTitle='Radio Multicraft';
 let lastMediaArtist='Dein Sound | Dein Stream';
 
-// Media Session: liefert Titel/Interpret/Cover an Sperrbildschirm,
-// Benachrichtigungen und – wo vom System unterstützt – Android Auto/CarPlay,
-// inklusive Play/Pause-Steuerung direkt von dort aus.
-function updateMediaSessionMetadata(artworkUrl){
+// Lädt das Sendelogo einmalig vor, damit es beim Zusammensetzen der
+// Media-Session-Artwork sofort zur Verfügung steht.
+let stationLogoReady = null;
+function getStationLogoImage(){
+  if(!stationLogoReady){
+    stationLogoReady = new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = logoFallback;
+    });
+  }
+  return stationLogoReady;
+}
+
+// Baut aus Songcover + Sendelogo ein einziges Bild zusammen (Logo als kleines
+// rundes Badge unten rechts), damit im Sperrbildschirm/Auto-Display sowohl
+// das Songcover als auch "Radio Multicraft" sichtbar sind. Falls das Cover
+// von einer Quelle ohne CORS-Freigabe kommt, wird das Canvas "verunreinigt"
+// und wir fallen sauber auf das reine Cover ohne Badge zurück.
+async function buildArtworkWithLogo(coverUrl){
+  if(!coverUrl || coverUrl.includes('RMC20250918-2.png')) return logoFallback;
+  try{
+    const logoImg = await getStationLogoImage();
+    const coverImg = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = coverUrl;
+    });
+    const size = 512;
+    const canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(coverImg, 0, 0, size, size);
+    if(logoImg){
+      const badgeSize = size * 0.3;
+      const margin = size * 0.035;
+      const bx = size - badgeSize - margin;
+      const by = size - badgeSize - margin;
+      ctx.beginPath();
+      ctx.arc(bx + badgeSize/2, by + badgeSize/2, badgeSize/2 + 8, 0, Math.PI*2);
+      ctx.fillStyle = '#8E0E0E';
+      ctx.fill();
+      ctx.drawImage(logoImg, bx, by, badgeSize, badgeSize);
+    }
+    return canvas.toDataURL('image/png');
+  }catch(e){
+    return coverUrl;
+  }
+}
+
+// Media Session: liefert Titel/Interpret/Cover (inkl. Sendelogo-Badge) an
+// Sperrbildschirm, Benachrichtigungen und – wo vom System unterstützt –
+// Android Auto/CarPlay, inklusive Play/Pause-Steuerung direkt von dort aus.
+async function updateMediaSessionMetadata(artworkUrl){
   if(!('mediaSession' in navigator)) return;
+  const finalArtwork = await buildArtworkWithLogo(artworkUrl || logoFallback);
   try{
     navigator.mediaSession.metadata = new MediaMetadata({
       title: lastMediaTitle,
       artist: lastMediaArtist,
       album: 'Radio Multicraft',
       artwork: [
-        { src: artworkUrl || logoFallback, sizes: '512x512', type: 'image/png' }
+        { src: finalArtwork, sizes: '512x512', type: 'image/png' }
       ]
     });
   }catch(e){
