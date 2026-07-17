@@ -567,6 +567,96 @@ footer.player::before {
   #playButton { width: 48px; height: 48px; font-size: 20px; line-height: 48px; }
 }
 
+/* Header-Aktionsleiste (Wetter + Playlist), oben rechts */
+.header-actions {
+  position: fixed;
+  top: 12px;
+  right: 20px;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-btn {
+  background-color: #8E0E0D;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+}
+.header-btn:hover { background-color: #ff3b3b; }
+.header-btn:active { transform: scale(0.96); }
+#weatherButton .weather-btn-icon { font-size: 1.05rem; }
+#weatherButton .weather-btn-temp { font-weight: 700; }
+#weatherButton .weather-btn-place { opacity: 0.85; font-weight: 500; font-size: 0.85rem; }
+
+/* Wetter-Popup: gleicher Aufbau wie das Playlist-Popup, eigene Inhalte */
+.weather-current {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.weather-current .weather-icon-big { font-size: 3.2rem; color: #ff3b3b; }
+.weather-current .weather-temp-big { font-size: 2.6rem; font-weight: 700; line-height: 1; }
+.weather-current-details { text-align: left; }
+.weather-current-details p { margin: 2px 0; font-size: 0.9rem; color: #ccc; }
+.weather-current-details .weather-condition-label { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 4px; }
+
+.weather-forecast-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 18px 0;
+}
+.weather-forecast-day {
+  background: rgba(255,59,59,0.1);
+  border-radius: 10px;
+  padding: 10px 4px;
+  text-align: center;
+}
+.weather-forecast-day .fc-weekday { font-size: 0.75rem; color: #ccc; text-transform: uppercase; letter-spacing: 0.03em; }
+.weather-forecast-day .fc-icon { font-size: 1.3rem; color: #ff3b3b; margin: 6px 0; }
+.weather-forecast-day .fc-max { font-weight: 700; font-size: 0.9rem; }
+.weather-forecast-day .fc-min { font-size: 0.8rem; color: #999; }
+
+.weather-map-wrapper {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  margin-top: 6px;
+}
+.weather-map-wrapper iframe { display: block; width: 100%; height: 220px; border: 0; }
+.weather-map-link { display:inline-block; margin-top:8px; font-size:0.8rem; color:#ff3b3b; text-decoration:none; }
+.weather-map-link:hover { text-decoration: underline; }
+.weather-updated { font-size: 0.75rem; color: #888; margin-top: 14px; }
+.weather-error { color: #ccc; font-size: 0.9rem; }
+
+@media (max-width:768px){
+  .header-actions { top: 15px; right: 12px; gap: 8px; }
+  .header-btn { padding: 8px 12px; font-size: 0.82rem; gap: 6px; }
+  #weatherButton .weather-btn-place { display: none; }
+  .weather-current { gap: 12px; }
+  .weather-current .weather-icon-big { font-size: 2.6rem; }
+  .weather-current .weather-temp-big { font-size: 2.1rem; }
+  .weather-forecast-row { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+  .weather-forecast-day { padding: 8px 2px; }
+  .weather-forecast-day .fc-weekday { font-size: 0.65rem; }
+  .weather-map-wrapper iframe { height: 170px; }
+}
+
 /* Reduzierte Bewegung respektieren */
 @media (prefers-reduced-motion: reduce) {
   *:not(.marquee-track):not(.marquee-track *), *::before, *::after {
@@ -882,6 +972,21 @@ if (document.fonts && document.fonts.ready) {
   document.fonts.ready.then(updateMarqueeState);
 }
 
+// Pinch-to-Zoom auf dem Handy: die eigentliche Layout-Breite ändert sich dabei
+// nicht (window.resize feuert nicht), aber mobile Browser pausieren laufende
+// CSS-Animationen während/kurz nach einer aktiven Zoom-Geste oft aus
+// Performance-Gründen. Die Laufschrift kann dadurch mitten im Lauf "einfrieren"
+// und wirkt dann so, als wäre der Titel abgeschnitten. Die visualViewport-API
+// feuert speziell bei Zoom-Änderungen (anders als das normale resize-Event) –
+// wir nutzen das, um die Animation danach sauber neu zu starten.
+if(window.visualViewport){
+  let zoomRestartTimeout = null;
+  window.visualViewport.addEventListener('resize', () => {
+    clearTimeout(zoomRestartTimeout);
+    zoomRestartTimeout = setTimeout(updateMarqueeState, 250);
+  });
+}
+
 const sound=new Howl({
   src:[streamUrl],
   html5:true,
@@ -1106,7 +1211,7 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 Bei ihren beiden Konzerten in der Münchner Allianz Arena sorgten sie für Gänsehautmomente vor zehntausenden Fans.</p>
 
 <p>Ein Highlight gab es ganz am Ende der Show: 
-Die Band stimmte gemeinsam mit dem Publikum den deutschen Hit „Gut genug“ von KitschKrieg, Blumengarten und Shirin David an – auf Deutsch. 
+Die Band stimmte gemeinsam mit dem Publikum den deutschen Hit „Gut genug" von KitschKrieg, Blumengarten und Shirin David an – auf Deutsch. 
 Besonders Jung Kook überraschte die Fans mit der deutschen Hook, die die rund 70.000 Besucher begeistert mitsangen. 
 Der Moment verbreitet sich seitdem rasant in den sozialen Netzwerken.</p>
 
@@ -1141,39 +1246,39 @@ ausreichend zu trinken und aufeinander zu achten.</p
 
 
 <img src="img/TaylorSwift.jpg" alt="News" class="centered-banner" loading="lazy">
-<h2>Taylor Swift überrascht Fans bei „Toy Story 5“-Premiere</h2>
+<h2>Taylor Swift überrascht Fans bei „Toy Story 5"-Premiere</h2>
 
-<p>Damit hat wohl niemand gerechnet: Bei der Premiere von „Toy Story 5“ in Los Angeles sorgte Popstar Taylor Swift für einen echten Gänsehautmoment. 
+<p>Damit hat wohl niemand gerechnet: Bei der Premiere von „Toy Story 5" in Los Angeles sorgte Popstar Taylor Swift für einen echten Gänsehautmoment. 
 Überraschend erschien die Sängerin auf dem roten Teppich – und hatte etwas ganz Besonderes im Gepäck.</p>
 
-<p>Nach der Premiere performte Taylor Swift erstmals live ihren neuen Song „I Knew It, I Knew You“, 
-den sie eigens für den neuen „Toy Story“-Film aufgenommen hat. 
+<p>Nach der Premiere performte Taylor Swift erstmals live ihren neuen Song „I Knew It, I Knew You", 
+den sie eigens für den neuen „Toy Story"-Film aufgenommen hat. 
 Für besonders emotionale Momente sorgte anschließend ihr gemeinsamer Auftritt mit Filmkomponist Randy Newman: 
-Zusammen sangen sie den legendären Klassiker „You’ve Got a Friend in Me“ und begeisterten damit Fans der Filmreihe.</p>
+Zusammen sangen sie den legendären Klassiker „You've Got a Friend in Me" und begeisterten damit Fans der Filmreihe.</p>
 
-<p>Taylor Swift verriet außerdem, dass sie bereits seit ihrer Kindheit großer „Toy Story“-Fan sei. 
+<p>Taylor Swift verriet außerdem, dass sie bereits seit ihrer Kindheit großer „Toy Story"-Fan sei. 
 Für sie sei es ein lang gehegter Traum gewesen, Musik für die beliebten Figuren beizusteuern.
 
-In Deutschland startet „Toy Story 5“ am 23. Juli in den Kinos.</p>
+In Deutschland startet „Toy Story 5" am 23. Juli in den Kinos.</p>
 
 
 <!-- MELDUNG D -->
 
 
 <img src="img/javierdumont-vinyl-4722544.jpg" alt="News" class="centered-banner" loading="lazy">
-<h2>KI-Hit sorgt für Diskussionen: „North Wind Calls“ überrascht Musikfans</h2>
+<h2>KI-Hit sorgt für Diskussionen: „North Wind Calls" überrascht Musikfans</h2>
 
 <p>Die Grenzen zwischen Mensch und Maschine verschwimmen immer stärker – jetzt offenbar auch in der Musik. 
-Mit dem Song „100 %“ sorgt das Projekt North Wind Calls derzeit für Aufmerksamkeit. Der besondere Twist: Hinter dem Titel steckt offenbar künstliche Intelligenz.</p>
+Mit dem Song „100 %" sorgt das Projekt North Wind Calls derzeit für Aufmerksamkeit. Der besondere Twist: Hinter dem Titel steckt offenbar künstliche Intelligenz.</p>
 
 <p>Immer häufiger werden Songs mithilfe von KI erstellt – von Melodien über Songtexte bis hin zu Stimmen. 
 Während einige Musikfans die technischen Möglichkeiten feiern, sehen Kritiker darin eine Gefahr für echte Künstlerinnen und Künstler. 
-Genau diese Debatte wird nun auch rund um „100 %“ geführt.</p>
+Genau diese Debatte wird nun auch rund um „100 %" geführt.</p>
 
 <p>Musikalisch bewegt sich der Song im modernen Pop-Bereich und klingt für viele Hörer überraschend professionell. 
 Ohne Hintergrundwissen würden manche vermutlich gar nicht merken, dass KI bei der Entstehung eine Rolle gespielt haben könnte.
 
-Doch die Entwicklung wirft Fragen auf: Wie viel „echte Kunst“ steckt noch in Musik, wenn Algorithmen kreativ werden? 
+Doch die Entwicklung wirft Fragen auf: Wie viel „echte Kunst" steckt noch in Musik, wenn Algorithmen kreativ werden? 
 Und welche Bedeutung haben Musikerinnen und Musiker künftig in einer Branche, die immer digitaler wird?
 
 Fest steht: KI-Musik ist längst keine Zukunftsvision mehr – sie ist bereits in Playlists, Streams und Diskussionen angekommen. 
@@ -1295,6 +1400,8 @@ Auf unserer Website sind Inhalte und Dienste von externen Anbietern eingebunden:
 <li>Font Awesome (Icons über CDN)</li>
 <li>Howler.js (Audio-Player Bibliothek)</li>
 <li>laut.fm API (Titel- & Playlist-Anzeige)</li>
+<li>Open-Meteo (Wetterdaten für die Wetteranzeige)</li>
+<li>OpenStreetMap (Kartenansicht in der Wetteranzeige)</li>
 <li>Verlinkungen zu Instagram, WhatsApp und E-Mail</li>
 </ul>
 <p>
@@ -1397,22 +1504,25 @@ hamburger.addEventListener("click",()=>{
   hamburger.textContent = isOpen ? "✕" : "☰";
 });
 
+// Gemeinsame Aktionsleiste oben rechts (Wetter + Playlist)
+const headerActions = document.createElement('div');
+headerActions.className = 'header-actions';
+document.body.appendChild(headerActions);
+
+// Wetter-Button: zeigt Icon + aktuelle Temperatur für Aachen, öffnet beim
+// Klick ein Popup mit Details, 5-Tage-Vorschau und Karte (nach FFN-Vorbild).
+const weatherButton = document.createElement('button');
+weatherButton.id = 'weatherButton';
+weatherButton.className = 'header-btn';
+weatherButton.innerHTML = '<i class="fas fa-cloud weather-btn-icon"></i><span class="weather-btn-temp">--°</span><span class="weather-btn-place">Aachen</span>';
+headerActions.appendChild(weatherButton);
+
 // Playlist Button & Popup
 const playlistButton = document.createElement('button');
+playlistButton.id = 'playlistButton';
+playlistButton.className = 'header-btn';
 playlistButton.textContent = 'Playlist';
-playlistButton.style.position = 'fixed';
-playlistButton.style.top = '5px';
-playlistButton.style.right = '20px';
-playlistButton.style.zIndex = '1001';
-playlistButton.style.backgroundColor = '#8E0E0D';
-playlistButton.style.color = '#fff';
-playlistButton.style.border = 'none';
-playlistButton.style.padding = '10px 20px';
-playlistButton.style.borderRadius = '6px';
-playlistButton.style.cursor = 'pointer';
-playlistButton.style.fontWeight = '600';
-playlistButton.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
-document.body.appendChild(playlistButton);
+headerActions.appendChild(playlistButton);
 
 const playlistOverlay = document.createElement('div');
 playlistOverlay.style.position = 'fixed';
@@ -1557,6 +1667,214 @@ playlistButton.addEventListener('click', () => {
     loadLastSongs();
 });
 
+// ===== Wetter (Aachen) =====================================================
+// Datenquelle: Open-Meteo – kostenlos, kein API-Key nötig, direkt per fetch()
+// aus dem Browser abrufbar (ähnlich wie die laut.fm-Anfragen oben).
+const AACHEN_LAT = 50.7753;
+const AACHEN_LON = 6.0839;
+const WEATHER_REFRESH_MS = 15 * 60 * 1000; // alle 15 Minuten reicht für Wetterdaten
+
+// WMO-Wettercode → Icon (Font Awesome, bereits auf der Seite geladen) + deutsches Label.
+// Quelle der Codes: Open-Meteo-Dokumentation (WMO Weather interpretation codes).
+function getWeatherInfo(code, isDay){
+  const table = {
+    0:  { icon: isDay ? 'fa-sun' : 'fa-moon', label: 'Klarer Himmel' },
+    1:  { icon: isDay ? 'fa-cloud-sun' : 'fa-cloud-moon', label: 'Überwiegend klar' },
+    2:  { icon: isDay ? 'fa-cloud-sun' : 'fa-cloud-moon', label: 'Teilweise bewölkt' },
+    3:  { icon: 'fa-cloud', label: 'Bedeckt' },
+    45: { icon: 'fa-smog', label: 'Nebel' },
+    48: { icon: 'fa-smog', label: 'Reifnebel' },
+    51: { icon: 'fa-cloud-rain', label: 'Leichter Nieselregen' },
+    53: { icon: 'fa-cloud-rain', label: 'Nieselregen' },
+    55: { icon: 'fa-cloud-rain', label: 'Starker Nieselregen' },
+    56: { icon: 'fa-cloud-rain', label: 'Gefrierender Nieselregen' },
+    57: { icon: 'fa-cloud-rain', label: 'Starker gefrierender Nieselregen' },
+    61: { icon: 'fa-cloud-rain', label: 'Leichter Regen' },
+    63: { icon: 'fa-cloud-rain', label: 'Regen' },
+    65: { icon: 'fa-cloud-showers-heavy', label: 'Starker Regen' },
+    66: { icon: 'fa-cloud-rain', label: 'Gefrierender Regen' },
+    67: { icon: 'fa-cloud-showers-heavy', label: 'Starker gefrierender Regen' },
+    71: { icon: 'fa-snowflake', label: 'Leichter Schneefall' },
+    73: { icon: 'fa-snowflake', label: 'Schneefall' },
+    75: { icon: 'fa-snowflake', label: 'Starker Schneefall' },
+    77: { icon: 'fa-snowflake', label: 'Schneegriesel' },
+    80: { icon: 'fa-cloud-showers-heavy', label: 'Leichte Regenschauer' },
+    81: { icon: 'fa-cloud-showers-heavy', label: 'Regenschauer' },
+    82: { icon: 'fa-cloud-showers-heavy', label: 'Heftige Regenschauer' },
+    85: { icon: 'fa-snowflake', label: 'Leichte Schneeschauer' },
+    86: { icon: 'fa-snowflake', label: 'Schneeschauer' },
+    95: { icon: 'fa-bolt', label: 'Gewitter' },
+    96: { icon: 'fa-bolt', label: 'Gewitter mit Hagel' },
+    99: { icon: 'fa-bolt', label: 'Starkes Gewitter mit Hagel' }
+  };
+  return table[code] || { icon: 'fa-cloud', label: 'Unbekannt' };
+}
+
+const WEEKDAYS_SHORT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+
+// Wetter-Popup (gleicher Overlay-Aufbau wie das Playlist-Popup, eigener Inhalt)
+const weatherOverlay = document.createElement('div');
+weatherOverlay.style.position = 'fixed';
+weatherOverlay.style.top = '0';
+weatherOverlay.style.left = '0';
+weatherOverlay.style.width = '100vw';
+weatherOverlay.style.height = '100vh';
+weatherOverlay.style.backgroundColor = 'rgba(0,0,0,0.6)';
+weatherOverlay.style.display = 'none';
+weatherOverlay.style.zIndex = '1000';
+weatherOverlay.style.overflowY = 'auto';
+document.body.appendChild(weatherOverlay);
+
+const weatherPopup = document.createElement('div');
+weatherPopup.style.position = 'absolute';
+weatherPopup.style.top = '50%';
+weatherPopup.style.left = '50%';
+weatherPopup.style.transform = 'translate(-50%, -50%)';
+weatherPopup.style.backgroundColor = '#1e1e1e';
+weatherPopup.style.color = '#fff';
+weatherPopup.style.padding = '30px 30px';
+weatherPopup.style.borderRadius = '16px';
+weatherPopup.style.boxShadow = '0 20px 50px rgba(0,0,0,0.7)';
+weatherPopup.style.maxWidth = '480px';
+weatherPopup.style.width = '90%';
+weatherPopup.style.textAlign = 'center';
+weatherOverlay.appendChild(weatherPopup);
+
+const weatherCloseBtn = document.createElement('button');
+weatherCloseBtn.textContent = '✖';
+weatherCloseBtn.style.position = 'absolute';
+weatherCloseBtn.style.top = '15px';
+weatherCloseBtn.style.right = '15px';
+weatherCloseBtn.style.background = 'transparent';
+weatherCloseBtn.style.border = 'none';
+weatherCloseBtn.style.color = '#fff';
+weatherCloseBtn.style.fontSize = '22px';
+weatherCloseBtn.style.cursor = 'pointer';
+weatherCloseBtn.style.transition = 'color 0.2s';
+weatherCloseBtn.addEventListener('mouseenter', () => weatherCloseBtn.style.color = '#ff3b3b');
+weatherCloseBtn.addEventListener('mouseleave', () => weatherCloseBtn.style.color = '#fff');
+weatherPopup.appendChild(weatherCloseBtn);
+
+weatherCloseBtn.addEventListener('click', () => { weatherOverlay.style.display = 'none'; });
+weatherOverlay.addEventListener('click', (e) => {
+  if(e.target === weatherOverlay) weatherOverlay.style.display = 'none';
+});
+
+let weatherLastData = null;
+
+function renderWeatherPopup(data){
+  weatherPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:6px;">Wetter in Aachen</h2>';
+  weatherPopup.appendChild(weatherCloseBtn);
+
+  if(!data){
+    const err = document.createElement('p');
+    err.className = 'weather-error';
+    err.textContent = 'Wetterdaten konnten gerade nicht geladen werden.';
+    weatherPopup.appendChild(err);
+    return;
+  }
+
+  const cur = data.current;
+  const info = getWeatherInfo(cur.weather_code, cur.is_day === 1);
+
+  // Aktuelle Lage
+  const currentBlock = document.createElement('div');
+  currentBlock.className = 'weather-current';
+  currentBlock.innerHTML = `
+    <i class="fas ${info.icon} weather-icon-big"></i>
+    <div class="weather-temp-big">${Math.round(cur.temperature_2m)}°C</div>
+    <div class="weather-current-details">
+      <div class="weather-condition-label">${info.label}</div>
+      <p>Gefühlt ${Math.round(cur.apparent_temperature)}°C</p>
+      <p>Luftfeuchtigkeit ${Math.round(cur.relative_humidity_2m)}%</p>
+      <p>Wind ${Math.round(cur.wind_speed_10m)} km/h</p>
+    </div>
+  `;
+  weatherPopup.appendChild(currentBlock);
+
+  // 5-Tage-Vorschau
+  const forecastRow = document.createElement('div');
+  forecastRow.className = 'weather-forecast-row';
+  const daily = data.daily;
+  for(let i = 0; i < Math.min(5, daily.time.length); i++){
+    const d = new Date(daily.time[i] + 'T12:00:00');
+    const dayInfo = getWeatherInfo(daily.weather_code[i], true);
+    const dayEl = document.createElement('div');
+    dayEl.className = 'weather-forecast-day';
+    dayEl.innerHTML = `
+      <div class="fc-weekday">${i === 0 ? 'Heute' : WEEKDAYS_SHORT[d.getDay()]}</div>
+      <i class="fas ${dayInfo.icon} fc-icon"></i>
+      <div class="fc-max">${Math.round(daily.temperature_2m_max[i])}°</div>
+      <div class="fc-min">${Math.round(daily.temperature_2m_min[i])}°</div>
+    `;
+    forecastRow.appendChild(dayEl);
+  }
+  weatherPopup.appendChild(forecastRow);
+
+  // Karte (OpenStreetMap, kein API-Key nötig)
+  const mapWrapper = document.createElement('div');
+  mapWrapper.className = 'weather-map-wrapper';
+  const bbox = '5.98,50.72,6.19,50.83';
+  const marker = `${AACHEN_LAT},${AACHEN_LON}`;
+  mapWrapper.innerHTML = `<iframe loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${marker}" title="Karte Aachen"></iframe>`;
+  weatherPopup.appendChild(mapWrapper);
+
+  const mapLink = document.createElement('a');
+  mapLink.className = 'weather-map-link';
+  mapLink.href = `https://www.openstreetmap.org/?mlat=${AACHEN_LAT}&mlon=${AACHEN_LON}#map=12/${AACHEN_LAT}/${AACHEN_LON}`;
+  mapLink.target = '_blank';
+  mapLink.rel = 'noopener noreferrer';
+  mapLink.textContent = 'Größere Karte öffnen';
+  weatherPopup.appendChild(mapLink);
+
+  const updated = document.createElement('p');
+  updated.className = 'weather-updated';
+  const now = new Date();
+  updated.textContent = `Aktualisiert um ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Daten: Open-Meteo`;
+  weatherPopup.appendChild(updated);
+}
+
+async function fetchWeather(){
+  try{
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${AACHEN_LAT}&longitude=${AACHEN_LON}` +
+      `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+      `&timezone=Europe%2FBerlin&forecast_days=5`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Wetter-API nicht erreichbar');
+    const data = await res.json();
+    weatherLastData = data;
+
+    // Button-Anzeige (Icon + Temperatur) aktualisieren
+    const info = getWeatherInfo(data.current.weather_code, data.current.is_day === 1);
+    weatherButton.querySelector('.weather-btn-icon').className = `fas ${info.icon} weather-btn-icon`;
+    weatherButton.querySelector('.weather-btn-temp').textContent = `${Math.round(data.current.temperature_2m)}°`;
+
+    // Falls das Popup gerade offen ist, gleich mit aktualisieren
+    if(weatherOverlay.style.display === 'block'){
+      renderWeatherPopup(data);
+    }
+  }catch(e){
+    weatherButton.querySelector('.weather-btn-icon').className = 'fas fa-cloud weather-btn-icon';
+    weatherButton.querySelector('.weather-btn-temp').textContent = '--°';
+    if(weatherOverlay.style.display === 'block' && !weatherLastData){
+      renderWeatherPopup(null);
+    }
+  }
+}
+
+weatherButton.addEventListener('click', () => {
+  weatherOverlay.style.display = 'block';
+  renderWeatherPopup(weatherLastData); // sofort zeigen, was wir schon haben (oder Ladehinweis)
+  if(!weatherLastData){
+    weatherPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:6px;">Wetter in Aachen</h2><p class="weather-error">Lade Wetterdaten…</p>';
+    weatherPopup.appendChild(weatherCloseBtn);
+  }
+  fetchWeather();
+});
+
+fetchWeather();
+setInterval(fetchWeather, WEATHER_REFRESH_MS);
 
 </script>
 </body>
