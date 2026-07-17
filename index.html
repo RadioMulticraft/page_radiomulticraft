@@ -1191,7 +1191,6 @@ Auf unserer Website sind Inhalte und Dienste von externen Anbietern eingebunden:
 <ul>
 <li>Font Awesome (Icons über CDN)</li>
 <li>Howler.js (Audio-Player Bibliothek)</li>
-<li>Apple (Coverbilder)</li>
 <li>laut.fm API (Titel- & Playlist-Anzeige)</li>
 <li>Verlinkungen zu Instagram, WhatsApp und E-Mail</li>
 </ul>
@@ -1361,6 +1360,29 @@ playlistOverlay.addEventListener('click', (e) => {
     if(e.target === playlistOverlay) playlistOverlay.style.display = 'none';
 });
 
+// Wandelt das laut.fm-Zeitformat ("2026-07-17 09:11:56 +0200") in ein
+// gültiges Date-Objekt um, damit es browserübergreifend zuverlässig geparst wird.
+function parseLautDate(str){
+  if(!str) return null;
+  const m = str.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) ([+-]\d{2})(\d{2})$/);
+  if(!m) return new Date(str);
+  return new Date(`${m[1]}T${m[2]}${m[3]}:${m[4]}`);
+}
+
+// Erzeugt eine kurze relative Zeitangabe ("gerade eben", "vor 5 Minuten", ...)
+// aus dem started_at-Zeitstempel eines Songs.
+function formatRelativeTime(dateStr){
+  const date = parseLautDate(dateStr);
+  if(!date || isNaN(date.getTime())) return '';
+  const diffMin = Math.round((Date.now() - date.getTime()) / 60000);
+  if(diffMin <= 0) return 'gerade eben';
+  if(diffMin === 1) return 'vor 1 Minute';
+  if(diffMin < 60) return `vor ${diffMin} Minuten`;
+  const diffH = Math.round(diffMin / 60);
+  if(diffH === 1) return 'vor 1 Stunde';
+  return `vor ${diffH} Stunden`;
+}
+
 async function loadLastSongs() {
     playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:20px;">Playlist</h2>';
     playlistPopup.appendChild(closeBtn);
@@ -1386,6 +1408,8 @@ async function loadLastSongs() {
     card.style.borderRadius = '10px';
     card.style.display = 'flex';
     card.style.alignItems = 'center';
+    card.style.justifyContent = 'space-between';
+    card.style.gap = '12px';
     card.style.transition = 'transform 0.2s, box-shadow 0.2s';
     card.style.cursor = 'default';
 
@@ -1404,8 +1428,17 @@ async function loadLastSongs() {
     const songHasValidArtist = songArtist && !/^-+$/.test(songArtist);
     songText.textContent = songHasValidArtist && songTitle ? `${songArtist} - ${songTitle}` : (songTitle || 'Dein Sound | Dein Stream');
     songText.style.fontWeight = '600';
+    songText.style.textAlign = 'left';
+
+    const songTime = document.createElement('span');
+    songTime.textContent = formatRelativeTime(song.started_at);
+    songTime.style.fontSize = '0.8rem';
+    songTime.style.color = '#c9c9c9';
+    songTime.style.flexShrink = '0';
+    songTime.style.whiteSpace = 'nowrap';
 
     card.appendChild(songText); // Musik-Icon entfernt
+    card.appendChild(songTime);
     songContainer.appendChild(card);
 });
 
