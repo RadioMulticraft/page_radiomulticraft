@@ -718,10 +718,28 @@ const logoFallback='img/RMC20250918-2.png';
 let lastSongKey='';
 let lastMarqueeText='';
 let coverRequestId=0;
+let lastMediaTitle='Radio Multicraft';
+let lastMediaArtist='Dein Sound | Dein Stream';
+
+// Media Session: liefert Titel/Interpret/Cover an Sperrbildschirm,
+// Benachrichtigungen und – wo vom System unterstützt – Android Auto/CarPlay,
+// inklusive Play/Pause-Steuerung direkt von dort aus.
+function updateMediaSessionMetadata(artworkUrl){
+  if(!('mediaSession' in navigator)) return;
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: lastMediaTitle,
+    artist: lastMediaArtist,
+    album: 'Radio Multicraft',
+    artwork: [
+      { src: artworkUrl || logoFallback, sizes: '512x512', type: 'image/png' }
+    ]
+  });
+}
 
 function setCoverImage(url, isLogo){
   coverImage.src = url;
   coverWrapper.classList.toggle('is-logo', !!isLogo);
+  updateMediaSessionMetadata(url);
 }
 
 // Sucht bei iTunes ein Coverbild anhand von Interpret + Titel,
@@ -848,6 +866,16 @@ syncVolumeIcon();
 
 // Play/Pause immer weiß
 const footerPlayer = document.querySelector('footer.player');
+
+// Media Session: Play/Pause-Steuerung, die vom Sperrbildschirm, aus
+// Benachrichtigungen oder von Android Auto/CarPlay aus ausgelöst werden kann.
+if('mediaSession' in navigator){
+  navigator.mediaSession.setActionHandler('play', () => sound.play());
+  navigator.mediaSession.setActionHandler('pause', () => sound.pause());
+  navigator.mediaSession.setActionHandler('stop', () => sound.pause());
+  updateMediaSessionMetadata(coverImage.src);
+}
+
 sound.on('play', () => {
   playButtonIcon.className = 'fas fa-pause';
   playButton.style.color = "#fff";
@@ -855,6 +883,7 @@ sound.on('play', () => {
   playButton.classList.add('is-playing');
   playButtonWrapper.classList.add('is-playing');
   footerPlayer.classList.add('is-playing');
+  if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
 });
 sound.on('pause', () => {
   playButtonIcon.className = 'fas fa-play';
@@ -863,6 +892,7 @@ sound.on('pause', () => {
   playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
   footerPlayer.classList.remove('is-playing');
+  if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
 });
 sound.on('loaderror', () => {
   playButtonIcon.className = 'fas fa-play';
@@ -892,6 +922,13 @@ const hasValidArtist=artist && !/^-+$/.test(artist);
 if(hasValidArtist && title){currentSongSpan.textContent=`${artist} - ${title}`;}
 else if(title){currentSongSpan.textContent=title;}
 else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
+
+// Media Session mit dem neuen Titel/Interpret aktualisieren (Cover-URL bleibt
+// vorerst wie gehabt, bis updateCoverForSong sie unten ggf. neu auflöst).
+lastMediaTitle = title || 'Radio Multicraft';
+lastMediaArtist = hasValidArtist ? artist : 'Dein Sound | Dein Stream';
+updateMediaSessionMetadata(coverImage.src);
+
 // Die Laufschrift nur neu starten, wenn sich der Titeltext wirklich geändert hat –
 // sonst würde sie bei jeder Abfrage (alle 3s) neu von vorne beginnen und käme
 // bei langen Titeln nie sichtbar zum Durchlaufen.
