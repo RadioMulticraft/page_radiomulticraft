@@ -726,14 +726,20 @@ let lastMediaArtist='Dein Sound | Dein Stream';
 // inklusive Play/Pause-Steuerung direkt von dort aus.
 function updateMediaSessionMetadata(artworkUrl){
   if(!('mediaSession' in navigator)) return;
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title: lastMediaTitle,
-    artist: lastMediaArtist,
-    album: 'Radio Multicraft',
-    artwork: [
-      { src: artworkUrl || logoFallback, sizes: '512x512', type: 'image/png' }
-    ]
-  });
+  try{
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: lastMediaTitle,
+      artist: lastMediaArtist,
+      album: 'Radio Multicraft',
+      artwork: [
+        { src: artworkUrl || logoFallback, sizes: '512x512', type: 'image/png' }
+      ]
+    });
+  }catch(e){
+    // Falls MediaMetadata auf diesem Gerät/Browser nicht sauber unterstützt
+    // wird, soll das den restlichen Player (Titelanzeige, Cover, Laufschrift)
+    // nicht beeinträchtigen.
+  }
 }
 
 function setCoverImage(url, isLogo){
@@ -883,7 +889,13 @@ sound.on('play', () => {
   playButton.classList.add('is-playing');
   playButtonWrapper.classList.add('is-playing');
   footerPlayer.classList.add('is-playing');
-  if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+  if('mediaSession' in navigator){
+    navigator.mediaSession.playbackState = 'playing';
+    // Metadaten genau im Moment des echten Play-Starts nochmal frisch setzen –
+    // einige Android-Versionen "fotografieren" die Metadaten für das
+    // Sperrbildschirm-Widget exakt zu diesem Zeitpunkt.
+    updateMediaSessionMetadata(coverImage.src);
+  }
 });
 sound.on('pause', () => {
   playButtonIcon.className = 'fas fa-play';
