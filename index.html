@@ -992,16 +992,69 @@ if(window.visualViewport){
   });
 }
 
-const sound=new Howl({
-  src:[streamUrl],
-  html5:true,
-  format:['mp3'],
-  volume:0.5
-});
+// ==========================================================================
+// Stream-Wiedergabe mit unauffälligem Auto-Resync (Crossfade)
+// --------------------------------------------------------------------------
+// Problem: Der Browser puffert das Audio beim Abspielen. Nach kleinen
+// Netzwerk-Hängern wächst dieser Puffer mit der Zeit an, wodurch der Ton
+// immer weiter hinter "live" zurückfällt – während die Titelanzeige (eigene,
+// häufige API-Abfrage) stets exakt aktuell bleibt. Ohne Gegenmaßnahme kann
+// das dazu führen, dass Hörer z.B. die Nachrichten zur vollen Stunde erst
+// mit spürbarer Verzögerung hören.
+//
+// Lösung: In regelmäßigen Abständen wird im Hintergrund eine zweite,
+// frische Stream-Verbindung aufgebaut (an der Live-Kante). Sobald sie
+// bereit ist, wird per Crossfade (kurzes Ein-/Ausblenden der Lautstärke)
+// unhörbar auf sie umgeschaltet und die alte Verbindung anschließend
+// sauber geschlossen. Es ist zu keinem Zeitpunkt mehr als eine Verbindung
+// dauerhaft aktiv – nur für die kurze Übergangszeit von ca. 1,5s laufen
+// zwei Verbindungen parallel.
+// ==========================================================================
 
-playButton.addEventListener('click',()=>{sound.playing()?sound.pause():sound.play();});
+const USER_VOLUME_DEFAULT = 0.5;
+const RESYNC_MIN_INTERVAL_MS = 3 * 60 * 1000;   // frühestens alle 3 Minuten resyncen
+const RESYNC_HOURLY_LEAD_MS = 45 * 1000;        // ~45s vor der vollen Stunde zusätzlich resyncen (Nachrichten)
+const CROSSFADE_DURATION_MS = 1500;             // Dauer der Ein-/Ausblendung
+const CROSSFADE_STEPS = 30;
+
+let sound = createStreamHowl();
+let isResyncing = false;
+let lastResyncAt = Date.now();
+let userVolume = parseFloat(volumeSlider.value) || USER_VOLUME_DEFAULT;
+let userWantsPlaying = false;
+
+function createStreamHowl(startVolume){
+  return new Howl({
+    src: [streamUrl + '?_=' + Date.now()], // Cache-Busting, damit wirklich neu verbunden wird
+    html5: true,
+    format: ['mp3'],
+    volume: (typeof startVolume === 'number') ? startVolume : userVolume
+  });
+}
+
+function bindSoundEvents(instance){
+  instance.on('play', onSoundPlay);
+  instance.on('pause', onSoundPause);
+  instance.on('loaderror', onSoundLoadError);
+  instance.on('playerror', onSoundPlayError);
+}
+
+playButton.addEventListener('click',()=>{
+  if(sound.playing()){
+    userWantsPlaying = false;
+    sound.pause();
+  } else {
+    userWantsPlaying = true;
+    sound.play();
+  }
+});
 function syncVolumeFill(){ volumeSlider.style.setProperty('--vol', (volumeSlider.value*100)+'%'); }
-volumeSlider.addEventListener('input',()=>{sound.volume(volumeSlider.value); syncVolumeFill(); syncVolumeIcon();});
+volumeSlider.addEventListener('input',()=>{
+  userVolume = parseFloat(volumeSlider.value);
+  if(!isResyncing){ sound.volume(userVolume); }
+  syncVolumeFill();
+  syncVolumeIcon();
+});
 syncVolumeFill();
 
 // Lautstärke-Icon: auf Mobil ersetzt es den Schieberegler als kompakter
@@ -1024,7 +1077,8 @@ function toggleMute(){
   } else {
     volumeSlider.value = lastVolume > 0 ? lastVolume : 0.5;
   }
-  sound.volume(parseFloat(volumeSlider.value));
+  userVolume = parseFloat(volumeSlider.value);
+  if(!isResyncing){ sound.volume(userVolume); }
   syncVolumeFill();
   syncVolumeIcon();
 }
@@ -1040,13 +1094,13 @@ const footerPlayer = document.querySelector('footer.player');
 // Media Session: Play/Pause-Steuerung, die vom Sperrbildschirm, aus
 // Benachrichtigungen oder von Android Auto/CarPlay aus ausgelöst werden kann.
 if('mediaSession' in navigator){
-  navigator.mediaSession.setActionHandler('play', () => sound.play());
-  navigator.mediaSession.setActionHandler('pause', () => sound.pause());
-  navigator.mediaSession.setActionHandler('stop', () => sound.pause());
+  navigator.mediaSession.setActionHandler('play', () => { userWantsPlaying = true; sound.play(); });
+  navigator.mediaSession.setActionHandler('pause', () => { userWantsPlaying = false; sound.pause(); });
+  navigator.mediaSession.setActionHandler('stop', () => { userWantsPlaying = false; sound.pause(); });
   updateMediaSessionMetadata(coverImage.src);
 }
 
-sound.on('play', () => {
+function onSoundPlay(){
   playButtonIcon.className = 'fas fa-pause';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
@@ -1060,8 +1114,8 @@ sound.on('play', () => {
     // Sperrbildschirm-Widget exakt zu diesem Zeitpunkt.
     updateMediaSessionMetadata(coverImage.src);
   }
-});
-sound.on('pause', () => {
+}
+function onSoundPause(){
   playButtonIcon.className = 'fas fa-play';
   playButton.style.color = "#fff";
   playButton.style.backgroundColor = "#ff3b3b";
@@ -1069,23 +1123,108 @@ sound.on('pause', () => {
   playButtonWrapper.classList.remove('is-playing');
   footerPlayer.classList.remove('is-playing');
   if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
-});
-sound.on('loaderror', () => {
+}
+function onSoundLoadError(){
   playButtonIcon.className = 'fas fa-play';
   playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
   const previousShow = currentShowTitle.textContent;
   currentShowTitle.textContent = '⚠ Stream nicht erreichbar';
   setTimeout(() => { currentShowTitle.textContent = previousShow; }, 5000);
-});
-sound.on('playerror', () => {
+}
+function onSoundPlayError(){
   playButtonIcon.className = 'fas fa-play';
   playButton.classList.remove('is-playing');
   playButtonWrapper.classList.remove('is-playing');
   const previousShow = currentShowTitle.textContent;
   currentShowTitle.textContent = '⚠ Verbindung unterbrochen';
   setTimeout(() => { currentShowTitle.textContent = previousShow; }, 5000);
-});
+}
+
+bindSoundEvents(sound);
+
+// Führt einen unauffälligen Resync durch: baut im Hintergrund eine neue
+// Verbindung an der Live-Kante auf und überblendet sanft dorthin. Läuft nur,
+// wenn gerade tatsächlich Wiedergabe aktiv ist – für pausierte/gestoppte
+// Hörer gibt es nichts zu resyncen (der nächste Play-Klick startet ohnehin
+// frisch an der Live-Kante).
+function resyncStream(){
+  if(isResyncing) return;
+  if(!sound || !sound.playing()) return;
+
+  isResyncing = true;
+  const oldSound = sound;
+  const newSound = createStreamHowl(0); // startet stumm, wird eingeblendet
+  bindSoundEvents(newSound);
+
+  let settled = false;
+  const finishCrossfade = () => {
+    if(settled) return;
+    settled = true;
+
+    let step = 0;
+    const stepMs = CROSSFADE_DURATION_MS / CROSSFADE_STEPS;
+    const fadeTimer = setInterval(() => {
+      step++;
+      const progress = step / CROSSFADE_STEPS;
+      newSound.volume(Math.min(userVolume, userVolume * progress));
+      oldSound.volume(Math.max(0, userVolume * (1 - progress)));
+      if(step >= CROSSFADE_STEPS){
+        clearInterval(fadeTimer);
+        oldSound.unload();
+        sound = newSound;
+        sound.volume(userVolume);
+        lastResyncAt = Date.now();
+        isResyncing = false;
+      }
+    }, stepMs);
+  };
+
+  newSound.once('play', finishCrossfade);
+  newSound.once('loaderror', () => {
+    // Neue Verbindung fehlgeschlagen: alte Verbindung unangetastet weiterlaufen lassen
+    newSound.unload();
+    isResyncing = false;
+    settled = true;
+  });
+  newSound.once('playerror', () => {
+    newSound.unload();
+    isResyncing = false;
+    settled = true;
+  });
+
+  newSound.play();
+
+  // Sicherheitsnetz: falls "play" aus irgendeinem Grund nie feuert, nach
+  // einigen Sekunden abbrechen statt dauerhaft in einem hängenden Zustand
+  // mit zwei offenen Verbindungen zu bleiben.
+  setTimeout(() => {
+    if(!settled){
+      settled = true;
+      isResyncing = false;
+      try{ newSound.unload(); }catch(e){}
+    }
+  }, 8000);
+}
+
+// Resync bei Songwechsel anstoßen (mit Mindestabstand), damit der kurze
+// Crossfade im ohnehin stattfindenden Übergang zwischen zwei Songs untergeht.
+function maybeResyncOnSongChange(){
+  if(Date.now() - lastResyncAt >= RESYNC_MIN_INTERVAL_MS){
+    resyncStream();
+  }
+}
+
+// Zusätzlich kurz vor jeder vollen Stunde zwangsweise resyncen, damit alle
+// Hörer garantiert synchron in die Nachrichten starten – unabhängig davon,
+// wann der letzte songwechselbasierte Resync stattfand.
+setInterval(() => {
+  const now = new Date();
+  const msToNextHour = (60 - now.getMinutes()) * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+  if(msToNextHour <= RESYNC_HOURLY_LEAD_MS && msToNextHour > RESYNC_HOURLY_LEAD_MS - 20000){
+    resyncStream();
+  }
+}, 15000);
 
 // Song Title
 async function fetchCurrentSong(retry=false){
@@ -1116,9 +1255,15 @@ if(currentSongSpan.textContent !== lastMarqueeText){
 // Cover nur aktualisieren, wenn sich der Song tatsächlich geändert hat
 const songKey = `${hasValidArtist?artist:''}|${title||''}`;
 if(songKey !== lastSongKey && (hasValidArtist || title)){
+  const isFirstLoad = (lastSongKey === '');
   lastSongKey = songKey;
   const lautfmImage = data.artist?.image || data.artist?.thumb;
   updateCoverForSong(hasValidArtist?artist:null, title, lautfmImage);
+  // Songwechsel erkannt (nicht der allererste Ladevorgang): guter,
+  // unauffälliger Moment für einen Stream-Resync.
+  if(!isFirstLoad){
+    maybeResyncOnSongChange();
+  }
 }
 }catch(e){
   setCoverImage(logoFallback, true);
