@@ -613,11 +613,41 @@ footer.player::before {
   margin-bottom: 18px;
   flex-wrap: wrap;
 }
-.weather-current .weather-icon-big { font-size: 3.2rem; color: #ff3b3b; }
+.weather-current .weather-icon-big { font-size: 3.2rem; color: #ff3b3b; transition: color 0.3s ease; }
 .weather-current .weather-temp-big { font-size: 2.6rem; font-weight: 700; line-height: 1; }
 .weather-current-details { text-align: left; }
-.weather-current-details p { margin: 2px 0; font-size: 0.9rem; color: #ccc; }
-.weather-current-details .weather-condition-label { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 4px; }
+.weather-current-details .weather-condition-label { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 8px; }
+
+/* Detailwerte (gefühlt/Feuchte/Wind/Niederschlag) mit kleinem Icon je Zeile,
+   statt reinem Fließtext – macht die Werte auf einen Blick scannbar. */
+.weather-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 4px 18px;
+}
+.weather-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #ccc;
+}
+.weather-detail-item i { width: 16px; text-align: center; color: #ff6a6a; font-size: 0.85rem; flex-shrink: 0; }
+.weather-detail-item strong { color: #fff; font-weight: 600; }
+
+/* Sonnenauf-/untergang, eigene schmale Zeile unterhalb der aktuellen Lage */
+.weather-sun-row {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin: 4px 0 18px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.weather-sun-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #ccc; }
+.weather-sun-item i { color: #ffb347; font-size: 1rem; }
+.weather-sun-item strong { color: #fff; font-weight: 600; }
 
 .weather-forecast-row {
   display: grid;
@@ -632,9 +662,28 @@ footer.player::before {
   text-align: center;
 }
 .weather-forecast-day .fc-weekday { font-size: 0.75rem; color: #ccc; text-transform: uppercase; letter-spacing: 0.03em; }
-.weather-forecast-day .fc-icon { font-size: 1.3rem; color: #ff3b3b; margin: 6px 0; }
+.weather-forecast-day .fc-icon { font-size: 1.3rem; margin: 6px 0; transition: color 0.3s ease; }
 .weather-forecast-day .fc-max { font-weight: 700; font-size: 0.9rem; }
 .weather-forecast-day .fc-min { font-size: 0.8rem; color: #999; }
+
+/* Min/Max-Balken: zeigt die Temperaturspanne des Tages relativ zur Wochenspanne,
+   damit man wärmere/kältere Tage auf einen Blick vergleichen kann, ohne Zahlen zu lesen. */
+.fc-bar-track {
+  position: relative;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.12);
+  margin: 6px 2px 8px;
+}
+.fc-bar-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #5aa7ff, #ff3b3b);
+}
+.fc-precip { display: flex; align-items: center; justify-content: center; gap: 3px; font-size: 0.68rem; color: #7fb8ff; margin-top: 2px; }
+.fc-precip i { font-size: 0.65rem; }
 
 .weather-map-wrapper {
   border-radius: 14px;
@@ -649,6 +698,26 @@ footer.player::before {
 .weather-updated { font-size: 0.75rem; color: #888; margin-top: 14px; }
 .weather-error { color: #ccc; font-size: 0.9rem; }
 
+/* Weicher Ein-/Ausblend-Übergang für das Popup, statt hartem display:block/none */
+#weatherOverlay { opacity: 0; transition: opacity 0.25s ease; }
+#weatherOverlay.is-visible { opacity: 1; }
+#weatherOverlay .weather-popup-inner { transform: translate(-50%, -46%) scale(0.97); transition: transform 0.25s ease; }
+#weatherOverlay.is-visible .weather-popup-inner { transform: translate(-50%, -50%) scale(1); }
+
+/* Lade-Skeleton: Platzhalter-Blöcke in Form der finalen Elemente statt nur Text */
+.weather-skeleton { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 10px 0 4px; }
+.weather-skeleton-row { display: flex; gap: 18px; align-items: center; }
+.weather-skeleton-block {
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.14) 37%, rgba(255,255,255,0.06) 63%);
+  background-size: 400% 100%;
+  animation: skeletonShine 1.4s ease-in-out infinite;
+}
+@keyframes skeletonShine {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
 @media (max-width:768px){
   .header-actions { top: 15px; right: 12px; gap: 8px; }
   .header-btn { padding: 8px 12px; font-size: 0.82rem; gap: 6px; }
@@ -660,6 +729,9 @@ footer.player::before {
   .weather-forecast-day { padding: 8px 2px; }
   .weather-forecast-day .fc-weekday { font-size: 0.65rem; }
   .weather-map-wrapper iframe { height: 170px; }
+  .weather-detail-grid { grid-template-columns: 1fr; gap: 6px; justify-items: start; }
+  .weather-sun-row { gap: 18px; }
+  .fc-precip { font-size: 0.62rem; }
 }
 
 /* Reduzierte Bewegung respektieren */
@@ -1683,36 +1755,36 @@ const WEATHER_REFRESH_MS = 15 * 60 * 1000; // alle 15 Minuten reicht für Wetter
 // Quelle der Codes: Open-Meteo-Dokumentation (WMO Weather interpretation codes).
 function getWeatherInfo(code, isDay){
   const table = {
-    0:  { icon: isDay ? 'fa-sun' : 'fa-moon', label: 'Klarer Himmel' },
-    1:  { icon: isDay ? 'fa-cloud-sun' : 'fa-cloud-moon', label: 'Überwiegend klar' },
-    2:  { icon: isDay ? 'fa-cloud-sun' : 'fa-cloud-moon', label: 'Teilweise bewölkt' },
-    3:  { icon: 'fa-cloud', label: 'Bedeckt' },
-    45: { icon: 'fa-smog', label: 'Nebel' },
-    48: { icon: 'fa-smog', label: 'Reifnebel' },
-    51: { icon: 'fa-cloud-rain', label: 'Leichter Nieselregen' },
-    53: { icon: 'fa-cloud-rain', label: 'Nieselregen' },
-    55: { icon: 'fa-cloud-rain', label: 'Starker Nieselregen' },
-    56: { icon: 'fa-cloud-rain', label: 'Gefrierender Nieselregen' },
-    57: { icon: 'fa-cloud-rain', label: 'Starker gefrierender Nieselregen' },
-    61: { icon: 'fa-cloud-rain', label: 'Leichter Regen' },
-    63: { icon: 'fa-cloud-rain', label: 'Regen' },
-    65: { icon: 'fa-cloud-showers-heavy', label: 'Starker Regen' },
-    66: { icon: 'fa-cloud-rain', label: 'Gefrierender Regen' },
-    67: { icon: 'fa-cloud-showers-heavy', label: 'Starker gefrierender Regen' },
-    71: { icon: 'fa-snowflake', label: 'Leichter Schneefall' },
-    73: { icon: 'fa-snowflake', label: 'Schneefall' },
-    75: { icon: 'fa-snowflake', label: 'Starker Schneefall' },
-    77: { icon: 'fa-snowflake', label: 'Schneegriesel' },
-    80: { icon: 'fa-cloud-showers-heavy', label: 'Leichte Regenschauer' },
-    81: { icon: 'fa-cloud-showers-heavy', label: 'Regenschauer' },
-    82: { icon: 'fa-cloud-showers-heavy', label: 'Heftige Regenschauer' },
-    85: { icon: 'fa-snowflake', label: 'Leichte Schneeschauer' },
-    86: { icon: 'fa-snowflake', label: 'Schneeschauer' },
-    95: { icon: 'fa-bolt', label: 'Gewitter' },
-    96: { icon: 'fa-bolt', label: 'Gewitter mit Hagel' },
-    99: { icon: 'fa-bolt', label: 'Starkes Gewitter mit Hagel' }
+    0:  { icon: isDay ? 'fa-sun' : 'fa-moon', label: 'Klarer Himmel', color: isDay ? '#ffb347' : '#8ea3c9' },
+    1:  { icon: isDay ? 'fa-cloud-sun' : 'fa-cloud-moon', label: 'Überwiegend klar', color: isDay ? '#ffb347' : '#8ea3c9' },
+    2:  { icon: isDay ? 'fa-cloud-sun' : 'fa-cloud-moon', label: 'Teilweise bewölkt', color: '#c9c9c9' },
+    3:  { icon: 'fa-cloud', label: 'Bedeckt', color: '#9a9a9a' },
+    45: { icon: 'fa-smog', label: 'Nebel', color: '#9a9a9a' },
+    48: { icon: 'fa-smog', label: 'Reifnebel', color: '#9a9a9a' },
+    51: { icon: 'fa-cloud-rain', label: 'Leichter Nieselregen', color: '#5aa7ff' },
+    53: { icon: 'fa-cloud-rain', label: 'Nieselregen', color: '#5aa7ff' },
+    55: { icon: 'fa-cloud-rain', label: 'Starker Nieselregen', color: '#5aa7ff' },
+    56: { icon: 'fa-cloud-rain', label: 'Gefrierender Nieselregen', color: '#5aa7ff' },
+    57: { icon: 'fa-cloud-rain', label: 'Starker gefrierender Nieselregen', color: '#5aa7ff' },
+    61: { icon: 'fa-cloud-rain', label: 'Leichter Regen', color: '#4090ff' },
+    63: { icon: 'fa-cloud-rain', label: 'Regen', color: '#4090ff' },
+    65: { icon: 'fa-cloud-showers-heavy', label: 'Starker Regen', color: '#2e6fe0' },
+    66: { icon: 'fa-cloud-rain', label: 'Gefrierender Regen', color: '#4090ff' },
+    67: { icon: 'fa-cloud-showers-heavy', label: 'Starker gefrierender Regen', color: '#2e6fe0' },
+    71: { icon: 'fa-snowflake', label: 'Leichter Schneefall', color: '#bcdcff' },
+    73: { icon: 'fa-snowflake', label: 'Schneefall', color: '#bcdcff' },
+    75: { icon: 'fa-snowflake', label: 'Starker Schneefall', color: '#bcdcff' },
+    77: { icon: 'fa-snowflake', label: 'Schneegriesel', color: '#bcdcff' },
+    80: { icon: 'fa-cloud-showers-heavy', label: 'Leichte Regenschauer', color: '#4090ff' },
+    81: { icon: 'fa-cloud-showers-heavy', label: 'Regenschauer', color: '#4090ff' },
+    82: { icon: 'fa-cloud-showers-heavy', label: 'Heftige Regenschauer', color: '#2e6fe0' },
+    85: { icon: 'fa-snowflake', label: 'Leichte Schneeschauer', color: '#bcdcff' },
+    86: { icon: 'fa-snowflake', label: 'Schneeschauer', color: '#bcdcff' },
+    95: { icon: 'fa-bolt', label: 'Gewitter', color: '#c58bff' },
+    96: { icon: 'fa-bolt', label: 'Gewitter mit Hagel', color: '#c58bff' },
+    99: { icon: 'fa-bolt', label: 'Starkes Gewitter mit Hagel', color: '#c58bff' }
   };
-  return table[code] || { icon: 'fa-cloud', label: 'Unbekannt' };
+  return table[code] || { icon: 'fa-cloud', label: 'Unbekannt', color: '#ff3b3b' };
 }
 
 const WEEKDAYS_SHORT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
@@ -1731,6 +1803,7 @@ weatherOverlay.style.overflowY = 'auto';
 document.body.appendChild(weatherOverlay);
 
 const weatherPopup = document.createElement('div');
+weatherPopup.className = 'weather-popup-inner';
 weatherPopup.style.position = 'absolute';
 weatherPopup.style.top = '50%';
 weatherPopup.style.left = '50%';
@@ -1760,12 +1833,50 @@ weatherCloseBtn.addEventListener('mouseenter', () => weatherCloseBtn.style.color
 weatherCloseBtn.addEventListener('mouseleave', () => weatherCloseBtn.style.color = '#fff');
 weatherPopup.appendChild(weatherCloseBtn);
 
-weatherCloseBtn.addEventListener('click', () => { weatherOverlay.style.display = 'none'; });
+// Weiches Ausblenden: erst die Übergangsklasse entfernen (Fade+Scale läuft),
+// erst danach display:none setzen, damit die Transition sichtbar ist.
+function closeWeatherPopup(){
+  weatherOverlay.classList.remove('is-visible');
+  setTimeout(() => { weatherOverlay.style.display = 'none'; }, 250);
+}
+weatherCloseBtn.addEventListener('click', closeWeatherPopup);
 weatherOverlay.addEventListener('click', (e) => {
-  if(e.target === weatherOverlay) weatherOverlay.style.display = 'none';
+  if(e.target === weatherOverlay) closeWeatherPopup();
 });
 
 let weatherLastData = null;
+
+// Platzhalter-Layout in Form der finalen Elemente, statt nur "Lade..."-Text –
+// wirkt beim ersten Öffnen deutlich hochwertiger.
+function renderWeatherSkeleton(){
+  weatherPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:6px;">Wetter in Aachen</h2>';
+  weatherPopup.appendChild(weatherCloseBtn);
+  const skeleton = document.createElement('div');
+  skeleton.className = 'weather-skeleton';
+  skeleton.innerHTML = `
+    <div class="weather-skeleton-row">
+      <div class="weather-skeleton-block" style="width:56px; height:56px; border-radius:50%;"></div>
+      <div class="weather-skeleton-block" style="width:80px; height:40px;"></div>
+    </div>
+    <div class="weather-skeleton-block" style="width:220px; height:14px;"></div>
+    <div class="weather-skeleton-row">
+      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
+      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
+      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
+      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
+      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
+    </div>
+  `;
+  weatherPopup.appendChild(skeleton);
+}
+
+// Kurzes HH:MM aus einem ISO-Zeitstempel wie "2026-07-22T06:03" extrahieren,
+// für die Sonnenauf-/untergang-Anzeige.
+function formatSunTime(isoStr){
+  if(!isoStr) return '--:--';
+  const parts = isoStr.split('T');
+  return parts.length > 1 ? parts[1] : '--:--';
+}
 
 function renderWeatherPopup(data){
   weatherPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:6px;">Wetter in Aachen</h2>';
@@ -1786,31 +1897,55 @@ function renderWeatherPopup(data){
   const currentBlock = document.createElement('div');
   currentBlock.className = 'weather-current';
   currentBlock.innerHTML = `
-    <i class="fas ${info.icon} weather-icon-big"></i>
+    <i class="fas ${info.icon} weather-icon-big" style="color:${info.color};"></i>
     <div class="weather-temp-big">${Math.round(cur.temperature_2m)}°C</div>
     <div class="weather-current-details">
       <div class="weather-condition-label">${info.label}</div>
-      <p>Gefühlt ${Math.round(cur.apparent_temperature)}°C</p>
-      <p>Luftfeuchtigkeit ${Math.round(cur.relative_humidity_2m)}%</p>
-      <p>Wind ${Math.round(cur.wind_speed_10m)} km/h</p>
+      <div class="weather-detail-grid">
+        <div class="weather-detail-item"><i class="fas fa-temperature-half"></i>Gefühlt <strong>${Math.round(cur.apparent_temperature)}°C</strong></div>
+        <div class="weather-detail-item"><i class="fas fa-droplet"></i>Feuchte <strong>${Math.round(cur.relative_humidity_2m)}%</strong></div>
+        <div class="weather-detail-item"><i class="fas fa-wind"></i>Wind <strong>${Math.round(cur.wind_speed_10m)} km/h</strong></div>
+      </div>
     </div>
   `;
   weatherPopup.appendChild(currentBlock);
 
-  // 5-Tage-Vorschau
+  // Sonnenauf-/untergang von heute
+  const daily = data.daily;
+  if(daily.sunrise && daily.sunset){
+    const sunRow = document.createElement('div');
+    sunRow.className = 'weather-sun-row';
+    sunRow.innerHTML = `
+      <div class="weather-sun-item"><i class="fas fa-arrow-up"></i>Aufgang <strong>${formatSunTime(daily.sunrise[0])}</strong></div>
+      <div class="weather-sun-item"><i class="fas fa-arrow-down"></i>Untergang <strong>${formatSunTime(daily.sunset[0])}</strong></div>
+    `;
+    weatherPopup.appendChild(sunRow);
+  }
+
+  // 5-Tage-Vorschau inkl. Min/Max-Balken (Spanne relativ zur Wochenspanne) und Regenwahrscheinlichkeit
   const forecastRow = document.createElement('div');
   forecastRow.className = 'weather-forecast-row';
-  const daily = data.daily;
-  for(let i = 0; i < Math.min(5, daily.time.length); i++){
+  const dayCount = Math.min(5, daily.time.length);
+  const weekMin = Math.min(...daily.temperature_2m_min.slice(0, dayCount));
+  const weekMax = Math.max(...daily.temperature_2m_max.slice(0, dayCount));
+  const weekSpan = Math.max(weekMax - weekMin, 1);
+  for(let i = 0; i < dayCount; i++){
     const d = new Date(daily.time[i] + 'T12:00:00');
     const dayInfo = getWeatherInfo(daily.weather_code[i], true);
+    const dayMin = daily.temperature_2m_min[i];
+    const dayMax = daily.temperature_2m_max[i];
+    const barLeft = ((dayMin - weekMin) / weekSpan) * 100;
+    const barWidth = Math.max(((dayMax - dayMin) / weekSpan) * 100, 8);
+    const precip = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : null;
     const dayEl = document.createElement('div');
     dayEl.className = 'weather-forecast-day';
     dayEl.innerHTML = `
       <div class="fc-weekday">${i === 0 ? 'Heute' : WEEKDAYS_SHORT[d.getDay()]}</div>
-      <i class="fas ${dayInfo.icon} fc-icon"></i>
-      <div class="fc-max">${Math.round(daily.temperature_2m_max[i])}°</div>
-      <div class="fc-min">${Math.round(daily.temperature_2m_min[i])}°</div>
+      <i class="fas ${dayInfo.icon} fc-icon" style="color:${dayInfo.color};"></i>
+      <div class="fc-max">${Math.round(dayMax)}°</div>
+      <div class="fc-bar-track"><div class="fc-bar-fill" style="left:${barLeft}%; width:${barWidth}%;"></div></div>
+      <div class="fc-min">${Math.round(dayMin)}°</div>
+      ${precip !== null ? `<div class="fc-precip"><i class="fas fa-droplet"></i>${Math.round(precip)}%</div>` : ''}
     `;
     forecastRow.appendChild(dayEl);
   }
@@ -1843,7 +1978,7 @@ async function fetchWeather(){
   try{
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${AACHEN_LAT}&longitude=${AACHEN_LON}` +
       `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day` +
-      `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset` +
       `&timezone=Europe%2FBerlin&forecast_days=5`;
     const res = await fetch(url);
     if(!res.ok) throw new Error('Wetter-API nicht erreichbar');
@@ -1852,7 +1987,9 @@ async function fetchWeather(){
 
     // Button-Anzeige (Icon + Temperatur) aktualisieren
     const info = getWeatherInfo(data.current.weather_code, data.current.is_day === 1);
-    weatherButton.querySelector('.weather-btn-icon').className = `fas ${info.icon} weather-btn-icon`;
+    const btnIcon = weatherButton.querySelector('.weather-btn-icon');
+    btnIcon.className = `fas ${info.icon} weather-btn-icon`;
+    btnIcon.style.color = info.color;
     weatherButton.querySelector('.weather-btn-temp').textContent = `${Math.round(data.current.temperature_2m)}°`;
 
     // Falls das Popup gerade offen ist, gleich mit aktualisieren
@@ -1870,11 +2007,16 @@ async function fetchWeather(){
 
 weatherButton.addEventListener('click', () => {
   weatherOverlay.style.display = 'block';
-  renderWeatherPopup(weatherLastData); // sofort zeigen, was wir schon haben (oder Ladehinweis)
-  if(!weatherLastData){
-    weatherPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:6px;">Wetter in Aachen</h2><p class="weather-error">Lade Wetterdaten…</p>';
-    weatherPopup.appendChild(weatherCloseBtn);
+  if(weatherLastData){
+    renderWeatherPopup(weatherLastData); // sofort zeigen, was wir schon haben
+  } else {
+    renderWeatherSkeleton(); // beim allerersten Öffnen: Platzhalter-Layout statt nur Text
   }
+  // Erst nach dem Setzen von display:block einen Frame warten, damit die
+  // CSS-Transition (opacity/transform) beim Einblenden greift statt zu springen.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { weatherOverlay.classList.add('is-visible'); });
+  });
   fetchWeather();
 });
 
