@@ -1646,6 +1646,12 @@ playlistButton.className = 'header-btn';
 playlistButton.textContent = 'Playlist';
 headerActions.appendChild(playlistButton);
 
+// Registry aller über createModal() erzeugten Popups. Wird genutzt, damit
+// beim Öffnen eines Popups automatisch jedes andere offene Popup zuerst
+// geschlossen wird – so können sich Playlist- und Wetter-Popup nie mehr
+// überlappen, egal in welcher Reihenfolge sie angeklickt werden.
+const openModals = [];
+
 // Gemeinsame Modal-Grundstruktur für Playlist- und Wetter-Popup: erzeugt
 // Overlay, Popup-Container und Close-Button und verdrahtet das Schließen
 // (Klick auf Close-Button oder auf den dunklen Hintergrund). Optional mit
@@ -1666,7 +1672,13 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
   closeBtn.textContent = '✖';
   popup.appendChild(closeBtn);
 
+  const modal = { overlay, popup, closeBtn };
+
   function open(){
+    // Andere offene Popups zuerst schließen, damit sich nie zwei gleichzeitig
+    // überlappen (z.B. Wetter offen lassen und dann Playlist anklicken).
+    openModals.forEach(other => { if(other !== modal) other.close(); });
+
     overlay.style.display = 'block';
     if(fade){
       // Erst nach dem Setzen von display:block einen Frame warten, damit die
@@ -1687,11 +1699,16 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
     }
   }
 
+  modal.open = open;
+  modal.close = close;
+  openModals.push(modal);
+
   closeBtn.addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
 
-  return { overlay, popup, closeBtn, open, close };
+  return modal;
 }
+
 
 const { overlay: playlistOverlay, popup: playlistPopup, closeBtn, open: openPlaylistModal } = createModal({ wide: true });
 
