@@ -469,8 +469,6 @@ footer.player::before {
     box-shadow: 0 -6px 24px rgba(0,0,0,0.4);
   }
 
-  .player-secondary { display: contents; }
-
   /* Play/Pause: ganz links, zuerst greifbar */
   #playButton-wrapper {
     grid-column: 1;
@@ -701,11 +699,54 @@ footer.player::before {
 .weather-updated { font-size: 0.75rem; color: #888; margin-top: 14px; }
 .weather-error { color: #ccc; font-size: 0.9rem; }
 
-/* Weicher Ein-/Ausblend-Übergang für das Popup, statt hartem display:block/none */
-#weatherOverlay { opacity: 0; transition: opacity 0.25s ease; }
-#weatherOverlay.is-visible { opacity: 1; }
-#weatherOverlay .weather-popup-inner { transform: translate(-50%, -46%) scale(0.97); transition: transform 0.25s ease; }
-#weatherOverlay.is-visible .weather-popup-inner { transform: translate(-50%, -50%) scale(1); }
+/* ===== Gemeinsame Modal-Grundstruktur (Playlist- & Wetter-Popup) =====
+   Beide Popups teilen sich Overlay/Container/Close-Button; siehe createModal()
+   im Script weiter unten. Individuelle Unterschiede (Breite, Fade-Effekt,
+   Scroll-Verhalten) werden über Modifier-Klassen gesteuert. */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.6);
+  display: none;
+  z-index: 1000;
+}
+.modal-overlay.modal-scrollable { overflow-y: auto; }
+.modal-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1e1e1e;
+  color: #fff;
+  padding: 30px 30px;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+}
+.modal-popup.modal-popup--wide { max-width: 500px; padding: 30px 40px; }
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.modal-close-btn:hover { color: #ff3b3b; }
+
+/* Weicher Ein-/Ausblend-Übergang für Popups mit fade-Option, statt hartem display:block/none */
+.modal-overlay.modal-fade { opacity: 0; transition: opacity 0.25s ease; }
+.modal-overlay.modal-fade.is-visible { opacity: 1; }
+.modal-overlay.modal-fade .modal-popup { transform: translate(-50%, -46%) scale(0.97); transition: transform 0.25s ease; }
+.modal-overlay.modal-fade.is-visible .modal-popup { transform: translate(-50%, -50%) scale(1); }
 
 /* Lade-Skeleton: Platzhalter-Blöcke in Form der finalen Elemente statt nur Text */
 .weather-skeleton { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 10px 0 4px; }
@@ -1605,54 +1646,54 @@ playlistButton.className = 'header-btn';
 playlistButton.textContent = 'Playlist';
 headerActions.appendChild(playlistButton);
 
-const playlistOverlay = document.createElement('div');
-playlistOverlay.style.position = 'fixed';
-playlistOverlay.style.top = '0';
-playlistOverlay.style.left = '0';
-playlistOverlay.style.width = '100vw';
-playlistOverlay.style.height = '100vh';
-playlistOverlay.style.backgroundColor = 'rgba(0,0,0,0.6)';
-playlistOverlay.style.display = 'none';
-playlistOverlay.style.zIndex = '1000';
-document.body.appendChild(playlistOverlay);
+// Gemeinsame Modal-Grundstruktur für Playlist- und Wetter-Popup: erzeugt
+// Overlay, Popup-Container und Close-Button und verdrahtet das Schließen
+// (Klick auf Close-Button oder auf den dunklen Hintergrund). Optional mit
+// weichem Fade-Übergang (siehe .modal-fade in CSS) statt hartem display:block/none.
+function createModal({ wide = false, fade = false, scrollable = false } = {}){
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay'
+    + (fade ? ' modal-fade' : '')
+    + (scrollable ? ' modal-scrollable' : '');
+  document.body.appendChild(overlay);
 
-const playlistPopup = document.createElement('div');
-playlistPopup.style.position = 'absolute';
-playlistPopup.style.top = '50%';
-playlistPopup.style.left = '50%';
-playlistPopup.style.transform = 'translate(-50%, -50%)';
-playlistPopup.style.backgroundColor = '#1e1e1e';
-playlistPopup.style.color = '#fff';
-playlistPopup.style.padding = '30px 40px';
-playlistPopup.style.borderRadius = '16px';
-playlistPopup.style.boxShadow = '0 20px 50px rgba(0,0,0,0.7)';
-playlistPopup.style.maxWidth = '500px';
-playlistPopup.style.width = '90%';
-playlistPopup.style.textAlign = 'center';
-playlistOverlay.appendChild(playlistPopup);
+  const popup = document.createElement('div');
+  popup.className = 'modal-popup' + (wide ? ' modal-popup--wide' : '');
+  overlay.appendChild(popup);
 
-const closeBtn = document.createElement('button');
-closeBtn.textContent = '✖';
-closeBtn.style.position = 'absolute';
-closeBtn.style.top = '15px';
-closeBtn.style.right = '15px';
-closeBtn.style.background = 'transparent';
-closeBtn.style.border = 'none';
-closeBtn.style.color = '#fff';
-closeBtn.style.fontSize = '22px';
-closeBtn.style.cursor = 'pointer';
-closeBtn.style.transition = 'color 0.2s';
-closeBtn.addEventListener('mouseenter', () => closeBtn.style.color = '#ff3b3b');
-closeBtn.addEventListener('mouseleave', () => closeBtn.style.color = '#fff');
-playlistPopup.appendChild(closeBtn);
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'modal-close-btn';
+  closeBtn.textContent = '✖';
+  popup.appendChild(closeBtn);
 
-closeBtn.addEventListener('click', () => {
-    playlistOverlay.style.display = 'none';
-});
+  function open(){
+    overlay.style.display = 'block';
+    if(fade){
+      // Erst nach dem Setzen von display:block einen Frame warten, damit die
+      // CSS-Transition (opacity/transform) beim Einblenden greift statt zu springen.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => overlay.classList.add('is-visible'));
+      });
+    }
+  }
+  function close(){
+    if(fade){
+      // Erst die Übergangsklasse entfernen (Fade+Scale läuft), erst danach
+      // display:none setzen, damit die Transition sichtbar ist.
+      overlay.classList.remove('is-visible');
+      setTimeout(() => { overlay.style.display = 'none'; }, 250);
+    } else {
+      overlay.style.display = 'none';
+    }
+  }
 
-playlistOverlay.addEventListener('click', (e) => {
-    if(e.target === playlistOverlay) playlistOverlay.style.display = 'none';
-});
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
+
+  return { overlay, popup, closeBtn, open, close };
+}
+
+const { overlay: playlistOverlay, popup: playlistPopup, closeBtn, open: openPlaylistModal } = createModal({ wide: true });
 
 // Wandelt das laut.fm-Zeitformat ("2026-07-17 09:11:56 +0200") in ein
 // gültiges Date-Objekt um, damit es browserübergreifend zuverlässig geparst wird.
@@ -1744,7 +1785,7 @@ async function loadLastSongs() {
 }
 
 playlistButton.addEventListener('click', () => {
-    playlistOverlay.style.display = 'block';
+    openPlaylistModal();
     loadLastSongs();
 });
 
@@ -1793,60 +1834,9 @@ function getWeatherInfo(code, isDay){
 
 const WEEKDAYS_SHORT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
-// Wetter-Popup (gleicher Overlay-Aufbau wie das Playlist-Popup, eigener Inhalt)
-const weatherOverlay = document.createElement('div');
-weatherOverlay.style.position = 'fixed';
-weatherOverlay.style.top = '0';
-weatherOverlay.style.left = '0';
-weatherOverlay.style.width = '100vw';
-weatherOverlay.style.height = '100vh';
-weatherOverlay.style.backgroundColor = 'rgba(0,0,0,0.6)';
-weatherOverlay.style.display = 'none';
-weatherOverlay.style.zIndex = '1000';
-weatherOverlay.style.overflowY = 'auto';
-document.body.appendChild(weatherOverlay);
-
-const weatherPopup = document.createElement('div');
-weatherPopup.className = 'weather-popup-inner';
-weatherPopup.style.position = 'absolute';
-weatherPopup.style.top = '50%';
-weatherPopup.style.left = '50%';
-weatherPopup.style.transform = 'translate(-50%, -50%)';
-weatherPopup.style.backgroundColor = '#1e1e1e';
-weatherPopup.style.color = '#fff';
-weatherPopup.style.padding = '30px 30px';
-weatherPopup.style.borderRadius = '16px';
-weatherPopup.style.boxShadow = '0 20px 50px rgba(0,0,0,0.7)';
-weatherPopup.style.maxWidth = '480px';
-weatherPopup.style.width = '90%';
-weatherPopup.style.textAlign = 'center';
-weatherOverlay.appendChild(weatherPopup);
-
-const weatherCloseBtn = document.createElement('button');
-weatherCloseBtn.textContent = '✖';
-weatherCloseBtn.style.position = 'absolute';
-weatherCloseBtn.style.top = '15px';
-weatherCloseBtn.style.right = '15px';
-weatherCloseBtn.style.background = 'transparent';
-weatherCloseBtn.style.border = 'none';
-weatherCloseBtn.style.color = '#fff';
-weatherCloseBtn.style.fontSize = '22px';
-weatherCloseBtn.style.cursor = 'pointer';
-weatherCloseBtn.style.transition = 'color 0.2s';
-weatherCloseBtn.addEventListener('mouseenter', () => weatherCloseBtn.style.color = '#ff3b3b');
-weatherCloseBtn.addEventListener('mouseleave', () => weatherCloseBtn.style.color = '#fff');
-weatherPopup.appendChild(weatherCloseBtn);
-
-// Weiches Ausblenden: erst die Übergangsklasse entfernen (Fade+Scale läuft),
-// erst danach display:none setzen, damit die Transition sichtbar ist.
-function closeWeatherPopup(){
-  weatherOverlay.classList.remove('is-visible');
-  setTimeout(() => { weatherOverlay.style.display = 'none'; }, 250);
-}
-weatherCloseBtn.addEventListener('click', closeWeatherPopup);
-weatherOverlay.addEventListener('click', (e) => {
-  if(e.target === weatherOverlay) closeWeatherPopup();
-});
+// Wetter-Popup (gleicher Modal-Aufbau wie das Playlist-Popup, eigener Inhalt;
+// zusätzlich mit weichem Fade-Übergang und Scroll-Fähigkeit für lange Inhalte)
+const { overlay: weatherOverlay, popup: weatherPopup, closeBtn: weatherCloseBtn, open: openWeatherModal, close: closeWeatherPopup } = createModal({ fade: true, scrollable: true });
 
 let weatherLastData = null;
 
@@ -2010,17 +2000,12 @@ async function fetchWeather(){
 }
 
 weatherButton.addEventListener('click', () => {
-  weatherOverlay.style.display = 'block';
   if(weatherLastData){
     renderWeatherPopup(weatherLastData); // sofort zeigen, was wir schon haben
   } else {
     renderWeatherSkeleton(); // beim allerersten Öffnen: Platzhalter-Layout statt nur Text
   }
-  // Erst nach dem Setzen von display:block einen Frame warten, damit die
-  // CSS-Transition (opacity/transform) beim Einblenden greift statt zu springen.
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => { weatherOverlay.classList.add('is-visible'); });
-  });
+  openWeatherModal();
   fetchWeather();
 });
 
