@@ -139,6 +139,35 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 .card a { color: #ff3b3b; text-decoration: none; }
 .card a:hover { text-decoration: underline; }
 
+/* Starnews: einzelne Meldungen visuell trennen und strukturieren.
+   Werden nicht mehr fest ins HTML getippt, sondern aus starnewsData
+   (siehe Script weiter unten) automatisch erzeugt. */
+.news-article {
+  text-align: left;
+  margin-bottom: 45px;
+  padding-bottom: 35px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.news-article:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.news-article h2 { text-align: left; margin-top: 0; }
+.news-article .centered-banner { margin-bottom: 18px; border-radius: 10px; }
+.news-tag {
+  display: inline-block;
+  background: rgba(255,59,59,0.15);
+  color: #ff6a6a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
 /* Team grid */
 .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 30px; }
 .team-member {
@@ -1261,6 +1290,73 @@ fetchCurrentSong(); setInterval(fetchCurrentSong,3000);
 updateMarqueeState();
 updateCurrentShow(); setInterval(updateCurrentShow,60000);
 
+// ===== Starnews: Meldungen bearbeiten ohne den restlichen Code anzufassen =====
+// Neue Meldung hinzufügen: einfach ein neues Objekt in dieses Array einfügen
+// (am Anfang = erscheint oben). Meldung löschen: Objekt entfernen. Meldung
+// bearbeiten: Text im jeweiligen Feld ändern. Der Rest (HTML, Styling,
+// Scroll-Reveal) passiert automatisch über renderStarnews() weiter unten.
+//
+// Felder je Meldung:
+//   tag         - kleines Kategorie-Label über dem Bild, z.B. "🎤 Konzerte"
+//   image       - Pfad zum Bild (aus dem img/-Ordner)
+//   title       - Überschrift der Meldung
+//   paragraphs  - Array von Textabsätzen; jeder Eintrag wird ein eigener <p>
+const starnewsData = [
+  {
+    tag: '🎤 Konzerte',
+    image: 'img/BTS.jpg',
+    title: 'BTS begeistern München – und singen auf Deutsch',
+    paragraphs: [
+      'Sieben Jahre mussten deutsche Fans warten – jetzt waren die K-Pop-Superstars BTS endlich wieder in Deutschland. Bei ihren beiden Konzerten in der Münchner Allianz Arena sorgten sie für Gänsehautmomente vor zehntausenden Fans.',
+      'Ein Highlight gab es ganz am Ende der Show: Die Band stimmte gemeinsam mit dem Publikum den deutschen Hit „Gut genug" von KitschKrieg, Blumengarten und Shirin David an – auf Deutsch. Besonders Jung Kook überraschte die Fans mit der deutschen Hook, die die rund 70.000 Besucher begeistert mitsangen. Der Moment verbreitet sich seitdem rasant in den sozialen Netzwerken.',
+      'Auch abseits der Bühne zeigte sich BTS begeistert von München: Die Band besuchte das Hofbräuhaus, probierte bayerische Spezialitäten und bedankte sich immer wieder mit deutschen Worten bei ihren Fans. Ein Wochenende, das die ARMY in Deutschland sicher nicht so schnell vergessen wird.'
+    ]
+  },
+  {
+    tag: '🎤 Konzerte',
+    image: 'img/Konzert1838653_1280.jpg',
+    title: 'Schreckmoment bei Harry-Styles-Konzert in London',
+    paragraphs: [
+      'Fans von Harry Styles haben am Wochenende einen kurzen Schockmoment erlebt: Während seines Konzerts im Londoner Wembley-Stadion ging der Sänger plötzlich auf der Bühne zu Boden.',
+      'Videos in den sozialen Medien zeigen, wie sich der 32-Jährige offenbar an einem Schluck Wasser verschluckt. Kurz darauf legt er sich auf den Bühnenboden und ringt für einige Sekunden nach Luft. Viele Zuschauer machten sich sofort Sorgen um den Musiker.',
+      'Entwarnung folgte jedoch schnell: Harry Styles erholte sich nach wenigen Augenblicken, stand wieder auf und verabschiedete sich unter dem Applaus der Fans. Medienberichten zufolge spielte auch die große Hitze in London eine Rolle. Bei Temperaturen von über 30 Grad hatte der Sänger sein Publikum zuvor sogar dazu aufgerufen, ausreichend zu trinken und aufeinander zu achten.'
+    ]
+  },
+  {
+    tag: '🎬 Filme & Musik',
+    image: 'img/TaylorSwift.jpg',
+    title: 'Taylor Swift überrascht Fans bei „Toy Story 5"-Premiere',
+    paragraphs: [
+      'Damit hat wohl niemand gerechnet: Bei der Premiere von „Toy Story 5" in Los Angeles sorgte Popstar Taylor Swift für einen echten Gänsehautmoment. Überraschend erschien die Sängerin auf dem roten Teppich – und hatte etwas ganz Besonderes im Gepäck.',
+      'Nach der Premiere performte Taylor Swift erstmals live ihren neuen Song „I Knew It, I Knew You", den sie eigens für den neuen „Toy Story"-Film aufgenommen hat. Für besonders emotionale Momente sorgte anschließend ihr gemeinsamer Auftritt mit Filmkomponist Randy Newman: Zusammen sangen sie den legendären Klassiker „You\'ve Got a Friend in Me" und begeisterten damit Fans der Filmreihe.',
+      'Taylor Swift verriet außerdem, dass sie bereits seit ihrer Kindheit großer „Toy Story"-Fan sei. Für sie sei es ein lang gehegter Traum gewesen, Musik für die beliebten Figuren beizusteuern. In Deutschland startet „Toy Story 5" am 23. Juli in den Kinos.'
+    ]
+  },
+  {
+    tag: '🤖 KI & Musik',
+    image: 'img/javierdumont-vinyl-4722544.jpg',
+    title: 'KI-Hit sorgt für Diskussionen: „North Wind Calls" überrascht Musikfans',
+    paragraphs: [
+      'Die Grenzen zwischen Mensch und Maschine verschwimmen immer stärker – jetzt offenbar auch in der Musik. Mit dem Song „100 %" sorgt das Projekt North Wind Calls derzeit für Aufmerksamkeit. Der besondere Twist: Hinter dem Titel steckt offenbar künstliche Intelligenz.',
+      'Immer häufiger werden Songs mithilfe von KI erstellt – von Melodien über Songtexte bis hin zu Stimmen. Während einige Musikfans die technischen Möglichkeiten feiern, sehen Kritiker darin eine Gefahr für echte Künstlerinnen und Künstler. Genau diese Debatte wird nun auch rund um „100 %" geführt.',
+      'Musikalisch bewegt sich der Song im modernen Pop-Bereich und klingt für viele Hörer überraschend professionell. Ohne Hintergrundwissen würden manche vermutlich gar nicht merken, dass KI bei der Entstehung eine Rolle gespielt haben könnte.',
+      'Doch die Entwicklung wirft Fragen auf: Wie viel „echte Kunst" steckt noch in Musik, wenn Algorithmen kreativ werden? Und welche Bedeutung haben Musikerinnen und Musiker künftig in einer Branche, die immer digitaler wird? Fest steht: KI-Musik ist längst keine Zukunftsvision mehr – sie ist bereits in Playlists, Streams und Diskussionen angekommen. Ob sich solche Songs dauerhaft durchsetzen oder eher ein Trend bleiben, wird sich zeigen.'
+    ]
+  }
+];
+
+// Baut aus starnewsData automatisch das komplette HTML für die STARNEWS-Sektion.
+// alt-Text bleibt bewusst bei "News" (wie im Original), damit sich daran nichts ändert.
+function renderStarnews(){
+  return starnewsData.map(item => `
+<article class="news-article">
+<span class="news-tag">${item.tag}</span>
+<img src="${item.image}" alt="News" class="centered-banner" loading="lazy">
+<h2>${item.title}</h2>
+${item.paragraphs.map(p => `<p>${p}</p>`).join('\n')}
+</article>`).join('\n');
+}
+
 // SPA Navigation
 const content=document.getElementById("main-content");
 const links=document.querySelectorAll("[data-link]");
@@ -1321,91 +1417,7 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 
 <h1>STARNEWS</h1>
 
-
-<!-- MELDUNG A -->
-
-
-<img src="img/BTS.jpg" alt="News" class="centered-banner" loading="lazy">
-<h2>BTS begeistern München – und singen auf Deutsch</h2>
-
-<p>Sieben Jahre mussten deutsche Fans warten – jetzt waren die K-Pop-Superstars BTS endlich wieder in Deutschland. 
-Bei ihren beiden Konzerten in der Münchner Allianz Arena sorgten sie für Gänsehautmomente vor zehntausenden Fans.</p>
-
-<p>Ein Highlight gab es ganz am Ende der Show: 
-Die Band stimmte gemeinsam mit dem Publikum den deutschen Hit „Gut genug" von KitschKrieg, Blumengarten und Shirin David an – auf Deutsch. 
-Besonders Jung Kook überraschte die Fans mit der deutschen Hook, die die rund 70.000 Besucher begeistert mitsangen. 
-Der Moment verbreitet sich seitdem rasant in den sozialen Netzwerken.</p>
-
-<p>Auch abseits der Bühne zeigte sich BTS begeistert von München: 
-Die Band besuchte das Hofbräuhaus, probierte bayerische Spezialitäten und bedankte sich immer wieder mit deutschen Worten bei ihren Fans. 
-Ein Wochenende, das die ARMY in Deutschland sicher nicht so schnell vergessen wird.</p>
-
-
-
-<!-- MELDUNG B -->
-
-
-<img src="img/Konzert1838653_1280.jpg" alt="News" class="centered-banner" loading="lazy">
-<h2>Schreckmoment bei Harry-Styles-Konzert in London</h2>
-
-<p>Fans von Harry Styles haben am Wochenende einen kurzen Schockmoment erlebt: 
-Während seines Konzerts im Londoner Wembley-Stadion ging der Sänger plötzlich auf der Bühne zu Boden.</p>
-
-<p>Videos in den sozialen Medien zeigen, wie sich der 32-Jährige offenbar an einem Schluck Wasser verschluckt. 
-Kurz darauf legt er sich auf den Bühnenboden und ringt für einige Sekunden nach Luft. 
-Viele Zuschauer machten sich sofort Sorgen um den Musiker.</p>
-
-<p>Entwarnung folgte jedoch schnell: Harry Styles erholte sich nach wenigen Augenblicken, 
-stand wieder auf und verabschiedete sich unter dem Applaus der Fans. 
-Medienberichten zufolge spielte auch die große Hitze in London eine Rolle. 
-
-Bei Temperaturen von über 30 Grad hatte der Sänger sein Publikum zuvor sogar dazu aufgerufen, 
-ausreichend zu trinken und aufeinander zu achten.</p
-
-
-<!-- MELDUNG C -->
-
-
-<img src="img/TaylorSwift.jpg" alt="News" class="centered-banner" loading="lazy">
-<h2>Taylor Swift überrascht Fans bei „Toy Story 5"-Premiere</h2>
-
-<p>Damit hat wohl niemand gerechnet: Bei der Premiere von „Toy Story 5" in Los Angeles sorgte Popstar Taylor Swift für einen echten Gänsehautmoment. 
-Überraschend erschien die Sängerin auf dem roten Teppich – und hatte etwas ganz Besonderes im Gepäck.</p>
-
-<p>Nach der Premiere performte Taylor Swift erstmals live ihren neuen Song „I Knew It, I Knew You", 
-den sie eigens für den neuen „Toy Story"-Film aufgenommen hat. 
-Für besonders emotionale Momente sorgte anschließend ihr gemeinsamer Auftritt mit Filmkomponist Randy Newman: 
-Zusammen sangen sie den legendären Klassiker „You've Got a Friend in Me" und begeisterten damit Fans der Filmreihe.</p>
-
-<p>Taylor Swift verriet außerdem, dass sie bereits seit ihrer Kindheit großer „Toy Story"-Fan sei. 
-Für sie sei es ein lang gehegter Traum gewesen, Musik für die beliebten Figuren beizusteuern.
-
-In Deutschland startet „Toy Story 5" am 23. Juli in den Kinos.</p>
-
-
-<!-- MELDUNG D -->
-
-
-<img src="img/javierdumont-vinyl-4722544.jpg" alt="News" class="centered-banner" loading="lazy">
-<h2>KI-Hit sorgt für Diskussionen: „North Wind Calls" überrascht Musikfans</h2>
-
-<p>Die Grenzen zwischen Mensch und Maschine verschwimmen immer stärker – jetzt offenbar auch in der Musik. 
-Mit dem Song „100 %" sorgt das Projekt North Wind Calls derzeit für Aufmerksamkeit. Der besondere Twist: Hinter dem Titel steckt offenbar künstliche Intelligenz.</p>
-
-<p>Immer häufiger werden Songs mithilfe von KI erstellt – von Melodien über Songtexte bis hin zu Stimmen. 
-Während einige Musikfans die technischen Möglichkeiten feiern, sehen Kritiker darin eine Gefahr für echte Künstlerinnen und Künstler. 
-Genau diese Debatte wird nun auch rund um „100 %" geführt.</p>
-
-<p>Musikalisch bewegt sich der Song im modernen Pop-Bereich und klingt für viele Hörer überraschend professionell. 
-Ohne Hintergrundwissen würden manche vermutlich gar nicht merken, dass KI bei der Entstehung eine Rolle gespielt haben könnte.
-
-Doch die Entwicklung wirft Fragen auf: Wie viel „echte Kunst" steckt noch in Musik, wenn Algorithmen kreativ werden? 
-Und welche Bedeutung haben Musikerinnen und Musiker künftig in einer Branche, die immer digitaler wird?
-
-Fest steht: KI-Musik ist längst keine Zukunftsvision mehr – sie ist bereits in Playlists, Streams und Diskussionen angekommen. 
-Ob sich solche Songs dauerhaft durchsetzen oder eher ein Trend bleiben, wird sich zeigen.</p>
-
-
+${renderStarnews()}
 
 <!-- ABSTAND -->
 <br>
@@ -1605,7 +1617,7 @@ function initScrollReveal(){
       }
     });
   }, { threshold: 0.15 });
-  const revealTargets = content.querySelectorAll('.card, .centered-banner, .team-member');
+  const revealTargets = content.querySelectorAll('.card, .centered-banner, .team-member, .news-article');
   revealTargets.forEach(el=>{
     el.classList.add('reveal-init');
     revealObserver.observe(el);
