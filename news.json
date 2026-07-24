@@ -1,5 +1,12 @@
 [
   {
+    "image": "",
+    "title": "TEST TEST TEST",
+    "paragraphs": [
+      "DIESE MELDUNG IST EIN TEST!"
+    ]
+  },
+  {
     "image": "img/BTS.jpg",
     "title": "BTS begeistern München – und singen auf Deutsch",
     "paragraphs": [
