@@ -6,6 +6,24 @@
 <title>Radio Multicraft – Dein Sound | Dein Stream</title>
 <meta name="description" content="Radio Multicraft – Dein Webradio mit dem besten Mix. Jetzt kostenlos reinhören!">
 
+<!-- Canonical: sagt Suchmaschinen, welche Adresse die "offizielle" ist -->
+<link rel="canonical" href="https://radiomulticraft.de/">
+
+<!-- Open Graph: Vorschau beim Teilen auf WhatsApp, Instagram, Facebook & co. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Radio Multicraft">
+<meta property="og:title" content="Radio Multicraft – Dein Sound | Dein Stream">
+<meta property="og:description" content="Radio Multicraft – Dein Webradio mit dem besten Mix. Jetzt kostenlos reinhören!">
+<meta property="og:image" content="https://radiomulticraft.de/img/deinsounddeinstream032026.jpg">
+<meta property="og:url" content="https://radiomulticraft.de/">
+<meta property="og:locale" content="de_DE">
+
+<!-- Twitter/X Card: eigenes Format, falls og:-Tags dort nicht greifen -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Radio Multicraft – Dein Sound | Dein Stream">
+<meta name="twitter:description" content="Radio Multicraft – Dein Webradio mit dem besten Mix. Jetzt kostenlos reinhören!">
+<meta name="twitter:image" content="https://radiomulticraft.de/img/deinsounddeinstream032026.jpg">
+
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://api.laut.fm" crossorigin>
 <link rel="preconnect" href="https://stream.laut.fm" crossorigin>
@@ -1309,7 +1327,7 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
   </a>
 
   <!-- WhatsApp -->
-  <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" title="WhatsApp Nachricht senden" class="contact-circle">
+  <a href="https://wa.me/4915755966472" target="_blank" rel="noopener noreferrer" title="WhatsApp Nachricht senden" class="contact-circle">
     <i class="fab fa-whatsapp"></i>
   </a>
 
@@ -1339,6 +1357,7 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 
 <!-- KALENDER -->
 
+<!-- TODO: Echte Kalender-URL eintragen, aktuell zeigt der Link nirgendwohin -->
 <a href="https:///" target="_blank" rel="noopener noreferrer">
     <img src="img/KalenderRMC.png" alt="Kalender" class="centered-banner" loading="lazy">
 </a>
@@ -1575,7 +1594,7 @@ async function loadStarnews(isPoll = false){
 function renderStarnewsInto(container, items){
   container.innerHTML = items.map(item => `
 <article class="news-article">
-<img src="${item.image}" alt="News" class="centered-banner" loading="lazy">
+<img src="${item.image}" alt="News" class="centered-banner" loading="lazy" onerror="this.onerror=null;this.src='img/RMC20250918-2.png';">
 <h2>${item.title}</h2>
 ${(item.paragraphs || []).map(p => `<p>${p}</p>`).join('\n')}
 </article>`).join('\n');
