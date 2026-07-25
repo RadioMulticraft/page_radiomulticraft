@@ -1575,7 +1575,7 @@ ${(item.paragraphs || []).map(p => `<p>${p}</p>`).join('\n')}
 // aktualisiert die Meldungen dann direkt - ohne dass Zuhörer:innen, die
 // gerade auf der Seite sind, die Seite neu laden müssen. Läuft nur, solange
 // die Startseite (mit dem #starnews-container) auch tatsächlich offen ist.
-const NEWS_POLL_MS = 90 * 1000;
+const NEWS_POLL_MS = 30 * 1000;
 setInterval(() => {
   if(document.getElementById('starnews-container')) loadStarnews(true);
 }, NEWS_POLL_MS);
