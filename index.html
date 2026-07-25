@@ -140,8 +140,9 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 .card a:hover { text-decoration: underline; }
 
 /* Starnews: einzelne Meldungen visuell trennen und strukturieren.
-   Jede Meldung ist ein eigener <article class="news-article">-Block direkt
-   im HTML (siehe "MELDUNG A/B/C/D" weiter unten im pages.home-Template). */
+   Die Meldungen selbst stehen nicht mehr im HTML, sondern werden zur
+   Laufzeit aus news.json geladen (siehe loadStarnews() im Script unten).
+   Bearbeitet werden sie über news-editor.html, nicht mehr hier im Code. */
 .news-article {
   text-align: left;
   margin-bottom: 45px;
@@ -1532,16 +1533,29 @@ const STARNEWS_FALLBACK = [
   }
 ];
 
-async function loadStarnews(){
+// Merkt sich den zuletzt geladenen news.json-Inhalt als Text, damit beim
+// automatischen Nachprüfen (Polling, siehe weiter unten) nur dann neu
+// gerendert wird, wenn sich wirklich etwas geändert hat.
+let lastNewsRaw = null;
+
+async function loadStarnews(isPoll = false){
   const container = document.getElementById('starnews-container');
   if(!container) return; // Container nur auf der Startseite vorhanden
   try{
     const res = await fetch('news.json?_=' + Date.now());
     if(!res.ok) throw new Error('news.json nicht erreichbar');
-    const items = await res.json();
+    const raw = await res.text();
+
+    // Beim automatischen Nachprüfen: nichts tun, wenn sich der Inhalt seit
+    // dem letzten Laden nicht verändert hat - so flackert für Zuhörer:innen,
+    // die die Seite gerade offen haben, nichts unnötig.
+    if(isPoll && raw === lastNewsRaw) return;
+    lastNewsRaw = raw;
+
+    const items = JSON.parse(raw);
     renderStarnewsInto(container, Array.isArray(items) && items.length ? items : STARNEWS_FALLBACK);
   }catch(e){
-    renderStarnewsInto(container, STARNEWS_FALLBACK);
+    if(!isPoll) renderStarnewsInto(container, STARNEWS_FALLBACK);
   }
   // Neu eingefügte Meldungen brauchen ihre eigene Scroll-Reveal-Beobachtung,
   // da sie erst nach initScrollReveal() ins DOM kommen.
@@ -1556,6 +1570,15 @@ function renderStarnewsInto(container, items){
 ${(item.paragraphs || []).map(p => `<p>${p}</p>`).join('\n')}
 </article>`).join('\n');
 }
+
+// Prüft alle 90 Sekunden automatisch, ob sich news.json geändert hat, und
+// aktualisiert die Meldungen dann direkt - ohne dass Zuhörer:innen, die
+// gerade auf der Seite sind, die Seite neu laden müssen. Läuft nur, solange
+// die Startseite (mit dem #starnews-container) auch tatsächlich offen ist.
+const NEWS_POLL_MS = 90 * 1000;
+setInterval(() => {
+  if(document.getElementById('starnews-container')) loadStarnews(true);
+}, NEWS_POLL_MS);
 
 function loadPage(page){
   if(prefersReducedMotion){
