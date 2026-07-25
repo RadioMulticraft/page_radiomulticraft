@@ -1,0 +1,37 @@
+{
+  "name": "Radio Multicraft – News-Editor",
+  "short_name": "News-Editor",
+  "description": "Starnews für Radio Multicraft bearbeiten und als news.json exportieren.",
+  "start_url": "./news-editor.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#8E0E0E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "img/news-editor-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/news-editor-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/news-editor-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "img/news-editor-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

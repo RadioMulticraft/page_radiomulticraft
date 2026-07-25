@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Interner News-Editor - nicht für Suchmaschinen/Besucher:innen gedacht,
+# nur für die Redaktion. Der Meta-Tag "noindex" in news-editor.html selbst
+# ist die zuverlässigere Absicherung, robots.txt ergänzt das zusätzlich.
+Disallow: /news-editor.html
+Disallow: /news-editor-manifest.json
+Disallow: /news-editor-sw.js

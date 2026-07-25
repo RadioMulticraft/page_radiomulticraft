@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radio Multicraft – News-Editor</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+
+<!-- PWA: macht diese Seite über den Browser installierbar (eigenes App-Icon,
+     öffnet sich ohne Adressleiste). Diese Seite wird bewusst nirgendwo von
+     der eigentlichen Radioseite aus verlinkt - nur wer die Adresse kennt,
+     findet sie. -->
+<link rel="manifest" href="news-editor-manifest.json">
+<meta name="theme-color" content="#8E0E0E">
+<link rel="icon" type="image/png" sizes="192x192" href="img/news-editor-icon-192.png">
+<link rel="apple-touch-icon" href="img/news-editor-icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="News-Editor">
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background-color: #121212;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 30px 20px 100px; }
+  h1 { color: #fff; font-size: 1.9rem; margin-bottom: 6px; }
+  .subtitle { color: #ccc; font-size: 0.95rem; margin-bottom: 22px; }
+
+  .howto {
+    background: #1e1e1e;
+    border-left: 4px solid #ff3b3b;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: #ddd;
+  }
+  .howto strong { color: #fff; }
+  .howto ol { margin: 8px 0 0; padding-left: 20px; }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  button, .file-btn {
+    background-color: #8E0E0D;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+  }
+  button:hover, .file-btn:hover { background-color: #ff3b3b; }
+  button.secondary { background-color: #333; }
+  button.secondary:hover { background-color: #444; }
+  button.danger { background-color: #3a1414; }
+  button.danger:hover { background-color: #6b1f1f; }
+  .file-btn { display: inline-block; }
+  input[type="file"] { display: none; }
+
+  .news-card {
+    background: #1e1e1e;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  }
+  .news-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .news-card-header h3 { margin: 0; color: #ff6a6a; font-size: 1.05rem; }
+  .header-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    background: #2a2a2a;
+    border: none;
+    color: #ccc;
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .icon-btn:hover { background: #3a3a3a; color: #fff; }
+
+  label { display: block; font-size: 0.82rem; color: #aaa; margin: 12px 0 5px; font-weight: 600; }
+  input[type="text"], textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: #121212;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #f0f0f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+  input[type="text"]:focus, textarea:focus { outline: none; border-color: #ff3b3b; }
+
+  .paragraph-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+  .paragraph-row textarea { flex-grow: 1; }
+  .paragraph-remove {
+    background: #2a2a2a; border: none; color: #ccc;
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer; flex-shrink: 0;
+  }
+  .paragraph-remove:hover { background: #6b1f1f; color: #fff; }
+
+  .add-paragraph-btn {
+    background: none;
+    border: 1px dashed rgba(255,255,255,0.25);
+    color: #aaa;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+  .add-paragraph-btn:hover { border-color: #ff3b3b; color: #ff6a6a; }
+
+  .add-news-btn {
+    display: block;
+    width: 100%;
+    background: none;
+    border: 2px dashed rgba(255,59,59,0.4);
+    color: #ff6a6a;
+    padding: 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+  .add-news-btn:hover { background: rgba(255,59,59,0.08); }
+
+  .footer-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, rgba(30,30,30,0.9), rgba(18,18,18,0.98));
+    backdrop-filter: blur(10px);
+    padding: 14px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.4);
+  }
+  .footer-bar button { font-size: 1rem; padding: 12px 26px; }
+  .status-msg {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #7fd88a;
+    margin-top: -14px;
+    margin-bottom: 20px;
+    min-height: 18px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📰 News-Editor</h1>
+  <p class="subtitle">Starnews für Radio Multicraft bearbeiten – ganz ohne Code.</p>
+
+  <div class="howto">
+    <strong>So funktioniert's:</strong>
+    <ol>
+      <li>Unten auf <strong>„news.json laden"</strong> klicken und die aktuelle <code>news.json</code> von deinem Server auswählen (optional – ohne das startest du mit einer leeren Liste).</li>
+      <li>Meldungen bearbeiten, neue hinzufügen, alte entfernen oder die Reihenfolge mit ▲ ▼ ändern.</li>
+      <li>Unten auf <strong>„news.json herunterladen"</strong> klicken.</li>
+      <li>Die heruntergeladene Datei per FTP/Hosting-Panel hochladen und die alte <code>news.json</code> im selben Ordner wie <code>index.html</code> damit ersetzen.</li>
+    </ol>
+    Die Website selbst musst du dafür nie mehr anfassen – sie liest die Meldungen automatisch aus <code>news.json</code>.
+  </div>
+
+  <div class="toolbar">
+    <label class="file-btn" for="jsonFileInput">📂 news.json laden</label>
+    <input type="file" id="jsonFileInput" accept="application/json,.json">
+    <button class="secondary" id="resetBtn">🗑️ Alles leeren</button>
+  </div>
+  <div class="status-msg" id="statusMsg"></div>
+
+  <div id="newsList"></div>
+
+  <button class="add-news-btn" id="addNewsBtn">+ Neue Meldung hinzufügen</button>
+</div>
+
+<div class="footer-bar">
+  <button id="downloadBtn">⬇️ news.json herunterladen</button>
+</div>
+
+<script>
+// Interner Zustand: Array von { image, title, paragraphs: [...] }
+let newsItems = [];
+
+const newsList = document.getElementById('newsList');
+const statusMsg = document.getElementById('statusMsg');
+
+function showStatus(text){
+  statusMsg.textContent = text;
+  setTimeout(()=>{ if(statusMsg.textContent === text) statusMsg.textContent = ''; }, 3500);
+}
+
+function render(){
+  newsList.innerHTML = '';
+  newsItems.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'news-card';
+
+    const header = document.createElement('div');
+    header.className = 'news-card-header';
+    header.innerHTML = `
+      <h3>Meldung ${index + 1}</h3>
+      <div class="header-actions">
+        <button class="icon-btn" data-action="up" title="Nach oben">▲</button>
+        <button class="icon-btn" data-action="down" title="Nach unten">▼</button>
+        <button class="icon-btn" data-action="delete" title="Meldung löschen">✖</button>
+      </div>
+    `;
+    header.querySelector('[data-action="up"]').addEventListener('click', () => moveItem(index, -1));
+    header.querySelector('[data-action="down"]').addEventListener('click', () => moveItem(index, 1));
+    header.querySelector('[data-action="delete"]').addEventListener('click', () => deleteItem(index));
+    card.appendChild(header);
+
+    const imgLabel = document.createElement('label');
+    imgLabel.textContent = 'Bild-Pfad (z.B. img/beispiel.jpg)';
+    card.appendChild(imgLabel);
+    const imgInput = document.createElement('input');
+    imgInput.type = 'text';
+    imgInput.value = item.image || '';
+    imgInput.placeholder = 'img/beispiel.jpg';
+    imgInput.addEventListener('input', () => { item.image = imgInput.value; });
+    card.appendChild(imgInput);
+
+    const titleLabel = document.createElement('label');
+    titleLabel.textContent = 'Überschrift';
+    card.appendChild(titleLabel);
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.value = item.title || '';
+    titleInput.placeholder = 'Titel der Meldung';
+    titleInput.addEventListener('input', () => { item.title = titleInput.value; });
+    card.appendChild(titleInput);
+
+    const paraLabel = document.createElement('label');
+    paraLabel.textContent = 'Absätze';
+    card.appendChild(paraLabel);
+
+    if(!Array.isArray(item.paragraphs) || item.paragraphs.length === 0){
+      item.paragraphs = [''];
+    }
+
+    item.paragraphs.forEach((para, pIndex) => {
+      const row = document.createElement('div');
+      row.className = 'paragraph-row';
+
+      const textarea = document.createElement('textarea');
+      textarea.value = para;
+      textarea.placeholder = 'Absatztext...';
+      textarea.addEventListener('input', () => { item.paragraphs[pIndex] = textarea.value; });
+      row.appendChild(textarea);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'paragraph-remove';
+      removeBtn.textContent = '✖';
+      removeBtn.title = 'Absatz entfernen';
+      removeBtn.addEventListener('click', () => {
+        item.paragraphs.splice(pIndex, 1);
+        if(item.paragraphs.length === 0) item.paragraphs = [''];
+        render();
+      });
+      row.appendChild(removeBtn);
+
+      card.appendChild(row);
+    });
+
+    const addParaBtn = document.createElement('button');
+    addParaBtn.className = 'add-paragraph-btn';
+    addParaBtn.textContent = '+ Absatz hinzufügen';
+    addParaBtn.addEventListener('click', () => {
+      item.paragraphs.push('');
+      render();
+    });
+    card.appendChild(addParaBtn);
+
+    newsList.appendChild(card);
+  });
+}
+
+function moveItem(index, direction){
+  const newIndex = index + direction;
+  if(newIndex < 0 || newIndex >= newsItems.length) return;
+  [newsItems[index], newsItems[newIndex]] = [newsItems[newIndex], newsItems[index]];
+  render();
+}
+
+function deleteItem(index){
+  if(!confirm('Diese Meldung wirklich löschen?')) return;
+  newsItems.splice(index, 1);
+  render();
+}
+
+document.getElementById('addNewsBtn').addEventListener('click', () => {
+  newsItems.push({ image: '', title: '', paragraphs: [''] });
+  render();
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(!confirm('Wirklich alle Meldungen aus dem Editor entfernen? (Deine news.json auf dem Server bleibt unberührt, solange du sie nicht erneut herunterlädst.)')) return;
+  newsItems = [];
+  render();
+});
+
+document.getElementById('jsonFileInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      if(!Array.isArray(parsed)) throw new Error('Keine gültige Liste');
+      newsItems = parsed.map(item => ({
+        image: item.image || '',
+        title: item.title || '',
+        paragraphs: Array.isArray(item.paragraphs) && item.paragraphs.length ? item.paragraphs : ['']
+      }));
+      render();
+      showStatus('✅ news.json geladen (' + newsItems.length + ' Meldungen)');
+    }catch(err){
+      alert('Diese Datei sieht nicht wie eine gültige news.json aus.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  // Leere Absätze rausfiltern, damit keine Platzhalter mit hochgeladen werden
+  const cleaned = newsItems
+    .filter(item => item.title.trim() || item.image.trim())
+    .map(item => ({
+      image: item.image.trim(),
+      title: item.title.trim(),
+      paragraphs: item.paragraphs.map(p => p.trim()).filter(p => p)
+    }));
+
+  const blob = new Blob([JSON.stringify(cleaned, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'news.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showStatus('✅ news.json wurde heruntergeladen - jetzt per FTP hochladen');
+});
+
+render();
+
+// Registriert den Service Worker, damit der Browser diese Seite als
+// installierbare App erkennt. Schlägt das fehl (z.B. weil die Seite lokal
+// per Doppelklick statt über https:// geöffnet wurde), funktioniert der
+// Editor trotzdem ganz normal weiter - nur "Installieren" wird dann nicht
+// angeboten.
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('news-editor-sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
