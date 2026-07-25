@@ -155,7 +155,17 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
   padding-bottom: 0;
 }
 .news-article h2 { text-align: left; margin-top: 0; }
-.news-article .centered-banner { margin-bottom: 18px; border-radius: 10px; }
+.news-article .centered-banner {
+  margin-bottom: 18px;
+  border-radius: 14px;
+  width: 100%;
+  /* Einheitliches Seitenverhältnis für alle Starnews-Bilder (Referenz:
+     739x415px). object-fit: cover sorgt dafür, dass jedes Bild - egal
+     welche Maße es tatsächlich hat, auch zukünftig über den News-Editor
+     hochgeladene - passend zugeschnitten wird, statt verzerrt zu werden. */
+  aspect-ratio: 739 / 415;
+  object-fit: cover;
+}
 
 
 /* Team grid */
@@ -1575,7 +1585,7 @@ ${(item.paragraphs || []).map(p => `<p>${p}</p>`).join('\n')}
 // aktualisiert die Meldungen dann direkt - ohne dass Zuhörer:innen, die
 // gerade auf der Seite sind, die Seite neu laden müssen. Läuft nur, solange
 // die Startseite (mit dem #starnews-container) auch tatsächlich offen ist.
-const NEWS_POLL_MS = 30 * 1000;
+const NEWS_POLL_MS = 90 * 1000;
 setInterval(() => {
   if(document.getElementById('starnews-container')) loadStarnews(true);
 }, NEWS_POLL_MS);
