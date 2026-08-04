@@ -1,5 +1,14 @@
 [
   {
+    "image": "img/ariana Grande.jpg",
+    "title": "Ariana Grande zieht sich vorerst zurück",
+    "paragraphs": [
+      "Ariana Grande möchte sich nach dem Ende ihrer aktuellen Tournee vorerst aus der Öffentlichkeit zurückziehen. Mit dieser Auszeit will die Sängerin bewusst Zeit für sich nehmen und ihre Gesundheit sowie ihr persönliches Wohlbefinden in den Vordergrund stellen. Nach einer intensiven Arbeitsphase soll die Pause ihr die Möglichkeit geben, neue Energie zu sammeln.",
+      "In den vergangenen Monaten stand Ariana Grande immer wieder im Fokus der Öffentlichkeit. Vor allem Diskussionen über ihr Aussehen und ihre Gesundheit sorgten für viel Aufmerksamkeit in den sozialen Medien. Ihr Team betonte jedoch, dass die Entscheidung für die Auszeit gut überlegt sei und nicht spontan getroffen wurde.",
+      "Trotz der angekündigten Pause bedankte sich die Musikerin bei ihren Fans für die große Unterstützung während ihrer Tour. Sie freue sich über die gemeinsame Zeit mit ihrem Publikum und wolle sich nun zunächst auf sich selbst konzentrieren. Wann sie wieder öffentlich auftreten oder neue Projekte vorstellen wird, ist derzeit noch nicht bekannt."
+    ]
+  },
+  {
     "image": "img/Nico_Santos.jpg",
     "title": "Ein Shirt, ein Fan, ein Sänger",
     "paragraphs": [
@@ -24,16 +33,6 @@
       "Fans von Harry Styles haben am Wochenende einen kurzen Schockmoment erlebt: Während seines Konzerts im Londoner Wembley-Stadion ging der Sänger plötzlich auf der Bühne zu Boden.",
       "Videos in den sozialen Medien zeigen, wie sich der 32-Jährige offenbar an einem Schluck Wasser verschluckt. Kurz darauf legt er sich auf den Bühnenboden und ringt für einige Sekunden nach Luft. Viele Zuschauer machten sich sofort Sorgen um den Musiker.",
       "Entwarnung folgte jedoch schnell: Harry Styles erholte sich nach wenigen Augenblicken, stand wieder auf und verabschiedete sich unter dem Applaus der Fans. Medienberichten zufolge spielte auch die große Hitze in London eine Rolle. Bei Temperaturen von über 30 Grad hatte der Sänger sein Publikum zuvor sogar dazu aufgerufen, ausreichend zu trinken und aufeinander zu achten."
-    ]
-  },
-  {
-    "image": "img/TaylorSwift.jpg",
-    "title": "Taylor Swift überrascht Fans bei „Toy Story 5“-Premiere",
-    "paragraphs": [
-      "Damit hat wohl niemand gerechnet: Bei der Premiere von „Toy Story 5“ in Los Angeles sorgte Popstar Taylor Swift für einen echten Gänsehautmoment. Überraschend erschien die Sängerin auf dem roten Teppich – und hatte etwas ganz Besonderes im Gepäck.",
-      "Nach der Premiere performte Taylor Swift erstmals live ihren neuen Song „I Knew It, I Knew You“, den sie eigens für den neuen „Toy Story“-Film aufgenommen hat. Für besonders emotionale Momente sorgte anschließend ihr gemeinsamer Auftritt mit Filmkomponist Randy Newman: Zusammen sangen sie den legendären Klassiker „You've Got a Friend in Me“ und begeisterten damit Fans der Filmreihe.",
-      "Musikalisch bewegt sich der Song im modernen Pop-Bereich und klingt für viele Hörer überraschend professionell. Ohne Hintergrundwissen würden manche vermutlich gar nicht merken, dass KI bei der Entstehung eine Rolle gespielt haben könnte.",
-      "Taylor Swift verriet außerdem, dass sie bereits seit ihrer Kindheit großer „Toy Story“-Fan sei. Für sie sei es ein lang gehegter Traum gewesen, Musik für die beliebten Figuren beizusteuern. In Deutschland startet „Toy Story 5“ am 23. Juli in den Kinos."
     ]
   }
 ]
