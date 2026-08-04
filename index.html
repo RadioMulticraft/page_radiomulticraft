@@ -30,6 +30,9 @@
 <link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
 <link rel="preconnect" href="https://itunes.apple.com" crossorigin>
 <link rel="preconnect" href="https://www.openstreetmap.org" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
   
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
@@ -136,12 +139,15 @@ main.content {
 
 /* Überschriften */
 h1,h2,h3 { text-align: center; color: #fff; }
+h1,h2 { font-family: 'Archivo Black', 'Segoe UI', sans-serif; letter-spacing: 0.5px; }
 h1 { font-size: 2.5rem; margin-bottom: 20px; }
 h2 { font-size: 1.8rem; margin-bottom: 20px; }
 h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 
 /* Separator */
 .separator { width: 80px; height: 4px; background: #ff3b3b; margin: 40px auto; border-radius: 2px; }
+.centered-banner + .separator,
+.separator + .centered-banner { margin-top: 10px; }
 
 /* Cards */
 .card {
@@ -1349,7 +1355,9 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 
 <hr class="separator">
 <img src="img/16007f74-e964-4e4c-88a4-10995f2eb00c.png" class="centered-banner" loading="lazy">
+<hr class="separator">
 <img src="img/deinsounddeinstream032026.jpg" class="centered-banner" loading="lazy">
+<hr class="separator">
 <img src="img/Newsbanner.jpg" class="centered-banner" loading="lazy">
 
 <!-- ABSTAND -->
