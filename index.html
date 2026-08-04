@@ -1259,13 +1259,16 @@ sound.on('playerror', () => {
 // Song Title
 async function fetchCurrentSong(retry=false){
 try{
-// Wir nutzen /last_songs statt /current_song und nehmen den ersten Eintrag,
-// da dieser bei laut.fm zuverlässiger sofort den tatsächlich laufenden Song
-// zeigt (das /current_song-Endpoint hinkt teils spürbar hinterher, siehe
-// gleiches Verhalten in loadLastSongs() für das Playlist-Popup).
-const response=await fetch('https://api.laut.fm/station/radioms990/last_songs?_='+Date.now());
-const list=await response.json();
-const data=Array.isArray(list) && list.length ? list[0] : {};
+// Wir nutzen /current_song statt /last_songs[0]: /last_songs liefert bei
+// laut.fm nur bereits abgespielte (abgeschlossene) Songs - der gerade
+// laufende Song taucht dort erst auf, sobald er zu Ende ist. Dadurch hinkte
+// die Anzeige hier um mehrere Minuten hinterher, obwohl laut.fm selbst über
+// /current_song exakt den Song liefert, der wirklich gerade läuft (genau das,
+// was auch auf laut.fm als "Jetzt läuft" angezeigt wird). /last_songs bleibt
+// weiterhin für das Playlist-Popup (echte Historie) im Einsatz, siehe
+// loadLastSongs() weiter unten.
+const response=await fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now());
+const data=await response.json();
 const artist=data.artist?.name?.trim();
 const title=data.title?.trim();
 const hasValidArtist=artist && !/^-+$/.test(artist);
