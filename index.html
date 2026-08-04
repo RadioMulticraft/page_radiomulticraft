@@ -1267,7 +1267,7 @@ try{
 // was auch auf laut.fm als "Jetzt läuft" angezeigt wird). /last_songs bleibt
 // weiterhin für das Playlist-Popup (echte Historie) im Einsatz, siehe
 // loadLastSongs() weiter unten.
-const response=await fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now());
+const response=await fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now(), { cache: 'no-store' });
 const data=await response.json();
 const artist=data.artist?.name?.trim();
 const title=data.title?.trim();
@@ -1790,7 +1790,7 @@ async function loadLastSongs() {
     playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:20px;">Playlist</h2>';
     playlistPopup.appendChild(closeBtn);
     try {
-        const res = await fetch('https://api.laut.fm/station/radioms990/last_songs?_=' + Date.now());
+        const res = await fetch('https://api.laut.fm/station/radioms990/last_songs?_=' + Date.now(), { cache: 'no-store' });
         const data = await res.json();
 
         if (!data || !Array.isArray(data) || data.length === 0) {
