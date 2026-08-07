@@ -6,10 +6,8 @@
 <title>Radio Multicraft – Dein Sound | Dein Stream</title>
 <meta name="description" content="Radio Multicraft – Dein Webradio mit dem besten Mix. Jetzt kostenlos reinhören!">
 
-<!-- Canonical: sagt Suchmaschinen, welche Adresse die "offizielle" ist -->
 <link rel="canonical" href="https://radiomulticraft.de/">
 
-<!-- Open Graph: Vorschau beim Teilen auf WhatsApp, Instagram, Facebook & co. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Radio Multicraft">
 <meta property="og:title" content="Radio Multicraft – Dein Sound | Dein Stream">
@@ -18,7 +16,6 @@
 <meta property="og:url" content="https://radiomulticraft.de/">
 <meta property="og:locale" content="de_DE">
 
-<!-- Twitter/X Card: eigenes Format, falls og:-Tags dort nicht greifen -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Radio Multicraft – Dein Sound | Dein Stream">
 <meta name="twitter:description" content="Radio Multicraft – Dein Webradio mit dem besten Mix. Jetzt kostenlos reinhören!">
@@ -60,7 +57,6 @@
 </script>
 
 <style>
-/* Grund-Reset */
 html, body {
   margin: 0;
   padding: 0;
@@ -73,7 +69,6 @@ html, body {
   flex-direction: column;
 }
 
-/* Sidebar */
 .sidebar {
   position: fixed;
   top: 0;
@@ -117,16 +112,14 @@ html, body {
 }
 .sidebar-links a:hover { background-color: #ff3b3b; color: #121212; }
 
-/* Main content */
 main.content {
   margin-left: 220px;
   padding: 20px;
   flex-grow: 1;
-  margin-bottom: 100px; /* Abstand zum Player */
+  margin-bottom: 100px;
   transition: opacity 0.18s ease;
 }
 
-/* Scroll-Reveal: sanftes Einblenden beim Scrollen */
 .reveal-init {
   opacity: 0;
   transform: translateY(28px);
@@ -137,19 +130,16 @@ main.content {
   transform: translateY(0);
 }
 
-/* Überschriften */
 h1,h2,h3 { text-align: center; color: #fff; }
 h1,h2 { font-family: 'Archivo Black', 'Segoe UI', sans-serif; letter-spacing: 0.5px; }
 h1 { font-size: 2.5rem; margin-bottom: 20px; }
 h2 { font-size: 1.8rem; margin-bottom: 20px; }
 h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 
-/* Separator */
 .separator { width: 80px; height: 4px; background: #ff3b3b; margin: 40px auto; border-radius: 2px; }
 .centered-banner + .separator,
 .separator + .centered-banner { margin-top: 10px; }
 
-/* Cards */
 .card {
   background-color: #1e1e1e;
   padding: 30px;
@@ -163,10 +153,6 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 .card a { color: #ff3b3b; text-decoration: none; }
 .card a:hover { text-decoration: underline; }
 
-/* Starnews: einzelne Meldungen visuell trennen und strukturieren.
-   Die Meldungen selbst stehen nicht mehr im HTML, sondern werden zur
-   Laufzeit aus news.json geladen (siehe loadStarnews() im Script unten).
-   Bearbeitet werden sie über news-editor.html, nicht mehr hier im Code. */
 .news-article {
   text-align: left;
   margin-bottom: 45px;
@@ -183,16 +169,11 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
   margin-bottom: 18px;
   border-radius: 14px;
   width: 100%;
-  /* Einheitliches Seitenverhältnis für alle Starnews-Bilder (Referenz:
-     739x415px). object-fit: cover sorgt dafür, dass jedes Bild - egal
-     welche Maße es tatsächlich hat, auch zukünftig über den News-Editor
-     hochgeladene - passend zugeschnitten wird, statt verzerrt zu werden. */
   aspect-ratio: 739 / 415;
   object-fit: cover;
 }
 
 
-/* Team grid */
 .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 30px; }
 .team-member {
   background: #1e1e1e;
@@ -209,14 +190,11 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 .team-member h3 { margin: 10px 0 5px; font-size: 1.3rem; }
 .team-member p { margin: 0; font-size: 0.95rem; color: #ccc; }
 
-/* Banner zentrieren */
 .centered-banner { display:block; margin: 0 auto 30px; max-width:100%; height:auto; }
 
-/* Werbung Text */
 .werbung-text { max-width: 800px; margin: 0 auto 150px; font-size:1.1rem; line-height:1.6; text-align:center; }
 .werbung-text a { color: #ff3b3b; text-decoration:none; }
 
-/* Kontakt-Kreise */
 .contact-circles {
   display: flex;
   justify-content: center;
@@ -240,7 +218,6 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 }
 .contact-circle:hover { background-color: #ff3b3b; }
 
-/* Cover-Bild vor dem Play-Button */
 .cover-wrapper {
   width: 60px;
   height: 60px;
@@ -261,8 +238,6 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
   display: block;
   transition: opacity 0.25s ease;
 }
-/* Wenn kein echtes Songcover vorhanden ist, zeigen wir stattdessen
-   das Logo formatfüllend (nicht zugeschnitten) auf rotem Markenhintergrund */
 .cover-wrapper.is-logo {
   background: #8E0E0E;
   padding: 9px;
@@ -271,7 +246,6 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
   object-fit: contain;
 }
 
-/* Player Footer */
 footer.player {
   background: linear-gradient(180deg, rgba(46,46,46,0.97), rgba(24,24,24,0.98));
   backdrop-filter: blur(16px);
@@ -295,7 +269,6 @@ footer.player::before {
   background: linear-gradient(90deg, transparent, rgba(255,59,59,0.75), transparent);
 }
 
-/* Player Buttons */
 #playButton-wrapper {
   position: relative;
   width: 60px;
@@ -307,7 +280,7 @@ footer.player::before {
   border-radius: 50%;
   border: none;
   background: linear-gradient(150deg, #ff5252, #e21f1f);
-  color: #fff !important; /* Symbol immer weiß */
+  color: #fff !important;
   font-size: 28px;
   line-height: 60px;
   text-align: center;
@@ -322,7 +295,6 @@ footer.player::before {
 #playButton:active { transform: scale(0.94); }
 #playButton:hover { background: linear-gradient(150deg, #ff6a6a, #d31c1c); color: #fff !important; }
 
-/* Dezenter, ruhiger Atem-Puls direkt am Button */
 #playButton.is-playing {
   animation: playGlow 2.8s ease-in-out infinite;
 }
@@ -331,7 +303,6 @@ footer.player::before {
   50%     { box-shadow: 0 0 0 5px rgba(255,59,59,0), 0 0 14px 3px rgba(255,59,59,0.55); }
 }
 
-/* Deko-Hintergrund hinter dem Button (dezent, ohne eigene Animation) */
 #playButton-wrapper::before {
   content: '';
   position: absolute;
@@ -347,7 +318,6 @@ footer.player::before {
   opacity: 1;
 }
 
-/* Mini Audio-Visualizer neben/hinter dem Play-Button */
 #visualizer {
   position: absolute;
   left: 50%;
@@ -403,8 +373,6 @@ footer.player::before {
 #volume::-moz-range-track { background: rgba(255,255,255,0.25); height:6px; border-radius:3px; }
 #volume::-moz-range-progress { background: #ff3b3b; height:6px; border-radius:3px; }
 
-/* Songtitel: zuverlässiger Lauftext, der sich per JS an die Textlänge anpasst.
-   Läuft nur, wenn der Titel tatsächlich zu lang für das Feld ist – sonst steht er still. */
 .song-info { flex-grow:1; overflow:hidden; position: relative; min-width: 0; }
 .song-info.has-fade {
   mask-image: linear-gradient(to right, transparent 0, black 22px, black calc(100% - 22px), transparent 100%);
@@ -439,7 +407,6 @@ footer.player::before {
 }
 .volume-icon { color:#fff; margin-right:8px; font-size:20px; flex-shrink: 0; cursor: pointer; }
 
-/* Aktuelle Sendung Fenster im Player */
 #current-show {
   margin-left: 20px;
   margin-right: 20px;
@@ -459,7 +426,6 @@ footer.player::before {
 #current-show h4 { margin: 6px 0; font-size: 1rem; color: #fff; }
 #current-show p { margin: 0; font-weight: 700; font-size: 1rem; color: #ff3b3b; }
 
-/* ON AIR Label */
 .on-air {
   display: inline-block;
   background: #ff1a1a;
@@ -474,7 +440,6 @@ footer.player::before {
 }
 @keyframes pulse { 0%{box-shadow:0 0 5px rgba(255,0,0,0.7);}50%{box-shadow:0 0 20px rgba(255,0,0,1);}100%{box-shadow:0 0 5px rgba(255,0,0,0.7);} }
 
-/* Hamburger Button nur mobil */
 #hamburger { display: none; }
 @media (max-width:768px){
   #hamburger {
@@ -502,11 +467,6 @@ footer.player::before {
   .contact-circles { gap: 14px; margin: 24px 0; }
   .contact-circle { width: 52px; height: 52px; font-size: 22px; }
 
-  /* === Player: eine kompakte, aufgeräumte Zeile statt zwei unruhiger Reihen ===
-     Aufbau als Grid: Cover | Titel + Sendung (übereinander) | Lautstärke | Play
-     Die Lautstärke bekommt auf Mobil nur einen Icon-Toggle (stumm/an), da ein
-     Schieberegler auf so wenig Breite ohnehin kaum präzise bedienbar ist und
-     Lautstärke auf dem Handy ganz natürlich über die Hardware-Tasten läuft. */
   footer.player {
     left:0; right:0;
     height: auto;
@@ -522,7 +482,6 @@ footer.player::before {
     box-shadow: 0 -6px 24px rgba(0,0,0,0.4);
   }
 
-  /* Play/Pause: ganz links, zuerst greifbar */
   #playButton-wrapper {
     grid-column: 1;
     grid-row: 1 / 3;
@@ -532,10 +491,8 @@ footer.player::before {
   }
   #playButton { width:52px; height:52px; font-size:22px; line-height:52px; }
 
-  /* Lautstärke entfällt auf Mobil komplett – Pegel läuft über die Hardware-Tasten */
   #volume-wrapper { display: none; }
 
-  /* Cover: direkt neben dem Play-Button, über beide Zeilen, mit Leuchtring beim Abspielen */
   .cover-wrapper {
     grid-column: 2;
     grid-row: 1 / 3;
@@ -550,7 +507,6 @@ footer.player::before {
     box-shadow: 0 0 0 2px rgba(255,59,59,0.55), 0 4px 14px rgba(0,0,0,0.5);
   }
 
-  /* Songtitel: obere Zeile der rechten Spalte */
   .song-info {
     grid-column: 3;
     grid-row: 1;
@@ -565,7 +521,6 @@ footer.player::before {
   }
   .marquee-item { font-size: 0.98rem; font-weight: 700; padding-right: 32px; }
 
-  /* Aktuelle Sendung: untere Zeile der rechten Spalte, als schlankes Label */
   #current-show {
     grid-column: 3;
     grid-row: 2;
@@ -609,7 +564,6 @@ footer.player::before {
     margin: 0;
   }
 
-  /* Der Mini-Visualizer (Punkte unter dem Button) braucht auf Mobil zu viel Platz */
   #visualizer { display: none; }
 
   .team-grid { grid-template-columns:1fr; gap:20px; }
@@ -626,7 +580,6 @@ footer.player::before {
   #playButton { width: 48px; height: 48px; font-size: 20px; line-height: 48px; }
 }
 
-/* Header-Aktionsleiste (Wetter + Playlist), oben rechts */
 .header-actions {
   position: fixed;
   top: 12px;
@@ -658,7 +611,6 @@ footer.player::before {
 #weatherButton .weather-btn-temp { font-weight: 700; }
 #weatherButton .weather-btn-place { opacity: 0.85; font-weight: 500; font-size: 0.85rem; }
 
-/* Wetter-Popup: gleicher Aufbau wie das Playlist-Popup, eigene Inhalte */
 .weather-current {
   display: flex;
   align-items: center;
@@ -672,8 +624,6 @@ footer.player::before {
 .weather-current-details { text-align: left; }
 .weather-current-details .weather-condition-label { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 8px; }
 
-/* Detailwerte (gefühlt/Feuchte/Wind/Niederschlag) mit kleinem Icon je Zeile,
-   statt reinem Fließtext – macht die Werte auf einen Blick scannbar. */
 .weather-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, auto);
@@ -689,7 +639,6 @@ footer.player::before {
 .weather-detail-item i { width: 16px; text-align: center; color: #ff6a6a; font-size: 0.85rem; flex-shrink: 0; }
 .weather-detail-item strong { color: #fff; font-weight: 600; }
 
-/* Sonnenauf-/untergang, eigene schmale Zeile unterhalb der aktuellen Lage */
 .weather-sun-row {
   display: flex;
   justify-content: center;
@@ -720,8 +669,6 @@ footer.player::before {
 .weather-forecast-day .fc-max { font-weight: 700; font-size: 0.9rem; }
 .weather-forecast-day .fc-min { font-size: 0.8rem; color: #999; }
 
-/* Min/Max-Balken: zeigt die Temperaturspanne des Tages relativ zur Wochenspanne,
-   damit man wärmere/kältere Tage auf einen Blick vergleichen kann, ohne Zahlen zu lesen. */
 .fc-bar-track {
   position: relative;
   height: 4px;
@@ -752,10 +699,6 @@ footer.player::before {
 .weather-updated { font-size: 0.75rem; color: #888; margin-top: 14px; }
 .weather-error { color: #ccc; font-size: 0.9rem; }
 
-/* ===== Gemeinsame Modal-Grundstruktur (Playlist- & Wetter-Popup) =====
-   Beide Popups teilen sich Overlay/Container/Close-Button; siehe createModal()
-   im Script weiter unten. Individuelle Unterschiede (Breite, Fade-Effekt,
-   Scroll-Verhalten) werden über Modifier-Klassen gesteuert. */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -795,13 +738,11 @@ footer.player::before {
 }
 .modal-close-btn:hover { color: #ff3b3b; }
 
-/* Weicher Ein-/Ausblend-Übergang für Popups mit fade-Option, statt hartem display:block/none */
 .modal-overlay.modal-fade { opacity: 0; transition: opacity 0.25s ease; }
 .modal-overlay.modal-fade.is-visible { opacity: 1; }
 .modal-overlay.modal-fade .modal-popup { transform: translate(-50%, -46%) scale(0.97); transition: transform 0.25s ease; }
 .modal-overlay.modal-fade.is-visible .modal-popup { transform: translate(-50%, -50%) scale(1); }
 
-/* Lade-Skeleton: Platzhalter-Blöcke in Form der finalen Elemente statt nur Text */
 .weather-skeleton { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 10px 0 4px; }
 .weather-skeleton-row { display: flex; gap: 18px; align-items: center; }
 .weather-skeleton-block {
@@ -831,7 +772,6 @@ footer.player::before {
   .fc-precip { font-size: 0.62rem; }
 }
 
-/* Reduzierte Bewegung respektieren */
 @media (prefers-reduced-motion: reduce) {
   *:not(.marquee-track):not(.marquee-track *), *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -849,7 +789,6 @@ footer.player::before {
 
  
 
-<!-- ❄ Schneefall-Effekt nur im Dezember -->
 <style>
 .snowflake {
   position: fixed;
@@ -872,24 +811,21 @@ footer.player::before {
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const today = new Date();
-    const month = today.getMonth(); // 0 = Januar, 11 = Dezember
+    const month = today.getMonth();
     const day = today.getDate();
 
-    // Schneefall nur 1.–26. Dezember
     const isChristmasSeason = (month === 11 && day >= 1 && day <= 26);
-    if (!isChristmasSeason) return; // Skript beenden, wenn nicht Dezember
+    if (!isChristmasSeason) return;
 
     function createSnowflake() {
         const snowflake = document.createElement("div");
         snowflake.classList.add("snowflake");
         snowflake.textContent = "❄";
 
-        // Zufällige Startposition und Größe
         const size = Math.random() * 1.2 + 0.6; 
         snowflake.style.left = Math.random() * 100 + "vw";
         snowflake.style.fontSize = size + "rem";
 
-        // Unterschiedliche Fallgeschwindigkeit
         snowflake.style.animationDuration = Math.random() * 4 + 4 + "s";
 
         document.body.appendChild(snowflake);
@@ -897,19 +833,15 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => snowflake.remove(), 8000);
     }
 
-    // Alle 1500ms neue Schneeflocke
     setInterval(createSnowflake, 1500);
 });
 </script>
-<!-- ❄ Schneefall Ende -->
 
 
 
-<!-- Hamburger Button für Mobil -->
 <button id="hamburger">☰</button>
 
 
-<!-- Sidebar -->
 <nav class="sidebar">
   <div class="sidebar-logo">
     <img src="img/RMC20250918-2.png" alt="Radio Multicraft Logo" />
@@ -929,10 +861,8 @@ document.addEventListener("DOMContentLoaded", function() {
   </div>
 </nav>
 
-<!-- Main content -->
 <main class="content" id="main-content"></main>
 
-<!-- Player -->
 <footer class="player">
   <div class="player-secondary">
     <div id="playButton-wrapper">
@@ -965,7 +895,6 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 
 <script>
-// Audio Player
 const streamUrl='https://stream.laut.fm/radioms990';
 const playButtonWrapper=document.getElementById('playButton-wrapper');
 const playButton=document.getElementById('playButton');
@@ -985,8 +914,6 @@ let coverRequestId=0;
 let lastMediaTitle='Radio Multicraft';
 let lastMediaArtist='Dein Sound | Dein Stream';
 
-// Lädt das Sendelogo einmalig vor, damit es beim Zusammensetzen der
-// Media-Session-Artwork sofort zur Verfügung steht.
 let stationLogoReady = null;
 function getStationLogoImage(){
   if(!stationLogoReady){
@@ -1000,11 +927,6 @@ function getStationLogoImage(){
   return stationLogoReady;
 }
 
-// Baut aus Songcover + Sendelogo ein einziges Bild zusammen (Logo als kleines
-// rundes Badge unten rechts), damit im Sperrbildschirm/Auto-Display sowohl
-// das Songcover als auch "Radio Multicraft" sichtbar sind. Falls das Cover
-// von einer Quelle ohne CORS-Freigabe kommt, wird das Canvas "verunreinigt"
-// und wir fallen sauber auf das reine Cover ohne Badge zurück.
 async function buildArtworkWithLogo(coverUrl){
   if(!coverUrl || coverUrl.includes('RMC20250918-2.png')) return logoFallback;
   try{
@@ -1038,9 +960,6 @@ async function buildArtworkWithLogo(coverUrl){
   }
 }
 
-// Media Session: liefert Titel/Interpret/Cover (inkl. Sendelogo-Badge) an
-// Sperrbildschirm, Benachrichtigungen und – wo vom System unterstützt –
-// Android Auto/CarPlay, inklusive Play/Pause-Steuerung direkt von dort aus.
 async function updateMediaSessionMetadata(artworkUrl){
   if(!('mediaSession' in navigator)) return;
   const finalArtwork = await buildArtworkWithLogo(artworkUrl || logoFallback);
@@ -1054,9 +973,6 @@ async function updateMediaSessionMetadata(artworkUrl){
       ]
     });
   }catch(e){
-    // Falls MediaMetadata auf diesem Gerät/Browser nicht sauber unterstützt
-    // wird, soll das den restlichen Player (Titelanzeige, Cover, Laufschrift)
-    // nicht beeinträchtigen.
   }
 }
 
@@ -1066,8 +982,6 @@ function setCoverImage(url, isLogo){
   updateMediaSessionMetadata(url);
 }
 
-// Sucht bei iTunes ein Coverbild anhand von Interpret + Titel,
-// falls laut.fm selbst kein Bild liefert.
 async function resolveCoverViaItunes(artist, title){
   const myRequestId = ++coverRequestId;
   try{
@@ -1076,7 +990,7 @@ async function resolveCoverViaItunes(artist, title){
     const res = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=1`);
     const json = await res.json();
     const artwork = json.results?.[0]?.artworkUrl100;
-    if(myRequestId!==coverRequestId) return; // Song hat sich in der Zwischenzeit schon wieder geändert
+    if(myRequestId!==coverRequestId) return;
     if(artwork){
       setCoverImage(artwork.replace('100x100bb','600x600bb'), false);
     } else {
@@ -1088,7 +1002,7 @@ async function resolveCoverViaItunes(artist, title){
 }
 
 function updateCoverForSong(artist, title, lautfmImage){
-  coverRequestId++; // laufende iTunes-Anfragen für den alten Song verwerfen
+  coverRequestId++;
   if(lautfmImage){
     setCoverImage(lautfmImage, false);
     return;
@@ -1101,9 +1015,6 @@ function updateCoverForSong(artist, title, lautfmImage){
 }
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// Lauftext für den Songtitel: läuft nur, wenn der Titel wirklich zu lang für
-// das Feld ist, und dessen Geschwindigkeit sich an die Textlänge anpasst,
-// damit auch sehr lange Titel vollständig lesbar durchlaufen.
 const MARQUEE_SPEED_PX_PER_SEC = 55;
 const MARQUEE_MIN_DURATION = 6;
 let marqueeResizeTimeout = null;
@@ -1114,16 +1025,10 @@ function updateMarqueeState(){
   songInfoBox.classList.remove('has-fade');
   currentSongClone.textContent = currentSongSpan.textContent;
 
-  // Doppeltes rAF: erst nach dem zweiten Frame ist das Grid-Layout
-  // (v.a. die 1fr-Spalte im mobilen Player) garantiert final berechnet,
-  // sonst wird auf Mobil teils gegen eine noch nicht fertige Breite gemessen.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const itemWidth = currentSongSpan.scrollWidth;
       const containerWidth = songInfoBox.clientWidth;
-      // Die Songtitel-Laufschrift läuft bewusst unabhängig von der
-      // "Bewegung reduzieren"-Einstellung, damit jeder Nutzer den vollständigen
-      // Titel sehen kann, egal auf welchem Gerät/Browser er unterwegs ist.
       if(itemWidth > containerWidth){
         const duration = Math.max(itemWidth / MARQUEE_SPEED_PX_PER_SEC, MARQUEE_MIN_DURATION);
         marqueeTrack.style.animationDuration = duration + 's';
@@ -1140,19 +1045,10 @@ const marqueeObserver = new ResizeObserver(() => {
 });
 marqueeObserver.observe(songInfoBox);
 
-// Nach dem Laden der Schrift erneut prüfen, da sich Textbreiten dadurch
-// nachträglich verschieben können (relevant für die Lauftext-Berechnung).
 if (document.fonts && document.fonts.ready) {
   document.fonts.ready.then(updateMarqueeState);
 }
 
-// Pinch-to-Zoom auf dem Handy: die eigentliche Layout-Breite ändert sich dabei
-// nicht (window.resize feuert nicht), aber mobile Browser pausieren laufende
-// CSS-Animationen während/kurz nach einer aktiven Zoom-Geste oft aus
-// Performance-Gründen. Die Laufschrift kann dadurch mitten im Lauf "einfrieren"
-// und wirkt dann so, als wäre der Titel abgeschnitten. Die visualViewport-API
-// feuert speziell bei Zoom-Änderungen (anders als das normale resize-Event) –
-// wir nutzen das, um die Animation danach sauber neu zu starten.
 if(window.visualViewport){
   let zoomRestartTimeout = null;
   window.visualViewport.addEventListener('resize', () => {
@@ -1173,8 +1069,6 @@ function syncVolumeFill(){ volumeSlider.style.setProperty('--vol', (volumeSlider
 volumeSlider.addEventListener('input',()=>{sound.volume(volumeSlider.value); syncVolumeFill(); syncVolumeIcon();});
 syncVolumeFill();
 
-// Lautstärke-Icon: auf Mobil ersetzt es den Schieberegler als kompakter
-// Stumm/An-Schalter, auf Desktop zeigt es zusätzlich den aktuellen Pegel an.
 const volumeIcon = document.getElementById('volumeIcon');
 let lastVolume = parseFloat(volumeSlider.value) || 0.5;
 function syncVolumeIcon(){
@@ -1203,11 +1097,8 @@ volumeIcon.addEventListener('keydown', (e)=>{
 });
 syncVolumeIcon();
 
-// Play/Pause immer weiß
 const footerPlayer = document.querySelector('footer.player');
 
-// Media Session: Play/Pause-Steuerung, die vom Sperrbildschirm, aus
-// Benachrichtigungen oder von Android Auto/CarPlay aus ausgelöst werden kann.
 if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('play', () => sound.play());
   navigator.mediaSession.setActionHandler('pause', () => sound.pause());
@@ -1224,9 +1115,6 @@ sound.on('play', () => {
   footerPlayer.classList.add('is-playing');
   if('mediaSession' in navigator){
     navigator.mediaSession.playbackState = 'playing';
-    // Metadaten genau im Moment des echten Play-Starts nochmal frisch setzen –
-    // einige Android-Versionen "fotografieren" die Metadaten für das
-    // Sperrbildschirm-Widget exakt zu diesem Zeitpunkt.
     updateMediaSessionMetadata(coverImage.src);
   }
 });
@@ -1256,17 +1144,30 @@ sound.on('playerror', () => {
   setTimeout(() => { currentShowTitle.textContent = previousShow; }, 5000);
 });
 
-// Song Title
+// ===== Song Title (Player) =====
+// Statt eines einfachen setInterval(...,3000) - das Browser im Hintergrund
+// drosseln/pausieren (Displaysperre, Tab-/App-Wechsel: der Stream läuft über
+// Howler weiter, aber der Timer für die Titel-Abfrage nicht mehr zuverlässig) -
+// planen wir den nächsten Poll immer erst NACH Abschluss der aktuellen Abfrage
+// per setTimeout und stoßen zusätzlich bei jeder Rückkehr der Seite
+// (visibilitychange/pageshow/focus) sofort eine frische Abfrage an. Das war
+// die Ursache dafür, dass der Player-Titel manchmal veraltet war, während die
+// Playlist (die bei jedem Öffnen frisch lädt) schon den echten aktuellen Song
+// zeigte.
+let currentSongPollTimer = null;
+
+function scheduleNextSongPoll(){
+  clearTimeout(currentSongPollTimer);
+  currentSongPollTimer = setTimeout(() => fetchCurrentSong(), 3000);
+}
+
 async function fetchCurrentSong(retry=false){
 try{
 // Wir nutzen /current_song statt /last_songs[0]: /last_songs liefert bei
 // laut.fm nur bereits abgespielte (abgeschlossene) Songs - der gerade
-// laufende Song taucht dort erst auf, sobald er zu Ende ist. Dadurch hinkte
-// die Anzeige hier um mehrere Minuten hinterher, obwohl laut.fm selbst über
-// /current_song exakt den Song liefert, der wirklich gerade läuft (genau das,
-// was auch auf laut.fm als "Jetzt läuft" angezeigt wird). /last_songs bleibt
-// weiterhin für das Playlist-Popup (echte Historie) im Einsatz, siehe
-// loadLastSongs() weiter unten.
+// laufende Song taucht dort erst auf, sobald er zu Ende ist. /current_song
+// liefert dagegen exakt den Song, der wirklich gerade läuft. /last_songs
+// bleibt weiterhin für das Playlist-Popup (echte Historie) im Einsatz.
 const response=await fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now(), { cache: 'no-store' });
 const data=await response.json();
 const artist=data.artist?.name?.trim();
@@ -1276,21 +1177,15 @@ if(hasValidArtist && title){currentSongSpan.textContent=`${artist} - ${title}`;}
 else if(title){currentSongSpan.textContent=title;}
 else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
 
-// Media Session mit dem neuen Titel/Interpret aktualisieren (Cover-URL bleibt
-// vorerst wie gehabt, bis updateCoverForSong sie unten ggf. neu auflöst).
 lastMediaTitle = title || 'Radio Multicraft';
 lastMediaArtist = hasValidArtist ? artist : 'Dein Sound | Dein Stream';
 updateMediaSessionMetadata(coverImage.src);
 
-// Die Laufschrift nur neu starten, wenn sich der Titeltext wirklich geändert hat –
-// sonst würde sie bei jeder Abfrage (alle 3s) neu von vorne beginnen und käme
-// bei langen Titeln nie sichtbar zum Durchlaufen.
 if(currentSongSpan.textContent !== lastMarqueeText){
   lastMarqueeText = currentSongSpan.textContent;
   updateMarqueeState();
 }
 
-// Cover nur aktualisieren, wenn sich der Song tatsächlich geändert hat
 const songKey = `${hasValidArtist?artist:''}|${title||''}`;
 if(songKey !== lastSongKey && (hasValidArtist || title)){
   lastSongKey = songKey;
@@ -1304,10 +1199,11 @@ if(songKey !== lastSongKey && (hasValidArtist || title)){
     lastMarqueeText = currentSongSpan.textContent;
     updateMarqueeState();
   }
+}finally{
+  scheduleNextSongPoll();
 }
 }
 
-// Aktuelle Sendung
 function updateCurrentShow(){
 const now=new Date(); const hour=now.getHours(); let show="NonStop!";
 if(hour>=6 && hour<11) show="Morningshow";
@@ -1318,11 +1214,24 @@ else if(hour>=22 && hour<24) show="Abendshow";
 else if(hour>=0 && hour<6) show="NonStop!";
 currentShowTitle.textContent=show;
 }
-fetchCurrentSong(); setInterval(fetchCurrentSong,3000);
+fetchCurrentSong();
 updateMarqueeState();
 updateCurrentShow(); setInterval(updateCurrentShow,60000);
 
-// SPA Navigation
+// Sobald der Tab/die App wieder sichtbar wird (z.B. nach Displaysperre,
+// App-Wechsel oder minimiertem Browserfenster), sofort den aktuellen Song
+// neu abfragen. Ohne diesen Trigger blieb die Titelanzeige beim Zurückkehren
+// auf dem letzten Song vor dem Wechsel "hängen", auch wenn im Playlist-Popup
+// längst ein neuerer Song auftaucht.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    fetchCurrentSong();
+  }
+});
+// Zusätzliches Sicherheitsnetz (iOS-Safari-Zurück-Cache, reiner Fokuswechsel).
+window.addEventListener('pageshow', () => fetchCurrentSong());
+window.addEventListener('focus', () => fetchCurrentSong());
+
 const content=document.getElementById("main-content");
 const links=document.querySelectorAll("[data-link]");
 const pages={
@@ -1333,47 +1242,37 @@ home:`<h1>HERZLICH WILLKOMMEN</h1>
 Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Nachricht!</h3>
 
 
-<!-- Kontakt-Kreise -->
 <div class="contact-circles">
-  <!-- Telefon -->
   <a href="tel:+4915755966472" title="Anrufen" class="contact-circle">
     <i class="fas fa-phone"></i>
   </a>
 
-  <!-- WhatsApp -->
   <a href="https://wa.me/4915755966472" target="_blank" rel="noopener noreferrer" title="WhatsApp Nachricht senden" class="contact-circle">
     <i class="fab fa-whatsapp"></i>
   </a>
 
-  <!-- Instagram -->
   <a href="https://www.instagram.com/radiomulticraft.de/" target="_blank" rel="noopener noreferrer" title="Instagram" class="contact-circle">
     <i class="fab fa-instagram"></i>
   </a>
 
-  <!-- E-Mail -->
   <a href="mailto:info@radiomulticraft.de" title="E-Mail schreiben" class="contact-circle">
     <i class="fas fa-envelope"></i>
   </a>
 </div>
 
 <hr class="separator">
-<img src="img/rmcbanner_9Jahre.png" class="centered-banner" loading="lazy">
+<img src="img/16007f74-e964-4e4c-88a4-10995f2eb00c.png" class="centered-banner" loading="lazy">
 <hr class="separator">
 <img src="img/deinsounddeinstream032026.jpg" class="centered-banner" loading="lazy">
 <hr class="separator">
 <img src="img/Newsbanner.jpg" class="centered-banner" loading="lazy">
 
-<!-- ABSTAND -->
 <br>
 <br>
-<!-- ABSTAND -->
 
 
 <div class="card">
 
-<!-- KALENDER -->
-
-<!-- TODO: Echte Kalender-URL eintragen, aktuell zeigt der Link nirgendwohin -->
 <a href="https:///" target="_blank" rel="noopener noreferrer">
     <img src="img/KalenderRMC.png" alt="Kalender" class="centered-banner" loading="lazy">
 </a>
@@ -1385,20 +1284,15 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 
 <h1>STARNEWS</h1>
 
-<!-- Die Meldungen hier werden automatisch aus news.json geladen (siehe
-     loadStarnews() im Script weiter unten). Neue Meldungen trägst du am
-     einfachsten über news-editor.html ein - siehe die Hinweise dort. -->
 <div id="starnews-container">
   <p style="text-align:center; color:#999;">Meldungen werden geladen...</p>
 </div>
 
-<!-- ABSTAND -->
 <br>
 <br>
 <br>
 <br>
 <br>
-<!-- ABSTAND -->
 
 <img src="img/supportedbyfull.jpg" alt="support" class="centered-banner" loading="lazy">
 </div>`,
@@ -1561,13 +1455,6 @@ jobs:`<h1>JOBS</h1>
 </div>`
 };
 
-// ===== Starnews: lädt die Meldungen automatisch aus news.json =====
-// Damit reicht es, news.json auf dem Server auszutauschen (z.B. erzeugt über
-// news-editor.html) - an der index.html muss dafür nichts mehr geändert werden.
-// Fallback: Falls news.json nicht geladen werden kann (z.B. beim lokalen Testen
-// direkt per Doppelklick auf die Datei, ohne echten Server - dort blockieren
-// Browser das Nachladen von Dateien aus Sicherheitsgründen), werden ein paar
-// Standard-Meldungen angezeigt, damit die Seite trotzdem nie leer bleibt.
 const STARNEWS_FALLBACK = [
   {
     image: 'img/RMC20250918-2.png',
@@ -1578,22 +1465,16 @@ const STARNEWS_FALLBACK = [
   }
 ];
 
-// Merkt sich den zuletzt geladenen news.json-Inhalt als Text, damit beim
-// automatischen Nachprüfen (Polling, siehe weiter unten) nur dann neu
-// gerendert wird, wenn sich wirklich etwas geändert hat.
 let lastNewsRaw = null;
 
 async function loadStarnews(isPoll = false){
   const container = document.getElementById('starnews-container');
-  if(!container) return; // Container nur auf der Startseite vorhanden
+  if(!container) return;
   try{
     const res = await fetch('news.json?_=' + Date.now());
     if(!res.ok) throw new Error('news.json nicht erreichbar');
     const raw = await res.text();
 
-    // Beim automatischen Nachprüfen: nichts tun, wenn sich der Inhalt seit
-    // dem letzten Laden nicht verändert hat - so flackert für Zuhörer:innen,
-    // die die Seite gerade offen haben, nichts unnötig.
     if(isPoll && raw === lastNewsRaw) return;
     lastNewsRaw = raw;
 
@@ -1602,8 +1483,6 @@ async function loadStarnews(isPoll = false){
   }catch(e){
     if(!isPoll) renderStarnewsInto(container, STARNEWS_FALLBACK);
   }
-  // Neu eingefügte Meldungen brauchen ihre eigene Scroll-Reveal-Beobachtung,
-  // da sie erst nach initScrollReveal() ins DOM kommen.
   initScrollReveal();
 }
 
@@ -1616,10 +1495,6 @@ ${(item.paragraphs || []).map(p => `<p>${p}</p>`).join('\n')}
 </article>`).join('\n');
 }
 
-// Prüft alle 90 Sekunden automatisch, ob sich news.json geändert hat, und
-// aktualisiert die Meldungen dann direkt - ohne dass Zuhörer:innen, die
-// gerade auf der Seite sind, die Seite neu laden müssen. Läuft nur, solange
-// die Startseite (mit dem #starnews-container) auch tatsächlich offen ist.
 const NEWS_POLL_MS = 90 * 1000;
 setInterval(() => {
   if(document.getElementById('starnews-container')) loadStarnews(true);
@@ -1643,7 +1518,6 @@ function loadPage(page){
   }, 180);
 }
 
-// Scroll-Reveal: Karten, Banner & Team-Kacheln gleiten beim Scrollen sanft ins Bild
 let revealObserver = null;
 function initScrollReveal(){
   if(prefersReducedMotion) return;
@@ -1670,43 +1544,30 @@ links.forEach(link=>{link.addEventListener("click",e=>{
 });});
 loadPage("home");
 
-// Hamburger Toggle
 const hamburger=document.getElementById("hamburger");
 hamburger.addEventListener("click",()=>{
   const isOpen = document.querySelector(".sidebar").classList.toggle("show");
   hamburger.textContent = isOpen ? "✕" : "☰";
 });
 
-// Gemeinsame Aktionsleiste oben rechts (Wetter + Playlist)
 const headerActions = document.createElement('div');
 headerActions.className = 'header-actions';
 document.body.appendChild(headerActions);
 
-// Wetter-Button: zeigt Icon + aktuelle Temperatur für Aachen, öffnet beim
-// Klick ein Popup mit Details, 5-Tage-Vorschau und Karte (nach FFN-Vorbild).
 const weatherButton = document.createElement('button');
 weatherButton.id = 'weatherButton';
 weatherButton.className = 'header-btn';
 weatherButton.innerHTML = '<i class="fas fa-cloud weather-btn-icon"></i><span class="weather-btn-temp">--°</span><span class="weather-btn-place">Aachen</span>';
 headerActions.appendChild(weatherButton);
 
-// Playlist Button & Popup
 const playlistButton = document.createElement('button');
 playlistButton.id = 'playlistButton';
 playlistButton.className = 'header-btn';
 playlistButton.textContent = 'Playlist';
 headerActions.appendChild(playlistButton);
 
-// Registry aller über createModal() erzeugten Popups. Wird genutzt, damit
-// beim Öffnen eines Popups automatisch jedes andere offene Popup zuerst
-// geschlossen wird – so können sich Playlist- und Wetter-Popup nie mehr
-// überlappen, egal in welcher Reihenfolge sie angeklickt werden.
 const openModals = [];
 
-// Gemeinsame Modal-Grundstruktur für Playlist- und Wetter-Popup: erzeugt
-// Overlay, Popup-Container und Close-Button und verdrahtet das Schließen
-// (Klick auf Close-Button oder auf den dunklen Hintergrund). Optional mit
-// weichem Fade-Übergang (siehe .modal-fade in CSS) statt hartem display:block/none.
 function createModal({ wide = false, fade = false, scrollable = false } = {}){
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay'
@@ -1726,14 +1587,10 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
   const modal = { overlay, popup, closeBtn };
 
   function open(){
-    // Andere offene Popups zuerst schließen, damit sich nie zwei gleichzeitig
-    // überlappen (z.B. Wetter offen lassen und dann Playlist anklicken).
     openModals.forEach(other => { if(other !== modal) other.close(); });
 
     overlay.style.display = 'block';
     if(fade){
-      // Erst nach dem Setzen von display:block einen Frame warten, damit die
-      // CSS-Transition (opacity/transform) beim Einblenden greift statt zu springen.
       requestAnimationFrame(() => {
         requestAnimationFrame(() => overlay.classList.add('is-visible'));
       });
@@ -1741,8 +1598,6 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
   }
   function close(){
     if(fade){
-      // Erst die Übergangsklasse entfernen (Fade+Scale läuft), erst danach
-      // display:none setzen, damit die Transition sichtbar ist.
       overlay.classList.remove('is-visible');
       setTimeout(() => { overlay.style.display = 'none'; }, 250);
     } else {
@@ -1763,8 +1618,6 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
 
 const { overlay: playlistOverlay, popup: playlistPopup, closeBtn, open: openPlaylistModal } = createModal({ wide: true });
 
-// Wandelt das laut.fm-Zeitformat ("2026-07-17 09:11:56 +0200") in ein
-// gültiges Date-Objekt um, damit es browserübergreifend zuverlässig geparst wird.
 function parseLautDate(str){
   if(!str) return null;
   const m = str.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) ([+-]\d{2})(\d{2})$/);
@@ -1772,8 +1625,6 @@ function parseLautDate(str){
   return new Date(`${m[1]}T${m[2]}${m[3]}:${m[4]}`);
 }
 
-// Erzeugt eine kurze relative Zeitangabe ("gerade eben", "vor 5 Minuten", ...)
-// aus dem started_at-Zeitstempel eines Songs.
 function formatRelativeTime(dateStr){
   const date = parseLautDate(dateStr);
   if(!date || isNaN(date.getTime())) return '';
@@ -1840,7 +1691,7 @@ async function loadLastSongs() {
     songTime.style.flexShrink = '0';
     songTime.style.whiteSpace = 'nowrap';
 
-    card.appendChild(songText); // Musik-Icon entfernt
+    card.appendChild(songText);
     card.appendChild(songTime);
     songContainer.appendChild(card);
 });
@@ -1855,17 +1706,13 @@ async function loadLastSongs() {
 playlistButton.addEventListener('click', () => {
     openPlaylistModal();
     loadLastSongs();
+    fetchCurrentSong(); // Player-Titel synchron mit der Playlist neu abfragen
 });
 
-// ===== Wetter (Aachen) =====================================================
-// Datenquelle: Open-Meteo – kostenlos, kein API-Key nötig, direkt per fetch()
-// aus dem Browser abrufbar (ähnlich wie die laut.fm-Anfragen oben).
 const AACHEN_LAT = 50.7753;
 const AACHEN_LON = 6.0839;
-const WEATHER_REFRESH_MS = 15 * 60 * 1000; // alle 15 Minuten reicht für Wetterdaten
+const WEATHER_REFRESH_MS = 15 * 60 * 1000;
 
-// WMO-Wettercode → Icon (Font Awesome, bereits auf der Seite geladen) + deutsches Label.
-// Quelle der Codes: Open-Meteo-Dokumentation (WMO Weather interpretation codes).
 function getWeatherInfo(code, isDay){
   const table = {
     0:  { icon: isDay ? 'fa-sun' : 'fa-moon', label: 'Klarer Himmel', color: isDay ? '#ffb347' : '#8ea3c9' },
@@ -1902,14 +1749,10 @@ function getWeatherInfo(code, isDay){
 
 const WEEKDAYS_SHORT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
-// Wetter-Popup (gleicher Modal-Aufbau wie das Playlist-Popup, eigener Inhalt;
-// zusätzlich mit weichem Fade-Übergang und Scroll-Fähigkeit für lange Inhalte)
 const { overlay: weatherOverlay, popup: weatherPopup, closeBtn: weatherCloseBtn, open: openWeatherModal, close: closeWeatherPopup } = createModal({ fade: true, scrollable: true });
 
 let weatherLastData = null;
 
-// Platzhalter-Layout in Form der finalen Elemente, statt nur "Lade..."-Text –
-// wirkt beim ersten Öffnen deutlich hochwertiger.
 function renderWeatherSkeleton(){
   weatherPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:6px;">Wetter in Aachen</h2>';
   weatherPopup.appendChild(weatherCloseBtn);
@@ -1932,8 +1775,6 @@ function renderWeatherSkeleton(){
   weatherPopup.appendChild(skeleton);
 }
 
-// Kurzes HH:MM aus einem ISO-Zeitstempel wie "2026-07-22T06:03" extrahieren,
-// für die Sonnenauf-/untergang-Anzeige.
 function formatSunTime(isoStr){
   if(!isoStr) return '--:--';
   const parts = isoStr.split('T');
@@ -1955,7 +1796,6 @@ function renderWeatherPopup(data){
   const cur = data.current;
   const info = getWeatherInfo(cur.weather_code, cur.is_day === 1);
 
-  // Aktuelle Lage
   const currentBlock = document.createElement('div');
   currentBlock.className = 'weather-current';
   currentBlock.innerHTML = `
@@ -1972,7 +1812,6 @@ function renderWeatherPopup(data){
   `;
   weatherPopup.appendChild(currentBlock);
 
-  // Sonnenauf-/untergang von heute
   const daily = data.daily;
   if(daily.sunrise && daily.sunset){
     const sunRow = document.createElement('div');
@@ -1984,7 +1823,6 @@ function renderWeatherPopup(data){
     weatherPopup.appendChild(sunRow);
   }
 
-  // 5-Tage-Vorschau inkl. Min/Max-Balken (Spanne relativ zur Wochenspanne) und Regenwahrscheinlichkeit
   const forecastRow = document.createElement('div');
   forecastRow.className = 'weather-forecast-row';
   const dayCount = Math.min(5, daily.time.length);
@@ -2013,7 +1851,6 @@ function renderWeatherPopup(data){
   }
   weatherPopup.appendChild(forecastRow);
 
-  // Karte (OpenStreetMap, kein API-Key nötig)
   const mapWrapper = document.createElement('div');
   mapWrapper.className = 'weather-map-wrapper';
   const bbox = '5.98,50.72,6.19,50.83';
@@ -2047,14 +1884,12 @@ async function fetchWeather(){
     const data = await res.json();
     weatherLastData = data;
 
-    // Button-Anzeige (Icon + Temperatur) aktualisieren
     const info = getWeatherInfo(data.current.weather_code, data.current.is_day === 1);
     const btnIcon = weatherButton.querySelector('.weather-btn-icon');
     btnIcon.className = `fas ${info.icon} weather-btn-icon`;
     btnIcon.style.color = info.color;
     weatherButton.querySelector('.weather-btn-temp').textContent = `${Math.round(data.current.temperature_2m)}°`;
 
-    // Falls das Popup gerade offen ist, gleich mit aktualisieren
     if(weatherOverlay.style.display === 'block'){
       renderWeatherPopup(data);
     }
@@ -2069,9 +1904,9 @@ async function fetchWeather(){
 
 weatherButton.addEventListener('click', () => {
   if(weatherLastData){
-    renderWeatherPopup(weatherLastData); // sofort zeigen, was wir schon haben
+    renderWeatherPopup(weatherLastData);
   } else {
-    renderWeatherSkeleton(); // beim allerersten Öffnen: Platzhalter-Layout statt nur Text
+    renderWeatherSkeleton();
   }
   openWeatherModal();
   fetchWeather();
