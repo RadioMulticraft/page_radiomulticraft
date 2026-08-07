@@ -1161,6 +1161,90 @@ function scheduleNextSongPoll(){
   currentSongPollTimer = setTimeout(() => fetchCurrentSong(), 3000);
 }
 
+// ===== ICY-Metadaten direkt aus dem Audiostream (echte Echtzeit-Quelle) =====
+// Viele Icecast/Shoutcast-Streams (so auch laut.fm) betten den aktuellen
+// Songtitel direkt in den Audiodatenstrom ein ("ICY-Metadata"), exakt
+// synchron zu dem, was gerade zu hören ist - unabhängig von laut.fm's
+// eigener REST-API (die für /current_song aktuell Stunden alte Daten liefert,
+// siehe Kommentar unten). Das ist dieselbe Technik, mit der klassische
+// Player wie Winamp Songtitel direkt aus dem Stream lasen.
+//
+// Wir eröffnen dafür eine SEPARATE, kurze Verbindung zum Stream (die normale
+// Wiedergabe über Howler läuft davon unberührt weiter), lesen nur so viele
+// Bytes wie nötig, um EINEN Metadaten-Block zu bekommen, und brechen die
+// Verbindung danach sofort ab - es wird also kein Audio "mitgeladen".
+//
+// Voraussetzung: der Streaming-Server muss den "icy-metaint"-Header per CORS
+// freigeben (Access-Control-Expose-Headers). Ist das nicht der Fall, schlägt
+// dieser Versuch fehl und der Code fällt automatisch auf die bisherige
+// current_song/last_songs-Abfrage zurück - ganz ohne Fehlermeldung für den
+// Hörer.
+async function fetchIcyNowPlaying(){
+  try{
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch(streamUrl, {
+      headers: { 'Icy-MetaData': '1' },
+      cache: 'no-store',
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    const metaintHeader = res.headers.get('icy-metaint');
+    if(!metaintHeader || !res.body){ controller.abort(); return null; }
+    const metaint = parseInt(metaintHeader, 10);
+    if(!metaint || isNaN(metaint) || metaint <= 0 || metaint > 200000){ controller.abort(); return null; }
+
+    const reader = res.body.getReader();
+    let buffer = new Uint8Array(0);
+    function appendBuf(chunk){
+      const merged = new Uint8Array(buffer.length + chunk.length);
+      merged.set(buffer);
+      merged.set(chunk, buffer.length);
+      buffer = merged;
+    }
+
+    // Erst bis zum Beginn des Metadaten-Blocks lesen (Audiodaten + 1 Längen-Byte).
+    while(buffer.length < metaint + 1){
+      const { done, value } = await reader.read();
+      if(done) break;
+      if(value) appendBuf(value);
+      if(buffer.length > metaint + 1 + 4096){ break; } // Sicherheitsnetz gegen Endlosschleifen
+    }
+    if(buffer.length < metaint + 1){ reader.cancel().catch(()=>{}); return null; }
+
+    const metaLength = buffer[metaint] * 16; // Länge steht in 16-Byte-Schritten
+    if(metaLength === 0){ reader.cancel().catch(()=>{}); return null; } // kein Titelwechsel gerade
+
+    while(buffer.length < metaint + 1 + metaLength){
+      const { done, value } = await reader.read();
+      if(done) break;
+      if(value) appendBuf(value);
+    }
+    reader.cancel().catch(()=>{}); // Verbindung sofort beenden, kein Audio weiter mitladen
+
+    if(buffer.length < metaint + 1 + metaLength) return null;
+    const metaBytes = buffer.slice(metaint + 1, metaint + 1 + metaLength);
+    const metaStr = new TextDecoder('utf-8').decode(metaBytes).replace(/\0+$/,'');
+    const match = metaStr.match(/StreamTitle='([^']*)'/);
+    if(!match) return null;
+    const raw = match[1].trim();
+    return raw || null;
+  }catch(e){
+    return null; // z.B. CORS blockiert, Timeout, Netzwerkfehler -> sauberer Fallback
+  }
+}
+
+// Wandelt einen rohen ICY-Titel ("Interpret - Songtitel") in unser
+// {artist, title}-Format um, analog zu den laut.fm-API-Antworten.
+function parseIcyTitle(raw){
+  if(!raw) return null;
+  const parts = raw.split(' - ');
+  if(parts.length >= 2){
+    return { artist: parts[0].trim(), title: parts.slice(1).join(' - ').trim() };
+  }
+  return { artist: null, title: raw.trim() };
+}
+
 // Wandelt das laut.fm-Zeitformat ("2026-07-17 09:11:56 +0200") in einen
 // Unix-Timestamp um, damit sich zwei Zeitangaben zuverlässig vergleichen lassen.
 function lautDateToTimestamp(str){
@@ -1173,28 +1257,44 @@ function lautDateToTimestamp(str){
 
 async function fetchCurrentSong(retry=false){
 try{
-// WICHTIG: laut.fm liefert über /current_song für diesen Sender teils über
-// Stunden hinweg denselben, eingefrorenen Song zurück (bestätigt per
-// Direktabfrage der API: /current_song blieb bei einem 6 Stunden alten Song
-// stehen, während /last_songs ganz normal aktuelle Songs zeigte). Das ist ein
-// Cache-Problem auf laut.fm-Seite, kein Bug in diesem Skript. Um robust zu
-// bleiben, fragen wir daher BEIDE Endpunkte parallel ab und nehmen den Song
-// mit dem späteren Startzeitpunkt (started_at) - so "gewinnt" automatisch die
-// jeweils frischere Quelle, egal welcher der beiden Endpunkte gerade hängt.
-const [currentRes, lastRes] = await Promise.all([
-  fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now(), { cache: 'no-store' }),
-  fetch('https://api.laut.fm/station/radioms990/last_songs?_='+Date.now(), { cache: 'no-store' })
-]);
-const currentData = await currentRes.json();
-const lastSongsData = await lastRes.json();
-const newestLastSong = Array.isArray(lastSongsData) && lastSongsData.length ? lastSongsData[0] : null;
+// SCHRITT 1: ICY-Metadaten direkt aus dem Audiostream versuchen - das ist
+// die einzige Quelle, die wirklich in Echtzeit ist (siehe fetchIcyNowPlaying
+// oben). Klappt das, überspringen wir die laut.fm-REST-API komplett.
+const icyRaw = await fetchIcyNowPlaying();
+const icyParsed = parseIcyTitle(icyRaw);
 
-const currentStarted = lautDateToTimestamp(currentData?.started_at);
-const lastStarted = lautDateToTimestamp(newestLastSong?.started_at);
-const data = (newestLastSong && lastStarted > currentStarted) ? newestLastSong : currentData;
+let artist, title, coverImageUrl;
 
-const artist=data.artist?.name?.trim();
-const title=data.title?.trim();
+if(icyParsed){
+  artist = icyParsed.artist;
+  title = icyParsed.title;
+} else {
+  // SCHRITT 2 (Fallback): laut.fm REST-API, current_song + last_songs
+  // parallel abfragen und den mit dem späteren Startzeitpunkt nehmen.
+  // WICHTIG: /current_song lieferte bei diesem Sender teils über Stunden
+  // hinweg denselben, eingefrorenen Song zurück (Cache-Problem auf
+  // laut.fm-Seite, kein Bug in diesem Skript). /last_songs zeigt dagegen nur
+  // bereits abgeschlossene Songs - kann also bis zu einer vollen
+  // Songlänge hinter dem wirklich aktuellen Song zurückliegen. Dieser
+  // Fallback ist daher zweitbeste Wahl, greift aber nur, wenn ICY nicht
+  // verfügbar ist (z.B. weil der Stream-Server das nicht per CORS freigibt).
+  const [currentRes, lastRes] = await Promise.all([
+    fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now(), { cache: 'no-store' }),
+    fetch('https://api.laut.fm/station/radioms990/last_songs?_='+Date.now(), { cache: 'no-store' })
+  ]);
+  const currentData = await currentRes.json();
+  const lastSongsData = await lastRes.json();
+  const newestLastSong = Array.isArray(lastSongsData) && lastSongsData.length ? lastSongsData[0] : null;
+
+  const currentStarted = lautDateToTimestamp(currentData?.started_at);
+  const lastStarted = lautDateToTimestamp(newestLastSong?.started_at);
+  const data = (newestLastSong && lastStarted > currentStarted) ? newestLastSong : currentData;
+
+  artist = data.artist?.name?.trim();
+  title = data.title?.trim();
+  coverImageUrl = data.artist?.image || data.artist?.thumb;
+}
+
 const hasValidArtist=artist && !/^-+$/.test(artist);
 if(hasValidArtist && title){currentSongSpan.textContent=`${artist} - ${title}`;}
 else if(title){currentSongSpan.textContent=title;}
@@ -1212,8 +1312,7 @@ if(currentSongSpan.textContent !== lastMarqueeText){
 const songKey = `${hasValidArtist?artist:''}|${title||''}`;
 if(songKey !== lastSongKey && (hasValidArtist || title)){
   lastSongKey = songKey;
-  const lautfmImage = data.artist?.image || data.artist?.thumb;
-  updateCoverForSong(hasValidArtist?artist:null, title, lautfmImage);
+  updateCoverForSong(hasValidArtist?artist:null, title, coverImageUrl);
 }
 }catch(e){
   setCoverImage(logoFallback, true);
