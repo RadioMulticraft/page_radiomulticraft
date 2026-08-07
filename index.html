@@ -1161,15 +1161,38 @@ function scheduleNextSongPoll(){
   currentSongPollTimer = setTimeout(() => fetchCurrentSong(), 3000);
 }
 
+// Wandelt das laut.fm-Zeitformat ("2026-07-17 09:11:56 +0200") in einen
+// Unix-Timestamp um, damit sich zwei Zeitangaben zuverlässig vergleichen lassen.
+function lautDateToTimestamp(str){
+  if(!str) return 0;
+  const m = str.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) ([+-]\d{2})(\d{2})$/);
+  const d = m ? new Date(`${m[1]}T${m[2]}${m[3]}:${m[4]}`) : new Date(str);
+  const t = d.getTime();
+  return isNaN(t) ? 0 : t;
+}
+
 async function fetchCurrentSong(retry=false){
 try{
-// Wir nutzen /current_song statt /last_songs[0]: /last_songs liefert bei
-// laut.fm nur bereits abgespielte (abgeschlossene) Songs - der gerade
-// laufende Song taucht dort erst auf, sobald er zu Ende ist. /current_song
-// liefert dagegen exakt den Song, der wirklich gerade läuft. /last_songs
-// bleibt weiterhin für das Playlist-Popup (echte Historie) im Einsatz.
-const response=await fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now(), { cache: 'no-store' });
-const data=await response.json();
+// WICHTIG: laut.fm liefert über /current_song für diesen Sender teils über
+// Stunden hinweg denselben, eingefrorenen Song zurück (bestätigt per
+// Direktabfrage der API: /current_song blieb bei einem 6 Stunden alten Song
+// stehen, während /last_songs ganz normal aktuelle Songs zeigte). Das ist ein
+// Cache-Problem auf laut.fm-Seite, kein Bug in diesem Skript. Um robust zu
+// bleiben, fragen wir daher BEIDE Endpunkte parallel ab und nehmen den Song
+// mit dem späteren Startzeitpunkt (started_at) - so "gewinnt" automatisch die
+// jeweils frischere Quelle, egal welcher der beiden Endpunkte gerade hängt.
+const [currentRes, lastRes] = await Promise.all([
+  fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now(), { cache: 'no-store' }),
+  fetch('https://api.laut.fm/station/radioms990/last_songs?_='+Date.now(), { cache: 'no-store' })
+]);
+const currentData = await currentRes.json();
+const lastSongsData = await lastRes.json();
+const newestLastSong = Array.isArray(lastSongsData) && lastSongsData.length ? lastSongsData[0] : null;
+
+const currentStarted = lautDateToTimestamp(currentData?.started_at);
+const lastStarted = lautDateToTimestamp(newestLastSong?.started_at);
+const data = (newestLastSong && lastStarted > currentStarted) ? newestLastSong : currentData;
+
 const artist=data.artist?.name?.trim();
 const title=data.title?.trim();
 const hasValidArtist=artist && !/^-+$/.test(artist);
@@ -1261,7 +1284,7 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 </div>
 
 <hr class="separator">
-<img src="img/rmcbanner_9Jahre.png" class="centered-banner" loading="lazy">
+<img src="img/16007f74-e964-4e4c-88a4-10995f2eb00c.png" class="centered-banner" loading="lazy">
 <hr class="separator">
 <img src="img/deinsounddeinstream032026.jpg" class="centered-banner" loading="lazy">
 <hr class="separator">
