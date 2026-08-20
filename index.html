@@ -221,6 +221,16 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 
 .centered-banner { display:block; margin: 0 auto 30px; max-width:100%; height:auto; }
 
+.hero-banner {
+  display: block;
+  margin: 0 auto 30px;
+  width: 100%;
+  max-width: 1500px;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
 .werbung-text { max-width: 800px; margin: 0 auto 150px; font-size:1.1rem; line-height:1.6; text-align:center; }
 .werbung-text a { color: #ff3b3b; text-decoration:none; }
 
@@ -1434,11 +1444,11 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 </div>
 
 <hr class="separator">
-<img src="img/16007f74-e964-4e4c-88a4-10995f2eb00c.png" class="centered-banner" loading="lazy">
+<img src="img/16007f74-e964-4e4c-88a4-10995f2eb00c.png" class="hero-banner" loading="lazy">
 <hr class="separator">
-<img src="img/deinsounddeinstream032026.jpg" class="centered-banner" loading="lazy">
+<img src="img/deinsounddeinstream032026.jpg" class="hero-banner" loading="lazy">
 <hr class="separator">
-<img src="img/Newsbanner.jpg" class="centered-banner" loading="lazy">
+<img src="img/Newsbanner.jpg" class="hero-banner" loading="lazy">
 
 <br>
 <br>
@@ -1705,7 +1715,7 @@ function initScrollReveal(){
       }
     });
   }, { threshold: 0.15 });
-  const revealTargets = content.querySelectorAll('.card, .centered-banner, .team-member, .news-article');
+  const revealTargets = content.querySelectorAll('.card, .centered-banner, .hero-banner, .team-member, .news-article');
   revealTargets.forEach(el=>{
     el.classList.add('reveal-init');
     revealObserver.observe(el);
