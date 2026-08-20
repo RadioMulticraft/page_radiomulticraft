@@ -412,7 +412,7 @@ footer.player::before {
 #volume::-moz-range-track { background: rgba(255,255,255,0.25); height:6px; border-radius:3px; }
 #volume::-moz-range-progress { background: #ff3b3b; height:6px; border-radius:3px; }
 
-.song-info { flex-grow:1; overflow:hidden; position: relative; min-width: 0; }
+.song-info { flex-grow:1; overflow:hidden; position: relative; min-width: 0; opacity: 1; transition: opacity 0.2s ease; }
 .song-info.has-fade {
   mask-image: linear-gradient(to right, transparent 0, black 22px, black calc(100% - 22px), transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0, black 22px, black calc(100% - 22px), transparent 100%);
@@ -1037,10 +1037,55 @@ async function updateMediaSessionMetadata(artworkUrl){
   }
 }
 
-function setCoverImage(url, isLogo){
-  coverImage.src = url;
-  coverWrapper.classList.toggle('is-logo', !!isLogo);
-  updateMediaSessionMetadata(url);
+let coverTransitionId = 0;
+
+function preloadImage(url){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+async function setCoverImage(url, isLogo){
+  const transitionId = ++coverTransitionId;
+
+  if(prefersReducedMotion){
+    coverImage.src = url;
+    coverWrapper.classList.toggle('is-logo', !!isLogo);
+    updateMediaSessionMetadata(url);
+    return;
+  }
+
+  try{
+    await preloadImage(url);
+    if(transitionId !== coverTransitionId) return;
+    coverImage.style.opacity = '0';
+    setTimeout(() => {
+      if(transitionId !== coverTransitionId) return;
+      coverImage.src = url;
+      coverWrapper.classList.toggle('is-logo', !!isLogo);
+      updateMediaSessionMetadata(url);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if(transitionId !== coverTransitionId) return;
+        coverImage.style.opacity = '1';
+      }));
+    }, 250);
+  }catch(e){
+    if(transitionId !== coverTransitionId) return;
+    coverImage.style.opacity = '0';
+    setTimeout(() => {
+      if(transitionId !== coverTransitionId) return;
+      coverImage.src = logoFallback;
+      coverWrapper.classList.add('is-logo');
+      updateMediaSessionMetadata(logoFallback);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if(transitionId !== coverTransitionId) return;
+        coverImage.style.opacity = '1';
+      }));
+    }, 250);
+  }
 }
 
 async function resolveCoverViaItunes(artist, title){
@@ -1075,6 +1120,30 @@ function updateCoverForSong(artist, title, lautfmImage){
   resolveCoverViaItunes(artist, title);
 }
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let songTextTransitionId = 0;
+
+function setSongTitle(text){
+  const transitionId = ++songTextTransitionId;
+  if(prefersReducedMotion){
+    currentSongSpan.textContent = text;
+    lastMarqueeText = text;
+    updateMarqueeState();
+    songInfoBox.style.opacity = '1';
+    return;
+  }
+  songInfoBox.style.opacity = '0';
+  setTimeout(() => {
+    if(transitionId !== songTextTransitionId) return;
+    currentSongSpan.textContent = text;
+    lastMarqueeText = text;
+    updateMarqueeState();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if(transitionId !== songTextTransitionId) return;
+      songInfoBox.style.opacity = '1';
+    }));
+  }, 200);
+}
 
 const MARQUEE_SPEED_PX_PER_SEC = 55;
 const MARQUEE_MIN_DURATION = 6;
@@ -1357,18 +1426,18 @@ if(icyParsed){
 }
 
 const hasValidArtist=artist && !/^-+$/.test(artist);
-if(hasValidArtist && title){currentSongSpan.textContent=`${artist} - ${title}`;}
-else if(title){currentSongSpan.textContent=title;}
-else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}}
+let newSongText;
+if(hasValidArtist && title){newSongText=`${artist} - ${title}`;}
+else if(title){newSongText=title;}
+else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);return;}else{newSongText="Dein Sound | Dein Stream";}}
+
+if(newSongText !== lastMarqueeText){
+  setSongTitle(newSongText);
+}
 
 lastMediaTitle = title || 'Radio Multicraft';
 lastMediaArtist = hasValidArtist ? artist : 'Dein Sound | Dein Stream';
 updateMediaSessionMetadata(coverImage.src);
-
-if(currentSongSpan.textContent !== lastMarqueeText){
-  lastMarqueeText = currentSongSpan.textContent;
-  updateMarqueeState();
-}
 
 const songKey = `${hasValidArtist?artist:''}|${title||''}`;
 if(songKey !== lastSongKey && (hasValidArtist || title)){
@@ -1377,11 +1446,7 @@ if(songKey !== lastSongKey && (hasValidArtist || title)){
 }
 }catch(e){
   setCoverImage(logoFallback, true);
-  if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{currentSongSpan.textContent="Dein Sound | Dein Stream";}
-  if(currentSongSpan.textContent !== lastMarqueeText){
-    lastMarqueeText = currentSongSpan.textContent;
-    updateMarqueeState();
-  }
+  if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);}else{setSongTitle("Dein Sound | Dein Stream");}
 }finally{
   scheduleNextSongPoll();
 }
