@@ -57,11 +57,21 @@
 </script>
 
 <style>
+:root {
+  --brand-red: #8E0E0E;
+  --brand-red-accent: #ff3b3b;
+  --bg-dark: #121212;
+  --bg-panel: #1e1e1e;
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.28);
+  --shadow-md: 0 10px 22px rgba(0,0,0,0.35);
+  --shadow-lg: 0 20px 48px rgba(0,0,0,0.55);
+}
+
 html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background-color: #121212;
+  background-color: var(--bg-dark);
   color: #f0f0f0;
   font-family: 'Segoe UI', sans-serif;
   min-height: 100vh;
@@ -75,7 +85,7 @@ html, body {
   left: 0;
   width: 220px;
   height: 100vh;
-  background-color: #8E0E0E;
+  background-color: var(--brand-red);
   padding: 20px;
   box-sizing: border-box;
   display: flex;
@@ -110,7 +120,13 @@ html, body {
   text-align: center;
   display: block;
 }
-.sidebar-links a:hover { background-color: #ff3b3b; color: #121212; }
+.sidebar-links a:hover { background-color: var(--brand-red-accent); color: #121212; }
+.sidebar-links a.active {
+  background-color: rgba(255,255,255,0.14);
+  box-shadow: inset 3px 0 0 var(--brand-red-accent);
+  color: #fff;
+}
+.sidebar-links a.active:hover { background-color: var(--brand-red-accent); color: #121212; }
 
 main.content {
   margin-left: 220px;
@@ -141,17 +157,29 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 .separator + .centered-banner { margin-top: 10px; }
 
 .card {
-  background-color: #1e1e1e;
+  background-color: var(--bg-panel);
   padding: 30px;
   border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255,255,255,0.05);
   max-width: 800px;
   margin: 20px auto;
 }
-.card h2 { color: #ff3b3b; margin-bottom: 20px; }
-.card p { line-height: 1.6; font-size: 1rem; margin-bottom: 12px; }
-.card a { color: #ff3b3b; text-decoration: none; }
+.card h2 { color: var(--brand-red-accent); margin-bottom: 20px; }
+.card p { line-height: 1.65; font-size: 1rem; margin-bottom: 12px; color: #e6e6e6; }
+.card a { color: var(--brand-red-accent); text-decoration: none; }
 .card a:hover { text-decoration: underline; }
+
+.lead-text {
+  max-width: 720px;
+  margin: 0 auto 40px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  text-align: center;
+  color: #cfcfcf;
+}
+
+.card--spaced { margin-top: 60px; }
 
 .news-article {
   text-align: left;
@@ -176,16 +204,17 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 
 .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 30px; }
 .team-member {
-  background: #1e1e1e;
+  background: var(--bg-panel);
   border-radius: 16px;
   padding: 25px 15px;
   text-align: center;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255,255,255,0.05);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.team-member:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+.team-member:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); }
 .team-member img {
-  width: 160px; height: 160px; object-fit: cover; border-radius: 50%; margin-bottom: 15px; border: 4px solid #ff3b3b;
+  width: 160px; height: 160px; object-fit: cover; border-radius: 50%; margin-bottom: 15px; border: 4px solid var(--brand-red-accent);
 }
 .team-member h3 { margin: 10px 0 5px; font-size: 1.3rem; }
 .team-member p { margin: 0; font-size: 0.95rem; color: #ccc; }
@@ -205,7 +234,7 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 .contact-circle {
   width: 60px;
   height: 60px;
-  background-color: #8E0E0D;
+  background-color: var(--brand-red);
   color: #fff;
   border-radius: 50%;
   display: flex;
@@ -590,7 +619,7 @@ footer.player::before {
   gap: 10px;
 }
 .header-btn {
-  background-color: #8E0E0D;
+  background-color: var(--brand-red);
   color: #fff;
   border: none;
   padding: 9px 16px;
@@ -698,6 +727,28 @@ footer.player::before {
 .weather-map-link:hover { text-decoration: underline; }
 .weather-updated { font-size: 0.75rem; color: #888; margin-top: 14px; }
 .weather-error { color: #ccc; font-size: 0.9rem; }
+
+.playlist-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  text-align: left;
+}
+.playlist-item {
+  background: rgba(255,59,59,0.1);
+  padding: 12px 15px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+.playlist-item:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(255,59,59,0.4); }
+.playlist-item-title { font-weight: 600; color: #fff; }
+.playlist-item-time { font-size: 0.8rem; color: #c9c9c9; flex-shrink: 0; white-space: nowrap; }
+.playlist-empty, .playlist-error { text-align: left; color: #ccc; }
 
 .modal-overlay {
   position: fixed;
@@ -1360,8 +1411,8 @@ const pages={
 
 home:`<h1>HERZLICH WILLKOMMEN</h1>
 <h2>Hier findest Du alles rund um unser Programm</h2>
-<h3>Du möchtest uns direkt im Studio erreichen? <br><br>
-Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Nachricht!</h3>
+<p class="lead-text">Du möchtest uns direkt im Studio erreichen?<br>
+Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Nachricht!</p>
 
 
 <div class="contact-circles">
@@ -1404,7 +1455,7 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 
 
 
-<h1>STARNEWS</h1>
+<h2>STARNEWS</h2>
 
 <div id="starnews-container">
   <p style="text-align:center; color:#999;">Meldungen werden geladen...</p>
@@ -1458,8 +1509,7 @@ Für Anfragen schreiben Sie uns eine Email an: <a href="mailto:werbung@radiomult
 </div>`,
 
 impressum:`<h1>Impressum</h1>
-<br><br><br><br><br><br><br><br><br>
-<div class="card">
+<div class="card card--spaced">
 <p><strong>Radio Multicraft</strong><br>Webradio</p>
 <p><strong>Geschäftsführer:</strong><br>Michael Sander</p>
 <p><strong>Hauptstudio:</strong><br>E-Mail: <a href="mailto:info@radiomulticraft.de">info@radiomulticraft.de</a></p>
@@ -1661,13 +1711,19 @@ function initScrollReveal(){
     revealObserver.observe(el);
   });
 }
+function setActiveLink(page){
+  links.forEach(link => link.classList.toggle('active', link.dataset.link === page));
+}
+
 links.forEach(link=>{link.addEventListener("click",e=>{
   e.preventDefault();
   loadPage(link.dataset.link);
+  setActiveLink(link.dataset.link);
   document.querySelector(".sidebar").classList.remove("show");
   hamburger.textContent = "☰";
 });});
 loadPage("home");
+setActiveLink("home");
 
 const hamburger=document.getElementById("hamburger");
 hamburger.addEventListener("click",()=>{
@@ -1770,51 +1826,28 @@ async function loadLastSongs() {
         const data = await res.json();
 
         if (!data || !Array.isArray(data) || data.length === 0) {
-            playlistPopup.innerHTML += '<p>Keine Songs verfügbar</p>';
+            playlistPopup.innerHTML += '<p class="playlist-empty">Keine Songs verfügbar</p>';
             playlistPopup.appendChild(closeBtn);
             return;
         }
 
         const songContainer = document.createElement('div');
-        songContainer.style.display = 'grid';
-        songContainer.style.gridTemplateColumns = '1fr';
-        songContainer.style.gap = '12px';
+        songContainer.className = 'playlist-list';
 
         data.slice(0, 10).forEach(song => {
     const card = document.createElement('div');
-    card.style.background = 'rgba(255,59,59,0.1)';
-    card.style.padding = '12px 15px';
-    card.style.borderRadius = '10px';
-    card.style.display = 'flex';
-    card.style.alignItems = 'center';
-    card.style.justifyContent = 'space-between';
-    card.style.gap = '12px';
-    card.style.transition = 'transform 0.2s, box-shadow 0.2s';
-    card.style.cursor = 'default';
-
-    card.addEventListener('mouseenter', () => {
-        card.style.transform = 'translateY(-3px)';
-        card.style.boxShadow = '0 6px 15px rgba(255,59,59,0.4)';
-    });
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'translateY(0)';
-        card.style.boxShadow = 'none';
-    });
+    card.className = 'playlist-item';
 
     const songText = document.createElement('span');
+    songText.className = 'playlist-item-title';
     const songArtist = song.artist?.name?.trim();
     const songTitle = song.title?.trim();
     const songHasValidArtist = songArtist && !/^-+$/.test(songArtist);
     songText.textContent = songHasValidArtist && songTitle ? `${songArtist} - ${songTitle}` : (songTitle || 'Dein Sound | Dein Stream');
-    songText.style.fontWeight = '600';
-    songText.style.textAlign = 'left';
 
     const songTime = document.createElement('span');
+    songTime.className = 'playlist-item-time';
     songTime.textContent = formatRelativeTime(song.started_at);
-    songTime.style.fontSize = '0.8rem';
-    songTime.style.color = '#c9c9c9';
-    songTime.style.flexShrink = '0';
-    songTime.style.whiteSpace = 'nowrap';
 
     card.appendChild(songText);
     card.appendChild(songTime);
@@ -1823,7 +1856,7 @@ async function loadLastSongs() {
 
         playlistPopup.appendChild(songContainer);
     } catch (e) {
-        playlistPopup.innerHTML += '<p>Fehler beim Laden</p>';
+        playlistPopup.innerHTML += '<p class="playlist-error">Fehler beim Laden</p>';
         playlistPopup.appendChild(closeBtn);
     }
 }
