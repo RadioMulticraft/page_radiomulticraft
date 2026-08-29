@@ -842,13 +842,62 @@ footer.player::before {
   }
   .reveal-init { opacity: 1 !important; transform: none !important; }
 }
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  background: var(--brand-red-accent);
+  color: #121212;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 2000;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 12px; }
+
+.seo-crawl-content {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
- 
+<!--
+  Statisch gerenderter Basis-Content für Suchmaschinen-Crawler und Nutzer
+  ohne JavaScript. Die eigentliche Seite ist eine JS-gesteuerte Single-Page-App
+  (siehe main#main-content weiter unten), die ihren Inhalt per JS nachlädt.
+  Damit Google & Co. trotzdem sofort erfassen, worum es hier geht (Sendername,
+  Beschreibung, Kontakt, Genre), steht dieser Text zusätzlich sichtbar für
+  Crawler im Markup - visuell ausgeblendet für Menschen mit funktionierendem
+  JavaScript, aber nicht per display:none (das ignorieren manche Crawler).
+-->
+<div class="seo-crawl-content" aria-hidden="true">
+  <h1>Radio Multicraft – Dein Webradio aus der Region Aachen</h1>
+  <p>Radio Multicraft (RMC) ist ein deutschsprachiges Webradio mit Live-Moderation, aktuellen Charts und Hits rund um die Uhr. Höre kostenlos und ohne Anmeldung live mit – direkt im Browser oder unterwegs.</p>
+  <p>Programm: Morningshow, Vormittagsprogramm, Nachmittagsshow, Feierabend-Programm und Abendshow, dazwischen NonStop Musik. Moderiert vom RMC-Team.</p>
+  <p>Kontakt: Telefon +49 1575 5966472, E-Mail info@radiomulticraft.de, WhatsApp und Instagram @radiomulticraft.de.</p>
+</div>
+
+<noscript>
+  <div style="max-width:700px;margin:40px auto;padding:20px;background:#1e1e1e;color:#fff;border-radius:12px;text-align:center;">
+    <h1>Radio Multicraft – Dein Sound | Dein Stream</h1>
+    <p>Für den Live-Player und alle interaktiven Funktionen wird JavaScript benötigt. Du kannst den Stream trotzdem direkt hören:</p>
+    <p><a href="https://stream.laut.fm/radioms990" style="color:#ff3b3b;">Live-Stream direkt öffnen</a></p>
+    <p>Kontakt: <a href="mailto:info@radiomulticraft.de" style="color:#ff3b3b;">info@radiomulticraft.de</a> · Tel. +49 1575 5966472</p>
+  </div>
+</noscript>
 
 <style>
 .snowflake {
@@ -882,6 +931,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const snowflake = document.createElement("div");
         snowflake.classList.add("snowflake");
         snowflake.textContent = "❄";
+        snowflake.setAttribute("aria-hidden", "true");
 
         const size = Math.random() * 1.2 + 0.6; 
         snowflake.style.left = Math.random() * 100 + "vw";
@@ -900,10 +950,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-<button id="hamburger">☰</button>
+<button id="hamburger" aria-expanded="false" aria-controls="main-sidebar" aria-label="Menü öffnen">☰</button>
 
 
-<nav class="sidebar">
+<nav class="sidebar" id="main-sidebar" aria-label="Hauptnavigation">
   <div class="sidebar-logo">
     <img src="img/RMC20250918-2.png" alt="Radio Multicraft Logo" />
   </div>
@@ -918,7 +968,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </div>
   <div class="sidebar-footer">
-    <p>© Radio Multicraft 2026</p>
+    <p>© Radio Multicraft <span id="footer-year">2026</span></p>
   </div>
 </nav>
 
@@ -938,7 +988,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </div>
   <div class="cover-wrapper is-logo">
-    <img id="cover-image" src="img/RMC20250918-2.png" alt="Cover" onerror="this.onerror=null;this.src='img/RMC20250918-2.png';this.closest('.cover-wrapper').classList.add('is-logo');">
+    <img id="cover-image" src="img/RMC20250918-2.png" alt="Aktuelles Cover des laufenden Songs" onerror="this.onerror=null;this.src='img/RMC20250918-2.png';this.closest('.cover-wrapper').classList.add('is-logo');">
   </div>
   <div class="song-info">
     <div class="marquee-track" id="marqueeTrack">
@@ -956,6 +1006,18 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 
 <script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+function escapeHtml(str){
+  if(str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 const streamUrl='https://stream.laut.fm/radioms990';
 const playButtonWrapper=document.getElementById('playButton-wrapper');
 const playButton=document.getElementById('playButton');
@@ -1274,16 +1336,6 @@ sound.on('playerror', () => {
   setTimeout(() => { currentShowTitle.textContent = previousShow; }, 5000);
 });
 
-// ===== Song Title (Player) =====
-// Statt eines einfachen setInterval(...,3000) - das Browser im Hintergrund
-// drosseln/pausieren (Displaysperre, Tab-/App-Wechsel: der Stream läuft über
-// Howler weiter, aber der Timer für die Titel-Abfrage nicht mehr zuverlässig) -
-// planen wir den nächsten Poll immer erst NACH Abschluss der aktuellen Abfrage
-// per setTimeout und stoßen zusätzlich bei jeder Rückkehr der Seite
-// (visibilitychange/pageshow/focus) sofort eine frische Abfrage an. Das war
-// die Ursache dafür, dass der Player-Titel manchmal veraltet war, während die
-// Playlist (die bei jedem Öffnen frisch lädt) schon den echten aktuellen Song
-// zeigte.
 let currentSongPollTimer = null;
 
 function scheduleNextSongPoll(){
@@ -1291,24 +1343,6 @@ function scheduleNextSongPoll(){
   currentSongPollTimer = setTimeout(() => fetchCurrentSong(), 3000);
 }
 
-// ===== ICY-Metadaten direkt aus dem Audiostream (echte Echtzeit-Quelle) =====
-// Viele Icecast/Shoutcast-Streams (so auch laut.fm) betten den aktuellen
-// Songtitel direkt in den Audiodatenstrom ein ("ICY-Metadata"), exakt
-// synchron zu dem, was gerade zu hören ist - unabhängig von laut.fm's
-// eigener REST-API (die für /current_song aktuell Stunden alte Daten liefert,
-// siehe Kommentar unten). Das ist dieselbe Technik, mit der klassische
-// Player wie Winamp Songtitel direkt aus dem Stream lasen.
-//
-// Wir eröffnen dafür eine SEPARATE, kurze Verbindung zum Stream (die normale
-// Wiedergabe über Howler läuft davon unberührt weiter), lesen nur so viele
-// Bytes wie nötig, um EINEN Metadaten-Block zu bekommen, und brechen die
-// Verbindung danach sofort ab - es wird also kein Audio "mitgeladen".
-//
-// Voraussetzung: der Streaming-Server muss den "icy-metaint"-Header per CORS
-// freigeben (Access-Control-Expose-Headers). Ist das nicht der Fall, schlägt
-// dieser Versuch fehl und der Code fällt automatisch auf die bisherige
-// current_song/last_songs-Abfrage zurück - ganz ohne Fehlermeldung für den
-// Hörer.
 async function fetchIcyNowPlaying(){
   try{
     const controller = new AbortController();
@@ -1333,24 +1367,23 @@ async function fetchIcyNowPlaying(){
       buffer = merged;
     }
 
-    // Erst bis zum Beginn des Metadaten-Blocks lesen (Audiodaten + 1 Längen-Byte).
     while(buffer.length < metaint + 1){
       const { done, value } = await reader.read();
       if(done) break;
       if(value) appendBuf(value);
-      if(buffer.length > metaint + 1 + 4096){ break; } // Sicherheitsnetz gegen Endlosschleifen
+      if(buffer.length > metaint + 1 + 4096){ break; }
     }
     if(buffer.length < metaint + 1){ reader.cancel().catch(()=>{}); return null; }
 
-    const metaLength = buffer[metaint] * 16; // Länge steht in 16-Byte-Schritten
-    if(metaLength === 0){ reader.cancel().catch(()=>{}); return null; } // kein Titelwechsel gerade
+    const metaLength = buffer[metaint] * 16;
+    if(metaLength === 0){ reader.cancel().catch(()=>{}); return null; }
 
     while(buffer.length < metaint + 1 + metaLength){
       const { done, value } = await reader.read();
       if(done) break;
       if(value) appendBuf(value);
     }
-    reader.cancel().catch(()=>{}); // Verbindung sofort beenden, kein Audio weiter mitladen
+    reader.cancel().catch(()=>{});
 
     if(buffer.length < metaint + 1 + metaLength) return null;
     const metaBytes = buffer.slice(metaint + 1, metaint + 1 + metaLength);
@@ -1360,12 +1393,10 @@ async function fetchIcyNowPlaying(){
     const raw = match[1].trim();
     return raw || null;
   }catch(e){
-    return null; // z.B. CORS blockiert, Timeout, Netzwerkfehler -> sauberer Fallback
+    return null;
   }
 }
 
-// Wandelt einen rohen ICY-Titel ("Interpret - Songtitel") in unser
-// {artist, title}-Format um, analog zu den laut.fm-API-Antworten.
 function parseIcyTitle(raw){
   if(!raw) return null;
   const parts = raw.split(' - ');
@@ -1375,8 +1406,6 @@ function parseIcyTitle(raw){
   return { artist: null, title: raw.trim() };
 }
 
-// Wandelt das laut.fm-Zeitformat ("2026-07-17 09:11:56 +0200") in einen
-// Unix-Timestamp um, damit sich zwei Zeitangaben zuverlässig vergleichen lassen.
 function lautDateToTimestamp(str){
   if(!str) return 0;
   const m = str.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) ([+-]\d{2})(\d{2})$/);
@@ -1387,9 +1416,6 @@ function lautDateToTimestamp(str){
 
 async function fetchCurrentSong(retry=false){
 try{
-// SCHRITT 1: ICY-Metadaten direkt aus dem Audiostream versuchen - das ist
-// die einzige Quelle, die wirklich in Echtzeit ist (siehe fetchIcyNowPlaying
-// oben). Klappt das, überspringen wir die laut.fm-REST-API komplett.
 const icyRaw = await fetchIcyNowPlaying();
 const icyParsed = parseIcyTitle(icyRaw);
 
@@ -1399,15 +1425,6 @@ if(icyParsed){
   artist = icyParsed.artist;
   title = icyParsed.title;
 } else {
-  // SCHRITT 2 (Fallback): laut.fm REST-API, current_song + last_songs
-  // parallel abfragen und den mit dem späteren Startzeitpunkt nehmen.
-  // WICHTIG: /current_song lieferte bei diesem Sender teils über Stunden
-  // hinweg denselben, eingefrorenen Song zurück (Cache-Problem auf
-  // laut.fm-Seite, kein Bug in diesem Skript). /last_songs zeigt dagegen nur
-  // bereits abgeschlossene Songs - kann also bis zu einer vollen
-  // Songlänge hinter dem wirklich aktuellen Song zurückliegen. Dieser
-  // Fallback ist daher zweitbeste Wahl, greift aber nur, wenn ICY nicht
-  // verfügbar ist (z.B. weil der Stream-Server das nicht per CORS freigibt).
   const [currentRes, lastRes] = await Promise.all([
     fetch('https://api.laut.fm/station/radioms990/current_song?_='+Date.now(), { cache: 'no-store' }),
     fetch('https://api.laut.fm/station/radioms990/last_songs?_='+Date.now(), { cache: 'no-store' })
@@ -1466,17 +1483,11 @@ fetchCurrentSong();
 updateMarqueeState();
 updateCurrentShow(); setInterval(updateCurrentShow,60000);
 
-// Sobald der Tab/die App wieder sichtbar wird (z.B. nach Displaysperre,
-// App-Wechsel oder minimiertem Browserfenster), sofort den aktuellen Song
-// neu abfragen. Ohne diesen Trigger blieb die Titelanzeige beim Zurückkehren
-// auf dem letzten Song vor dem Wechsel "hängen", auch wenn im Playlist-Popup
-// längst ein neuerer Song auftaucht.
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     fetchCurrentSong();
   }
 });
-// Zusätzliches Sicherheitsnetz (iOS-Safari-Zurück-Cache, reiner Fokuswechsel).
 window.addEventListener('pageshow', () => fetchCurrentSong());
 window.addEventListener('focus', () => fetchCurrentSong());
 
@@ -1509,11 +1520,11 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 </div>
 
 <hr class="separator">
-<img src="img/16007f74-e964-4e4c-88a4-10995f2eb00c.png" class="hero-banner" loading="lazy">
+<img src="img/16007f74-e964-4e4c-88a4-10995f2eb00c.png" class="hero-banner" loading="lazy" alt="Radio Multicraft Programmbanner">
 <hr class="separator">
-<img src="img/deinsounddeinstream032026.jpg" class="hero-banner" loading="lazy">
+<img src="img/deinsounddeinstream032026.jpg" class="hero-banner" loading="lazy" alt="Radio Multicraft – Dein Sound, Dein Stream">
 <hr class="separator">
-<img src="img/Newsbanner.jpg" class="hero-banner" loading="lazy">
+<img src="img/Newsbanner.jpg" class="hero-banner" loading="lazy" alt="Aktuelle Nachrichten bei Radio Multicraft">
 
 <br>
 <br>
@@ -1522,7 +1533,7 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 <div class="card">
 
 <a href="https:///" target="_blank" rel="noopener noreferrer">
-    <img src="img/KalenderRMC.png" alt="Kalender" class="centered-banner" loading="lazy">
+    <img src="img/KalenderRMC.png" alt="Sendekalender von Radio Multicraft" class="centered-banner" loading="lazy">
 </a>
 
 
@@ -1542,42 +1553,42 @@ Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Na
 <br>
 <br>
 
-<img src="img/supportedbyfull.jpg" alt="support" class="centered-banner" loading="lazy">
+<img src="img/supportedbyfull.jpg" alt="Radio Multicraft wird unterstützt von unseren Partnern" class="centered-banner" loading="lazy">
 </div>`,
 team:`<h1>Unser Team</h1>
 <div class="team-grid">
 <div class="team-member">
-<img src="img/michael-sander.256x256.jpg" alt="Michael" loading="lazy">
+<img src="img/michael-sander.256x256.jpg" alt="Michael Sander, Geschäftsführer und Moderator bei Radio Multicraft" loading="lazy">
 <h3>Michael</h3><p>Geschäftsführer & Moderator</p>
 </div>
 <div class="team-member">
-<img src="img/Vanessa_Schwinghoff.png" alt="Vanessa" loading="lazy">
+<img src="img/Vanessa_Schwinghoff.png" alt="Vanessa Schwinghoff, Social Media & Service bei Radio Multicraft" loading="lazy">
 <h3>Vanessa</h3><p>Social Media & Service</p>
 </div>
 <div class="team-member">
-<img src="img/timo-lützenkirchen.png" alt="Timo" loading="lazy">
+<img src="img/timo-lützenkirchen.png" alt="Timo Lützenkirchen, News-Redakteur bei Radio Multicraft" loading="lazy">
 <h3>Timo</h3><p>News-Redakteur</p>
 </div>
 <div class="team-member">
-<img src="img/jennnifer-wielgosch.png" alt="Jenny" loading="lazy">
+<img src="img/jennnifer-wielgosch.png" alt="Jenny Wielgosch, Stationvoice und Moderation bei Radio Multicraft" loading="lazy">
 <h3>Jenny</h3><p>Stationvoice & Moderation</p>
 </div>
 <div class="team-member">
-<img src="img/Marlon-Moderation.png" alt="Marlon" loading="lazy">
+<img src="img/Marlon-Moderation.png" alt="Marlon, Moderator bei Radio Multicraft" loading="lazy">
 <h3>Marlon</h3><p>Moderation</p>
 </div>
 <div class="team-member">
-<img src="img/Max-removebg2.png" alt="Max" loading="lazy">
+<img src="img/Max-removebg2.png" alt="Max, Moderator bei Radio Multicraft" loading="lazy">
 <h3>Max</h3><p>Moderation</p>
 </div>
 <div class="team-member">
-<img src="img/bildfolgtimg.jpg" alt="Tobias" loading="lazy">
+<img src="img/bildfolgtimg.jpg" alt="Tobias, Moderator bei Radio Multicraft" loading="lazy">
 <h3>Tobias</h3><p>Moderation</p>
 </div>`,
 
 werbung:`<h1>WERBUNG</h1>
-<img src="img/Show Banner in Blue Light Style.jpg" class="centered-banner" loading="lazy">
-<img src="img/3spaltensytemRMC.png" class="centered-banner" loading="lazy">
+<img src="img/Show Banner in Blue Light Style.jpg" class="centered-banner" loading="lazy" alt="Werbebanner Radio Multicraft im Blue-Light-Stil">
+<img src="img/3spaltensytemRMC.png" class="centered-banner" loading="lazy" alt="Übersicht der Werbeformate von Radio Multicraft">
 <div class="werbung-text">
 <p>
 Für Anfragen schreiben Sie uns eine Email an: <a href="mailto:werbung@radiomulticraft.de">werbung@radiomulticraft.de</a></p>
@@ -1694,7 +1705,7 @@ E-Mail: <a href="mailto:info@radiomulticraft.de">info@radiomulticraft.de</a>
 </div>`,
 
 jobs:`<h1>JOBS</h1>
-<img src="img/Aufruf_BewerbungRMC.jpg" class="centered-banner" loading="lazy">
+<img src="img/Aufruf_BewerbungRMC.jpg" class="centered-banner" loading="lazy" alt="Aufruf zur Bewerbung bei Radio Multicraft">
 <div class="card">
 <h2>Moderatoren (m/w/d)</h2>
 <p>Du liebst Musik, bist kommunikativ und möchtest Teil eines dynamischen Teams werden? Wir suchen engagierte Moderatoren, die mit Leidenschaft unser Programm bereichern.</p>
@@ -1739,9 +1750,9 @@ async function loadStarnews(isPoll = false){
 function renderStarnewsInto(container, items){
   container.innerHTML = items.map(item => `
 <article class="news-article">
-<img src="${item.image}" alt="News" class="centered-banner" loading="lazy" onerror="this.onerror=null;this.src='img/RMC20250918-2.png';">
-<h2>${item.title}</h2>
-${(item.paragraphs || []).map(p => `<p>${p}</p>`).join('\n')}
+<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title || 'News')}" class="centered-banner" loading="lazy" onerror="this.onerror=null;this.src='img/RMC20250918-2.png';">
+<h2>${escapeHtml(item.title)}</h2>
+${(item.paragraphs || []).map(p => `<p>${escapeHtml(p)}</p>`).join('\n')}
 </article>`).join('\n');
 }
 
@@ -1796,6 +1807,7 @@ links.forEach(link=>{link.addEventListener("click",e=>{
   setActiveLink(link.dataset.link);
   document.querySelector(".sidebar").classList.remove("show");
   hamburger.textContent = "☰";
+  hamburger.setAttribute('aria-expanded', 'false');
 });});
 loadPage("home");
 setActiveLink("home");
@@ -1804,6 +1816,7 @@ const hamburger=document.getElementById("hamburger");
 hamburger.addEventListener("click",()=>{
   const isOpen = document.querySelector(".sidebar").classList.toggle("show");
   hamburger.textContent = isOpen ? "✕" : "☰";
+  hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 });
 
 const headerActions = document.createElement('div');
@@ -1829,6 +1842,8 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
   overlay.className = 'modal-overlay'
     + (fade ? ' modal-fade' : '')
     + (scrollable ? ' modal-scrollable' : '');
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
   document.body.appendChild(overlay);
 
   const popup = document.createElement('div');
@@ -1838,6 +1853,7 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close-btn';
   closeBtn.textContent = '✖';
+  closeBtn.setAttribute('aria-label', 'Schließen');
   popup.appendChild(closeBtn);
 
   const modal = { overlay, popup, closeBtn };
@@ -1851,6 +1867,7 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
         requestAnimationFrame(() => overlay.classList.add('is-visible'));
       });
     }
+    closeBtn.focus();
   }
   function close(){
     if(fade){
@@ -1867,6 +1884,7 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
 
   closeBtn.addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
+  overlay.addEventListener('keydown', (e) => { if(e.key === 'Escape') close(); });
 
   return modal;
 }
@@ -1939,7 +1957,7 @@ async function loadLastSongs() {
 playlistButton.addEventListener('click', () => {
     openPlaylistModal();
     loadLastSongs();
-    fetchCurrentSong(); // Player-Titel synchron mit der Playlist neu abfragen
+    fetchCurrentSong();
 });
 
 const AACHEN_LAT = 50.7753;
