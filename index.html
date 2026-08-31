@@ -657,8 +657,12 @@ footer.player::before {
   gap: 18px;
   margin-bottom: 18px;
   flex-wrap: wrap;
+  background: linear-gradient(135deg, rgba(255,59,59,0.14), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 20px;
 }
-.weather-current .weather-icon-big { font-size: 3.2rem; color: #ff3b3b; transition: color 0.3s ease; }
+.weather-current .weather-icon-big { font-size: 3.2rem; color: #ff3b3b; transition: color 0.3s ease; filter: drop-shadow(0 0 14px currentColor); }
 .weather-current .weather-temp-big { font-size: 2.6rem; font-weight: 700; line-height: 1; }
 .weather-current-details { text-align: left; }
 .weather-current-details .weather-condition-label { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 8px; }
@@ -702,6 +706,17 @@ footer.player::before {
   border-radius: 10px;
   padding: 10px 4px;
   text-align: center;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.weather-forecast-day:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+  border-color: rgba(255,59,59,0.3);
+}
+.weather-forecast-day.is-today {
+  border-color: var(--brand-red-accent);
+  background: rgba(255,59,59,0.18);
 }
 .weather-forecast-day .fc-weekday { font-size: 0.75rem; color: #ccc; text-transform: uppercase; letter-spacing: 0.03em; }
 .weather-forecast-day .fc-icon { font-size: 1.3rem; margin: 6px 0; transition: color 0.3s ease; }
@@ -741,23 +756,58 @@ footer.player::before {
 .playlist-list {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 10px;
   text-align: left;
 }
 .playlist-item {
-  background: rgba(255,59,59,0.1);
+  background: rgba(255,255,255,0.03);
   padding: 12px 15px;
   border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-left: 3px solid transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   cursor: default;
 }
-.playlist-item:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(255,59,59,0.4); }
-.playlist-item-title { font-weight: 600; color: #fff; }
-.playlist-item-time { font-size: 0.8rem; color: #c9c9c9; flex-shrink: 0; white-space: nowrap; }
+.playlist-item:hover {
+  border-left-color: var(--brand-red-accent);
+  background: rgba(255,59,59,0.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  transform: translateY(-2px);
+}
+.playlist-item.is-latest {
+  border-left-color: var(--brand-red-accent);
+  background: rgba(255,59,59,0.1);
+}
+.playlist-item.is-latest::after {
+  content: 'ZULETZT';
+  position: absolute;
+  top: -8px;
+  left: 14px;
+  background: var(--brand-red-accent);
+  color: #121212;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.playlist-item-main { display: flex; align-items: center; min-width: 0; gap: 10px; }
+.playlist-item-icon { color: var(--brand-red-accent); font-size: 0.8rem; flex-shrink: 0; }
+.playlist-item-title { font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.playlist-item-time {
+  font-size: 0.72rem;
+  color: #c9c9c9;
+  flex-shrink: 0;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.08);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
 .playlist-empty, .playlist-error { text-align: left; color: #ccc; }
 
 .modal-overlay {
@@ -776,7 +826,7 @@ footer.player::before {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #1e1e1e;
+  background: linear-gradient(160deg, #232323, #1a1a1a);
   color: #fff;
   padding: 30px 30px;
   border-radius: 16px;
@@ -784,6 +834,27 @@ footer.player::before {
   max-width: 480px;
   width: 90%;
   text-align: center;
+  overflow: hidden;
+}
+.modal-popup::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--brand-red-accent), transparent);
+}
+.modal-popup h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.modal-popup h2 i { color: var(--brand-red-accent); font-size: 1.05rem; }
+.modal-subtitle {
+  text-align: center;
+  color: #999;
+  font-size: 0.82rem;
+  margin: -4px 0 20px;
 }
 .modal-popup.modal-popup--wide { max-width: 500px; padding: 30px 40px; }
 .modal-close-btn {
@@ -1911,7 +1982,7 @@ function formatRelativeTime(dateStr){
 }
 
 async function loadLastSongs() {
-    playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:20px;">Playlist</h2>';
+    playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:4px;"><i class="fas fa-music"></i>Playlist</h2><p class="modal-subtitle">Die letzten gespielten Songs</p>';
     playlistPopup.appendChild(closeBtn);
     try {
         const res = await fetch('https://api.laut.fm/station/radioms990/last_songs?_=' + Date.now(), { cache: 'no-store' });
@@ -1926,9 +1997,13 @@ async function loadLastSongs() {
         const songContainer = document.createElement('div');
         songContainer.className = 'playlist-list';
 
-        data.slice(0, 10).forEach(song => {
+        data.slice(0, 10).forEach((song, index) => {
     const card = document.createElement('div');
-    card.className = 'playlist-item';
+    card.className = 'playlist-item' + (index === 0 ? ' is-latest' : '');
+
+    const main = document.createElement('div');
+    main.className = 'playlist-item-main';
+    main.innerHTML = '<i class="fas fa-music playlist-item-icon"></i>';
 
     const songText = document.createElement('span');
     songText.className = 'playlist-item-title';
@@ -1936,12 +2011,13 @@ async function loadLastSongs() {
     const songTitle = song.title?.trim();
     const songHasValidArtist = songArtist && !/^-+$/.test(songArtist);
     songText.textContent = songHasValidArtist && songTitle ? `${songArtist} - ${songTitle}` : (songTitle || 'Dein Sound | Dein Stream');
+    main.appendChild(songText);
 
     const songTime = document.createElement('span');
     songTime.className = 'playlist-item-time';
     songTime.textContent = formatRelativeTime(song.started_at);
 
-    card.appendChild(songText);
+    card.appendChild(main);
     card.appendChild(songTime);
     songContainer.appendChild(card);
 });
@@ -2088,7 +2164,7 @@ function renderWeatherPopup(data){
     const barWidth = Math.max(((dayMax - dayMin) / weekSpan) * 100, 8);
     const precip = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : null;
     const dayEl = document.createElement('div');
-    dayEl.className = 'weather-forecast-day';
+    dayEl.className = 'weather-forecast-day' + (i === 0 ? ' is-today' : '');
     dayEl.innerHTML = `
       <div class="fc-weekday">${i === 0 ? 'Heute' : WEEKDAYS_SHORT[d.getDay()]}</div>
       <i class="fas ${dayInfo.icon} fc-icon" style="color:${dayInfo.color};"></i>
