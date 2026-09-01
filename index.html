@@ -57,6 +57,10 @@
 </script>
 
 <style>
+* , *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
   --brand-red: #8E0E0E;
   --brand-red-accent: #ff3b3b;
@@ -77,6 +81,8 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
 }
 
 .sidebar {
@@ -627,6 +633,7 @@ footer.player::before {
   display: flex;
   align-items: center;
   gap: 10px;
+  max-width: calc(100vw - 40px);
 }
 .header-btn {
   background-color: var(--brand-red);
@@ -697,7 +704,7 @@ footer.player::before {
 
 .weather-forecast-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
   margin: 18px 0;
 }
@@ -708,6 +715,7 @@ footer.player::before {
   text-align: center;
   border: 1px solid rgba(255,255,255,0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  min-width: 0;
 }
 .weather-forecast-day:hover {
   transform: translateY(-3px);
@@ -750,14 +758,58 @@ footer.player::before {
 .weather-map-wrapper iframe { display: block; width: 100%; height: 220px; border: 0; }
 .weather-map-link { display:inline-block; margin-top:8px; font-size:0.8rem; color:#ff3b3b; text-decoration:none; }
 .weather-map-link:hover { text-decoration: underline; }
-.weather-updated { font-size: 0.75rem; color: #888; margin-top: 14px; }
+.weather-updated { font-size: 0.75rem; color: #888; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.weather-updated .weather-refresh-btn {
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: #ff6a6a;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.weather-updated .weather-refresh-btn:hover { background: rgba(255,59,59,0.2); }
+.weather-updated .weather-refresh-btn.is-spinning i { animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .weather-error { color: #ccc; font-size: 0.9rem; }
+
+.playlist-modal-subtitle-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: -4px 0 20px;
+}
+.playlist-live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ff6a6a;
+  text-transform: uppercase;
+}
+.playlist-live-dot::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff3b3b;
+  box-shadow: 0 0 6px 1px rgba(255,59,59,0.7);
+  animation: pulse 1.5s infinite;
+}
 
 .playlist-list {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
   text-align: left;
+  min-width: 0;
 }
 .playlist-item {
   background: rgba(255,255,255,0.03);
@@ -772,6 +824,7 @@ footer.player::before {
   position: relative;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   cursor: default;
+  min-width: 0;
 }
 .playlist-item:hover {
   border-left-color: var(--brand-red-accent);
@@ -796,13 +849,13 @@ footer.player::before {
   padding: 2px 8px;
   border-radius: 20px;
 }
-.playlist-item-main { display: flex; align-items: center; min-width: 0; gap: 10px; }
+.playlist-item-main { display: flex; align-items: center; min-width: 0; gap: 10px; flex: 1 1 auto; }
 .playlist-item-icon { color: var(--brand-red-accent); font-size: 0.8rem; flex-shrink: 0; }
-.playlist-item-title { font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.playlist-item-title { font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .playlist-item-time {
   font-size: 0.72rem;
   color: #c9c9c9;
-  flex-shrink: 0;
+  flex: 0 0 auto;
   white-space: nowrap;
   background: rgba(255,255,255,0.08);
   padding: 4px 10px;
@@ -810,15 +863,23 @@ footer.player::before {
 }
 .playlist-empty, .playlist-error { text-align: left; color: #ccc; }
 
+.playlist-skeleton-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background-color: rgba(0,0,0,0.6);
   display: none;
   z-index: 1000;
+  box-sizing: border-box;
 }
 .modal-overlay.modal-scrollable { overflow-y: auto; }
 .modal-popup {
@@ -835,6 +896,9 @@ footer.player::before {
   width: 90%;
   text-align: center;
   overflow: hidden;
+  box-sizing: border-box;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
 }
 .modal-popup::before {
   content: '';
@@ -857,6 +921,9 @@ footer.player::before {
   margin: -4px 0 20px;
 }
 .modal-popup.modal-popup--wide { max-width: 500px; padding: 30px 40px; }
+@media (max-width: 480px) {
+  .modal-popup.modal-popup--wide { padding: 26px 18px; }
+}
 .modal-close-btn {
   position: absolute;
   top: 15px;
@@ -895,7 +962,7 @@ footer.player::before {
   .weather-current { gap: 12px; }
   .weather-current .weather-icon-big { font-size: 2.6rem; }
   .weather-current .weather-temp-big { font-size: 2.1rem; }
-  .weather-forecast-row { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+  .weather-forecast-row { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
   .weather-forecast-day { padding: 8px 2px; }
   .weather-forecast-day .fc-weekday { font-size: 0.65rem; }
   .weather-map-wrapper iframe { height: 170px; }
@@ -1902,7 +1969,7 @@ headerActions.appendChild(weatherButton);
 const playlistButton = document.createElement('button');
 playlistButton.id = 'playlistButton';
 playlistButton.className = 'header-btn';
-playlistButton.textContent = 'Playlist';
+playlistButton.innerHTML = '<i class="fas fa-list-ul"></i><span>Playlist</span>';
 headerActions.appendChild(playlistButton);
 
 const openModals = [];
@@ -1946,6 +2013,7 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
     } else {
       overlay.style.display = 'none';
     }
+    stopPlaylistAutoRefresh();
   }
 
   modal.open = open;
@@ -1960,7 +2028,7 @@ function createModal({ wide = false, fade = false, scrollable = false } = {}){
 }
 
 
-const { overlay: playlistOverlay, popup: playlistPopup, closeBtn, open: openPlaylistModal } = createModal({ wide: true });
+const { overlay: playlistOverlay, popup: playlistPopup, closeBtn, open: openPlaylistModal } = createModal({ wide: true, fade: true, scrollable: true });
 
 function parseLautDate(str){
   if(!str) return null;
@@ -1981,16 +2049,58 @@ function formatRelativeTime(dateStr){
   return `vor ${diffH} Stunden`;
 }
 
+function renderPlaylistSkeleton(){
+  playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:4px;"><i class="fas fa-music"></i>Playlist</h2><p class="modal-subtitle">Die letzten gespielten Songs</p>';
+  playlistPopup.appendChild(closeBtn);
+  const wrap = document.createElement('div');
+  wrap.className = 'playlist-list';
+  for(let i = 0; i < 6; i++){
+    const row = document.createElement('div');
+    row.className = 'playlist-skeleton-item';
+    row.innerHTML = `
+      <div class="weather-skeleton-block" style="width:14px; height:14px; border-radius:4px; flex-shrink:0;"></div>
+      <div class="weather-skeleton-block" style="flex:1 1 auto; height:14px; max-width:${60 - i * 5}%;"></div>
+      <div class="weather-skeleton-block" style="width:62px; height:20px; border-radius:20px; flex-shrink:0;"></div>
+    `;
+    wrap.appendChild(row);
+  }
+  playlistPopup.appendChild(wrap);
+}
+
+let playlistAutoRefreshTimer = null;
+const PLAYLIST_AUTO_REFRESH_MS = 20 * 1000;
+
+function startPlaylistAutoRefresh(){
+  stopPlaylistAutoRefresh();
+  playlistAutoRefreshTimer = setInterval(() => {
+    if(playlistOverlay.style.display === 'block') loadLastSongs();
+  }, PLAYLIST_AUTO_REFRESH_MS);
+}
+function stopPlaylistAutoRefresh(){
+  if(playlistAutoRefreshTimer){
+    clearInterval(playlistAutoRefreshTimer);
+    playlistAutoRefreshTimer = null;
+  }
+}
+
 async function loadLastSongs() {
-    playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:4px;"><i class="fas fa-music"></i>Playlist</h2><p class="modal-subtitle">Die letzten gespielten Songs</p>';
-    playlistPopup.appendChild(closeBtn);
     try {
         const res = await fetch('https://api.laut.fm/station/radioms990/last_songs?_=' + Date.now(), { cache: 'no-store' });
         const data = await res.json();
 
+        playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:4px;"><i class="fas fa-music"></i>Playlist</h2>';
+        playlistPopup.appendChild(closeBtn);
+
+        const subtitleRow = document.createElement('div');
+        subtitleRow.className = 'playlist-modal-subtitle-row';
+        subtitleRow.innerHTML = '<span class="modal-subtitle" style="margin:0;">Die letzten gespielten Songs</span><span class="playlist-live-dot">Live</span>';
+        playlistPopup.appendChild(subtitleRow);
+
         if (!data || !Array.isArray(data) || data.length === 0) {
-            playlistPopup.innerHTML += '<p class="playlist-empty">Keine Songs verfügbar</p>';
-            playlistPopup.appendChild(closeBtn);
+            const empty = document.createElement('p');
+            empty.className = 'playlist-empty';
+            empty.textContent = 'Keine Songs verfügbar';
+            playlistPopup.appendChild(empty);
             return;
         }
 
@@ -2011,6 +2121,7 @@ async function loadLastSongs() {
     const songTitle = song.title?.trim();
     const songHasValidArtist = songArtist && !/^-+$/.test(songArtist);
     songText.textContent = songHasValidArtist && songTitle ? `${songArtist} - ${songTitle}` : (songTitle || 'Dein Sound | Dein Stream');
+    songText.title = songText.textContent;
     main.appendChild(songText);
 
     const songTime = document.createElement('span');
@@ -2024,15 +2135,21 @@ async function loadLastSongs() {
 
         playlistPopup.appendChild(songContainer);
     } catch (e) {
-        playlistPopup.innerHTML += '<p class="playlist-error">Fehler beim Laden</p>';
+        playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:4px;"><i class="fas fa-music"></i>Playlist</h2><p class="modal-subtitle">Die letzten gespielten Songs</p>';
         playlistPopup.appendChild(closeBtn);
+        const err = document.createElement('p');
+        err.className = 'playlist-error';
+        err.textContent = 'Fehler beim Laden. Wird automatisch erneut versucht...';
+        playlistPopup.appendChild(err);
     }
 }
 
 playlistButton.addEventListener('click', () => {
+    renderPlaylistSkeleton();
     openPlaylistModal();
     loadLastSongs();
     fetchCurrentSong();
+    startPlaylistAutoRefresh();
 });
 
 const AACHEN_LAT = 50.7753;
@@ -2116,6 +2233,12 @@ function renderWeatherPopup(data){
     err.className = 'weather-error';
     err.textContent = 'Wetterdaten konnten gerade nicht geladen werden.';
     weatherPopup.appendChild(err);
+    const retryBtn = document.createElement('button');
+    retryBtn.className = 'weather-refresh-btn';
+    retryBtn.style.marginTop = '10px';
+    retryBtn.innerHTML = '<i class="fas fa-rotate"></i> Erneut versuchen';
+    retryBtn.addEventListener('click', () => { renderWeatherSkeleton(); fetchWeather(); });
+    weatherPopup.appendChild(retryBtn);
     return;
   }
 
@@ -2195,7 +2318,15 @@ function renderWeatherPopup(data){
   const updated = document.createElement('p');
   updated.className = 'weather-updated';
   const now = new Date();
-  updated.textContent = `Aktualisiert um ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Daten: Open-Meteo`;
+  updated.innerHTML = `<span>Aktualisiert um ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Daten: Open-Meteo</span>`;
+  const refreshBtn = document.createElement('button');
+  refreshBtn.className = 'weather-refresh-btn';
+  refreshBtn.innerHTML = '<i class="fas fa-rotate"></i> Aktualisieren';
+  refreshBtn.addEventListener('click', () => {
+    refreshBtn.classList.add('is-spinning');
+    fetchWeather().finally(() => refreshBtn.classList.remove('is-spinning'));
+  });
+  updated.appendChild(refreshBtn);
   weatherPopup.appendChild(updated);
 }
 
