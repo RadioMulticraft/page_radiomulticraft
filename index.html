@@ -657,124 +657,176 @@ footer.player::before {
 #weatherButton .weather-btn-temp { font-weight: 700; }
 #weatherButton .weather-btn-place { opacity: 0.85; font-weight: 500; font-size: 0.85rem; }
 
-.weather-current {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-  background: linear-gradient(135deg, rgba(255,59,59,0.14), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 16px;
-  padding: 20px;
+/* ---------- Wetter: verankertes Panel statt zentralem Popup ---------- */
+.weather-popover-overlay {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  display: none;
+  z-index: 1000;
 }
-.weather-current .weather-icon-big { font-size: 3.2rem; color: #ff3b3b; transition: color 0.3s ease; filter: drop-shadow(0 0 14px currentColor); }
-.weather-current .weather-temp-big { font-size: 2.6rem; font-weight: 700; line-height: 1; }
-.weather-current-details { text-align: left; }
-.weather-current-details .weather-condition-label { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 8px; }
+.weather-popover-overlay.modal-scrollable { overflow-y: auto; }
 
-.weather-detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, auto);
-  gap: 4px 18px;
-}
-.weather-detail-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.88rem;
-  color: #ccc;
-}
-.weather-detail-item i { width: 16px; text-align: center; color: #ff6a6a; font-size: 0.85rem; flex-shrink: 0; }
-.weather-detail-item strong { color: #fff; font-weight: 600; }
-
-.weather-sun-row {
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  margin: 4px 0 18px;
-  padding: 10px 0;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.weather-sun-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #ccc; }
-.weather-sun-item i { color: #ffb347; font-size: 1rem; }
-.weather-sun-item strong { color: #fff; font-weight: 600; }
-
-.weather-forecast-row {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-  margin: 18px 0;
-}
-.weather-forecast-day {
-  background: rgba(255,59,59,0.1);
-  border-radius: 10px;
-  padding: 10px 4px;
-  text-align: center;
-  border: 1px solid rgba(255,255,255,0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  min-width: 0;
-}
-.weather-forecast-day:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
-  border-color: rgba(255,59,59,0.3);
-}
-.weather-forecast-day.is-today {
-  border-color: var(--brand-red-accent);
-  background: rgba(255,59,59,0.18);
-}
-.weather-forecast-day .fc-weekday { font-size: 0.75rem; color: #ccc; text-transform: uppercase; letter-spacing: 0.03em; }
-.weather-forecast-day .fc-icon { font-size: 1.3rem; margin: 6px 0; transition: color 0.3s ease; }
-.weather-forecast-day .fc-max { font-weight: 700; font-size: 0.9rem; }
-.weather-forecast-day .fc-min { font-size: 0.8rem; color: #999; }
-
-.fc-bar-track {
-  position: relative;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255,255,255,0.12);
-  margin: 6px 2px 8px;
-}
-.fc-bar-fill {
+.weather-popover {
   position: absolute;
-  top: 0;
-  height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #5aa7ff, #ff3b3b);
-}
-.fc-precip { display: flex; align-items: center; justify-content: center; gap: 3px; font-size: 0.68rem; color: #7fb8ff; margin-top: 2px; }
-.fc-precip i { font-size: 0.65rem; }
-
-.weather-map-wrapper {
-  border-radius: 14px;
+  width: 372px;
+  max-width: calc(100vw - 20px);
+  border-radius: 20px;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  background: #1a1a1a;
+  box-shadow: 0 26px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07);
+  transform-origin: top right;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.96);
+  transition: opacity 0.22s cubic-bezier(.2,.8,.3,1), transform 0.22s cubic-bezier(.2,.8,.3,1);
+}
+.weather-popover-overlay.is-visible .weather-popover { opacity: 1; transform: translateY(0) scale(1); }
+
+.weather-caret {
+  position: absolute;
+  top: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  transform: rotate(45deg);
+  z-index: 0;
+}
+
+.wx-hero {
+  position: relative;
+  padding: 22px 22px 6px;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+.wx-hero::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.16), transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+.wx-hero-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.wx-place {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+}
+.wx-hero .modal-close-btn { position: static; color: rgba(255,255,255,0.85); }
+.wx-hero .modal-close-btn:hover { color: #fff; }
+
+.wx-hero-main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   margin-top: 6px;
 }
-.weather-map-wrapper iframe { display: block; width: 100%; height: 220px; border: 0; }
-.weather-map-link { display:inline-block; margin-top:8px; font-size:0.8rem; color:#ff3b3b; text-decoration:none; }
-.weather-map-link:hover { text-decoration: underline; }
-.weather-updated { font-size: 0.75rem; color: #888; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
-.weather-updated .weather-refresh-btn {
-  background: rgba(255,255,255,0.08);
+.wx-icon {
+  font-size: 2.6rem;
+  filter: drop-shadow(0 0 16px rgba(255,255,255,0.25));
+  flex-shrink: 0;
+}
+.wx-temp {
+  font-family: 'Archivo Black', 'Segoe UI', sans-serif;
+  font-size: 2.9rem;
+  line-height: 1;
+  letter-spacing: 0.2px;
+}
+.wx-condition-block { min-width: 0; }
+.wx-condition { font-size: 0.98rem; font-weight: 600; }
+.wx-feels { font-size: 0.78rem; opacity: 0.8; margin-top: 2px; }
+
+.wx-sparkline-wrap { margin: 14px -4px 0; }
+.wx-sparkline { display: block; width: 100%; height: 46px; overflow: visible; }
+.wx-sparkline-line { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.92; }
+.wx-sparkline-fill { opacity: 0.18; }
+.wx-sparkline-now { fill: #fff; }
+.wx-sparkline-labels { display: flex; justify-content: space-between; font-size: 0.62rem; color: rgba(255,255,255,0.6); padding: 2px 4px 14px; letter-spacing: 0.02em; }
+
+.wx-body { background: linear-gradient(180deg, #1e1e1e, #1a1a1a); padding: 16px 20px 6px; }
+
+.wx-meta-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.wx-meta-pill {
+  flex: 1 1 auto;
+  min-width: 88px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+.wx-meta-pill i { color: var(--brand-red-accent); font-size: 0.85rem; width: 14px; text-align: center; flex-shrink: 0; }
+.wx-meta-pill .wx-meta-value { font-size: 0.85rem; font-weight: 700; color: #fff; line-height: 1.15; }
+.wx-meta-pill .wx-meta-label { font-size: 0.66rem; color: #999; }
+
+.wx-forecast {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 12px 0 6px;
+}
+.wx-forecast-day {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px;
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+  min-width: 0;
+}
+.wx-forecast-day:hover { background: rgba(255,255,255,0.04); }
+.wx-forecast-day .fc-weekday { font-size: 0.68rem; color: #999; font-weight: 600; }
+.wx-forecast-day.is-today .fc-weekday { color: var(--brand-red-accent); }
+.wx-forecast-day .fc-icon { font-size: 1.05rem; margin: 2px 0 1px; }
+.wx-forecast-day .fc-max { font-size: 0.82rem; font-weight: 700; color: #fff; }
+.wx-forecast-day .fc-min { font-size: 0.72rem; color: #888; }
+.wx-forecast-day .fc-precip { display: flex; align-items: center; gap: 2px; font-size: 0.62rem; color: #7fb8ff; margin-top: 1px; }
+.wx-forecast-day .fc-precip i { font-size: 0.58rem; }
+
+.wx-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 0 4px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: #888;
+}
+.wx-map-link { color: var(--brand-red-accent); text-decoration: none; }
+.wx-map-link:hover { text-decoration: underline; }
+.wx-refresh-btn {
+  background: rgba(255,255,255,0.06);
   border: none;
   color: #ff6a6a;
-  font-size: 0.75rem;
-  padding: 3px 10px;
+  font-size: 0.7rem;
+  padding: 4px 10px;
   border-radius: 12px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 5px;
 }
-.weather-updated .weather-refresh-btn:hover { background: rgba(255,59,59,0.2); }
-.weather-updated .weather-refresh-btn.is-spinning i { animation: spin 0.7s linear infinite; }
+.wx-refresh-btn:hover { background: rgba(255,59,59,0.18); }
+.wx-refresh-btn.is-spinning i { animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.weather-error { color: #ccc; font-size: 0.9rem; }
+.weather-error { color: #ccc; font-size: 0.9rem; padding: 18px 20px; }
+.weather-error + .wx-refresh-btn { margin: 0 20px 16px; }
 
 .playlist-modal-subtitle-row {
   display: flex;
@@ -959,16 +1011,10 @@ footer.player::before {
   .header-actions { top: 15px; right: 12px; gap: 8px; }
   .header-btn { padding: 8px 12px; font-size: 0.82rem; gap: 6px; }
   #weatherButton .weather-btn-place { display: none; }
-  .weather-current { gap: 12px; }
-  .weather-current .weather-icon-big { font-size: 2.6rem; }
-  .weather-current .weather-temp-big { font-size: 2.1rem; }
-  .weather-forecast-row { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
-  .weather-forecast-day { padding: 8px 2px; }
-  .weather-forecast-day .fc-weekday { font-size: 0.65rem; }
-  .weather-map-wrapper iframe { height: 170px; }
-  .weather-detail-grid { grid-template-columns: 1fr; gap: 6px; justify-items: start; }
-  .weather-sun-row { gap: 18px; }
-  .fc-precip { font-size: 0.62rem; }
+  .weather-popover { width: calc(100vw - 20px); }
+  .wx-temp { font-size: 2.4rem; }
+  .wx-icon { font-size: 2.2rem; }
+  .wx-meta-pill { min-width: 76px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2192,30 +2238,15 @@ function getWeatherInfo(code, isDay){
 
 const WEEKDAYS_SHORT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
-const { overlay: weatherOverlay, popup: weatherPopup, closeBtn: weatherCloseBtn, open: openWeatherModal, close: closeWeatherPopup } = createModal({ fade: true, scrollable: true });
-
-let weatherLastData = null;
-
-function renderWeatherSkeleton(){
-  weatherPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:6px;">Wetter in Aachen</h2>';
-  weatherPopup.appendChild(weatherCloseBtn);
-  const skeleton = document.createElement('div');
-  skeleton.className = 'weather-skeleton';
-  skeleton.innerHTML = `
-    <div class="weather-skeleton-row">
-      <div class="weather-skeleton-block" style="width:56px; height:56px; border-radius:50%;"></div>
-      <div class="weather-skeleton-block" style="width:80px; height:40px;"></div>
-    </div>
-    <div class="weather-skeleton-block" style="width:220px; height:14px;"></div>
-    <div class="weather-skeleton-row">
-      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
-      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
-      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
-      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
-      <div class="weather-skeleton-block" style="width:60px; height:60px; border-radius:10px;"></div>
-    </div>
-  `;
-  weatherPopup.appendChild(skeleton);
+/* Stimmungs-Verlauf je Wetterlage - lebt nur im Hero, Markenrot bleibt das strukturelle Akzentelement */
+function getWeatherMood(code, isDay){
+  if(code === 0 || code === 1) return isDay ? ['#8a5416','#2a1c10'] : ['#242c58','#12131c'];
+  if(code === 2 || code === 3) return ['#42423f','#1e1e1e'];
+  if(code === 45 || code === 48) return ['#48484a','#232323'];
+  if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) return ['#20597e','#12232f'];
+  if([71,73,75,77,85,86].includes(code)) return ['#46647f','#1c2733'];
+  if(code === 95 || code === 96 || code === 99) return ['#5a3592','#1d1230'];
+  return ['#8E0E0E','#3a0505'];
 }
 
 function formatSunTime(isoStr){
@@ -2224,116 +2255,244 @@ function formatSunTime(isoStr){
   return parts.length > 1 ? parts[1] : '--:--';
 }
 
-function renderWeatherPopup(data){
-  weatherPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:6px;">Wetter in Aachen</h2>';
-  weatherPopup.appendChild(weatherCloseBtn);
+function formatHour(isoStr){
+  if(!isoStr) return '';
+  const h = isoStr.split('T')[1];
+  return h ? h.slice(0,5) : '';
+}
 
+/* Kompakter Temperaturverlauf der nächsten Stunden als eigenständiges SVG-Sparkline-Element */
+function buildSparkline(temps){
+  const w = 320, h = 40, pad = 3;
+  const min = Math.min(...temps), max = Math.max(...temps);
+  const span = Math.max(max - min, 1);
+  const stepX = (w - pad * 2) / Math.max(temps.length - 1, 1);
+  const pts = temps.map((t, i) => [
+    pad + i * stepX,
+    pad + (1 - (t - min) / span) * (h - pad * 2)
+  ]);
+  const line = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const fill = line + ` L${pts[pts.length - 1][0].toFixed(1)},${h} L${pts[0][0].toFixed(1)},${h} Z`;
+  return { line, fill, w, h, first: pts[0] };
+}
+
+/* ---------- Verankertes Wetter-Panel (kein zentrales Popup mehr) ---------- */
+const weatherPopoverOverlay = document.createElement('div');
+weatherPopoverOverlay.className = 'weather-popover-overlay modal-scrollable';
+weatherPopoverOverlay.setAttribute('role', 'dialog');
+weatherPopoverOverlay.setAttribute('aria-modal', 'true');
+weatherPopoverOverlay.setAttribute('aria-label', 'Wetter in Aachen');
+document.body.appendChild(weatherPopoverOverlay);
+
+const weatherCaret = document.createElement('div');
+weatherCaret.className = 'weather-caret';
+weatherPopoverOverlay.appendChild(weatherCaret);
+
+const weatherPopover = document.createElement('div');
+weatherPopover.className = 'weather-popover';
+weatherPopoverOverlay.appendChild(weatherPopover);
+
+let weatherLastData = null;
+let weatherPopoverIsOpen = false;
+
+function positionWeatherPopover(){
+  const btnRect = weatherButton.getBoundingClientRect();
+  const popRect = weatherPopover.getBoundingClientRect();
+  const margin = 10;
+  let left = btnRect.right - popRect.width;
+  left = Math.min(Math.max(left, margin), window.innerWidth - popRect.width - margin);
+  const top = btnRect.bottom + 12;
+  weatherPopover.style.left = left + 'px';
+  weatherPopover.style.top = top + 'px';
+
+  const caretCenter = btnRect.left + btnRect.width / 2;
+  const caretLeft = Math.min(Math.max(caretCenter - 7, left + 16), left + popRect.width - 28);
+  weatherCaret.style.left = caretLeft + 'px';
+  weatherCaret.style.top = (top - 7) + 'px';
+}
+
+function weatherEscHandler(e){ if(e.key === 'Escape') closeWeatherPopover(); }
+
+function openWeatherPopover(){
+  openModals.forEach(other => other.close());
+  weatherPopoverOverlay.style.display = 'block';
+  positionWeatherPopover();
+  requestAnimationFrame(() => requestAnimationFrame(() => weatherPopoverOverlay.classList.add('is-visible')));
+  weatherPopoverIsOpen = true;
+  document.addEventListener('keydown', weatherEscHandler);
+  window.addEventListener('resize', positionWeatherPopover);
+}
+function closeWeatherPopover(){
+  if(!weatherPopoverIsOpen) return;
+  weatherPopoverOverlay.classList.remove('is-visible');
+  setTimeout(() => { weatherPopoverOverlay.style.display = 'none'; }, 220);
+  weatherPopoverIsOpen = false;
+  document.removeEventListener('keydown', weatherEscHandler);
+  window.removeEventListener('resize', positionWeatherPopover);
+}
+weatherPopoverOverlay.addEventListener('click', (e) => { if(e.target === weatherPopoverOverlay) closeWeatherPopover(); });
+openModals.push({ close: closeWeatherPopover });
+
+function renderWeatherSkeleton(){
+  weatherPopover.innerHTML = `
+    <div class="wx-hero" style="background:linear-gradient(135deg, #3d3d3d, #1e1e1e);">
+      <div class="wx-hero-top"><span class="wx-place">Aachen</span><button class="modal-close-btn" aria-label="Schließen"><i class="fas fa-xmark"></i></button></div>
+      <div class="weather-skeleton" style="padding-top:6px;">
+        <div class="weather-skeleton-row">
+          <div class="weather-skeleton-block" style="width:46px; height:46px; border-radius:50%;"></div>
+          <div class="weather-skeleton-block" style="width:90px; height:38px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="wx-body">
+      <div class="weather-skeleton-row" style="margin-bottom:14px;">
+        <div class="weather-skeleton-block" style="width:110px; height:44px; border-radius:12px;"></div>
+        <div class="weather-skeleton-block" style="width:110px; height:44px; border-radius:12px;"></div>
+        <div class="weather-skeleton-block" style="width:110px; height:44px; border-radius:12px;"></div>
+      </div>
+      <div class="weather-skeleton-row">
+        <div class="weather-skeleton-block" style="width:48px; height:48px; border-radius:10px;"></div>
+        <div class="weather-skeleton-block" style="width:48px; height:48px; border-radius:10px;"></div>
+        <div class="weather-skeleton-block" style="width:48px; height:48px; border-radius:10px;"></div>
+        <div class="weather-skeleton-block" style="width:48px; height:48px; border-radius:10px;"></div>
+        <div class="weather-skeleton-block" style="width:48px; height:48px; border-radius:10px;"></div>
+      </div>
+    </div>
+  `;
+  weatherPopover.querySelector('.modal-close-btn').addEventListener('click', closeWeatherPopover);
+}
+
+function renderWeatherPopup(data){
   if(!data){
-    const err = document.createElement('p');
-    err.className = 'weather-error';
-    err.textContent = 'Wetterdaten konnten gerade nicht geladen werden.';
-    weatherPopup.appendChild(err);
-    const retryBtn = document.createElement('button');
-    retryBtn.className = 'weather-refresh-btn';
-    retryBtn.style.marginTop = '10px';
-    retryBtn.innerHTML = '<i class="fas fa-rotate"></i> Erneut versuchen';
-    retryBtn.addEventListener('click', () => { renderWeatherSkeleton(); fetchWeather(); });
-    weatherPopup.appendChild(retryBtn);
+    weatherPopover.innerHTML = `
+      <div class="wx-hero" style="background:linear-gradient(135deg, #3d3d3d, #1e1e1e);">
+        <div class="wx-hero-top"><span class="wx-place">Aachen</span><button class="modal-close-btn" aria-label="Schließen"><i class="fas fa-xmark"></i></button></div>
+      </div>
+      <p class="weather-error">Wetterdaten konnten gerade nicht geladen werden.</p>
+      <button class="wx-refresh-btn"><i class="fas fa-rotate"></i> Erneut versuchen</button>
+    `;
+    weatherPopover.querySelector('.modal-close-btn').addEventListener('click', closeWeatherPopover);
+    weatherPopover.querySelector('.wx-refresh-btn').addEventListener('click', () => { renderWeatherSkeleton(); fetchWeather(); });
+    weatherCaret.style.background = '#3d3d3d';
     return;
   }
 
   const cur = data.current;
-  const info = getWeatherInfo(cur.weather_code, cur.is_day === 1);
-
-  const currentBlock = document.createElement('div');
-  currentBlock.className = 'weather-current';
-  currentBlock.innerHTML = `
-    <i class="fas ${info.icon} weather-icon-big" style="color:${info.color};"></i>
-    <div class="weather-temp-big">${Math.round(cur.temperature_2m)}°C</div>
-    <div class="weather-current-details">
-      <div class="weather-condition-label">${info.label}</div>
-      <div class="weather-detail-grid">
-        <div class="weather-detail-item"><i class="fas fa-temperature-half"></i>Gefühlt <strong>${Math.round(cur.apparent_temperature)}°C</strong></div>
-        <div class="weather-detail-item"><i class="fas fa-droplet"></i>Feuchte <strong>${Math.round(cur.relative_humidity_2m)}%</strong></div>
-        <div class="weather-detail-item"><i class="fas fa-wind"></i>Wind <strong>${Math.round(cur.wind_speed_10m)} km/h</strong></div>
-      </div>
-    </div>
-  `;
-  weatherPopup.appendChild(currentBlock);
-
   const daily = data.daily;
-  if(daily.sunrise && daily.sunset){
-    const sunRow = document.createElement('div');
-    sunRow.className = 'weather-sun-row';
-    sunRow.innerHTML = `
-      <div class="weather-sun-item"><i class="fas fa-arrow-up"></i>Aufgang <strong>${formatSunTime(daily.sunrise[0])}</strong></div>
-      <div class="weather-sun-item"><i class="fas fa-arrow-down"></i>Untergang <strong>${formatSunTime(daily.sunset[0])}</strong></div>
-    `;
-    weatherPopup.appendChild(sunRow);
+  const info = getWeatherInfo(cur.weather_code, cur.is_day === 1);
+  const [moodA, moodB] = getWeatherMood(cur.weather_code, cur.is_day === 1);
+  weatherCaret.style.background = moodA;
+
+  weatherPopover.innerHTML = '';
+
+  const hero = document.createElement('div');
+  hero.className = 'wx-hero';
+  hero.style.background = `linear-gradient(135deg, ${moodA}, ${moodB})`;
+
+  let sparkHtml = '';
+  const hourly = data.hourly;
+  if(hourly && Array.isArray(hourly.temperature_2m) && hourly.time){
+    const nowIso = new Date().toISOString().slice(0, 13);
+    let startIdx = hourly.time.findIndex(t => t.slice(0, 13) === nowIso);
+    if(startIdx < 0) startIdx = 0;
+    const temps = hourly.temperature_2m.slice(startIdx, startIdx + 9);
+    const times = hourly.time.slice(startIdx, startIdx + 9);
+    if(temps.length >= 3){
+      const spark = buildSparkline(temps);
+      sparkHtml = `
+        <div class="wx-sparkline-wrap">
+          <svg class="wx-sparkline" viewBox="0 0 ${spark.w} ${spark.h}" preserveAspectRatio="none" aria-hidden="true">
+            <path class="wx-sparkline-fill" d="${spark.fill}" fill="#fff"/>
+            <path class="wx-sparkline-line" d="${spark.line}"/>
+            <circle class="wx-sparkline-now" cx="${spark.first[0]}" cy="${spark.first[1]}" r="3"/>
+          </svg>
+        </div>
+        <div class="wx-sparkline-labels">
+          <span>${formatHour(times[0]) || 'Jetzt'}</span>
+          <span>${formatHour(times[Math.floor(times.length/2)])}</span>
+          <span>${formatHour(times[times.length-1])}</span>
+        </div>
+      `;
+    }
   }
 
+  hero.innerHTML = `
+    <div class="wx-hero-top">
+      <span class="wx-place">Aachen</span>
+      <button class="modal-close-btn" aria-label="Schließen"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="wx-hero-main">
+      <i class="fas ${info.icon} wx-icon"></i>
+      <div class="wx-temp">${Math.round(cur.temperature_2m)}°</div>
+      <div class="wx-condition-block">
+        <div class="wx-condition">${info.label}</div>
+        <div class="wx-feels">Gefühlt ${Math.round(cur.apparent_temperature)}°C</div>
+      </div>
+    </div>
+    ${sparkHtml}
+  `;
+  hero.querySelector('.modal-close-btn').addEventListener('click', closeWeatherPopover);
+  weatherPopover.appendChild(hero);
+
+  const body = document.createElement('div');
+  body.className = 'wx-body';
+
+  const metaRow = document.createElement('div');
+  metaRow.className = 'wx-meta-row';
+  metaRow.innerHTML = `
+    <div class="wx-meta-pill"><i class="fas fa-droplet"></i><div><div class="wx-meta-value">${Math.round(cur.relative_humidity_2m)}%</div><div class="wx-meta-label">Feuchte</div></div></div>
+    <div class="wx-meta-pill"><i class="fas fa-wind"></i><div><div class="wx-meta-value">${Math.round(cur.wind_speed_10m)} km/h</div><div class="wx-meta-label">Wind</div></div></div>
+    ${daily.sunrise ? `<div class="wx-meta-pill"><i class="fas fa-arrow-up"></i><div><div class="wx-meta-value">${formatSunTime(daily.sunrise[0])}</div><div class="wx-meta-label">Aufgang</div></div></div>` : ''}
+    ${daily.sunset ? `<div class="wx-meta-pill"><i class="fas fa-arrow-down"></i><div><div class="wx-meta-value">${formatSunTime(daily.sunset[0])}</div><div class="wx-meta-label">Untergang</div></div></div>` : ''}
+  `;
+  body.appendChild(metaRow);
+
   const forecastRow = document.createElement('div');
-  forecastRow.className = 'weather-forecast-row';
+  forecastRow.className = 'wx-forecast';
   const dayCount = Math.min(5, daily.time.length);
-  const weekMin = Math.min(...daily.temperature_2m_min.slice(0, dayCount));
-  const weekMax = Math.max(...daily.temperature_2m_max.slice(0, dayCount));
-  const weekSpan = Math.max(weekMax - weekMin, 1);
   for(let i = 0; i < dayCount; i++){
     const d = new Date(daily.time[i] + 'T12:00:00');
     const dayInfo = getWeatherInfo(daily.weather_code[i], true);
-    const dayMin = daily.temperature_2m_min[i];
     const dayMax = daily.temperature_2m_max[i];
-    const barLeft = ((dayMin - weekMin) / weekSpan) * 100;
-    const barWidth = Math.max(((dayMax - dayMin) / weekSpan) * 100, 8);
+    const dayMin = daily.temperature_2m_min[i];
     const precip = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : null;
     const dayEl = document.createElement('div');
-    dayEl.className = 'weather-forecast-day' + (i === 0 ? ' is-today' : '');
+    dayEl.className = 'wx-forecast-day' + (i === 0 ? ' is-today' : '');
     dayEl.innerHTML = `
       <div class="fc-weekday">${i === 0 ? 'Heute' : WEEKDAYS_SHORT[d.getDay()]}</div>
       <i class="fas ${dayInfo.icon} fc-icon" style="color:${dayInfo.color};"></i>
       <div class="fc-max">${Math.round(dayMax)}°</div>
-      <div class="fc-bar-track"><div class="fc-bar-fill" style="left:${barLeft}%; width:${barWidth}%;"></div></div>
       <div class="fc-min">${Math.round(dayMin)}°</div>
       ${precip !== null ? `<div class="fc-precip"><i class="fas fa-droplet"></i>${Math.round(precip)}%</div>` : ''}
     `;
     forecastRow.appendChild(dayEl);
   }
-  weatherPopup.appendChild(forecastRow);
+  body.appendChild(forecastRow);
 
-  const mapWrapper = document.createElement('div');
-  mapWrapper.className = 'weather-map-wrapper';
-  const bbox = '5.98,50.72,6.19,50.83';
-  const marker = `${AACHEN_LAT},${AACHEN_LON}`;
-  mapWrapper.innerHTML = `<iframe loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${marker}" title="Karte Aachen"></iframe>`;
-  weatherPopup.appendChild(mapWrapper);
-
-  const mapLink = document.createElement('a');
-  mapLink.className = 'weather-map-link';
-  mapLink.href = `https://www.openstreetmap.org/?mlat=${AACHEN_LAT}&mlon=${AACHEN_LON}#map=12/${AACHEN_LAT}/${AACHEN_LON}`;
-  mapLink.target = '_blank';
-  mapLink.rel = 'noopener noreferrer';
-  mapLink.textContent = 'Größere Karte öffnen';
-  weatherPopup.appendChild(mapLink);
-
-  const updated = document.createElement('p');
-  updated.className = 'weather-updated';
+  const footer = document.createElement('div');
+  footer.className = 'wx-footer';
   const now = new Date();
-  updated.innerHTML = `<span>Aktualisiert um ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Daten: Open-Meteo</span>`;
-  const refreshBtn = document.createElement('button');
-  refreshBtn.className = 'weather-refresh-btn';
-  refreshBtn.innerHTML = '<i class="fas fa-rotate"></i> Aktualisieren';
+  footer.innerHTML = `
+    <a class="wx-map-link" target="_blank" rel="noopener noreferrer" href="https://www.openstreetmap.org/?mlat=${AACHEN_LAT}&mlon=${AACHEN_LON}#map=12/${AACHEN_LAT}/${AACHEN_LON}">Karte öffnen</a>
+    <span>Aktualisiert ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr</span>
+    <button class="wx-refresh-btn"><i class="fas fa-rotate"></i></button>
+  `;
+  const refreshBtn = footer.querySelector('.wx-refresh-btn');
   refreshBtn.addEventListener('click', () => {
     refreshBtn.classList.add('is-spinning');
     fetchWeather().finally(() => refreshBtn.classList.remove('is-spinning'));
   });
-  updated.appendChild(refreshBtn);
-  weatherPopup.appendChild(updated);
+  body.appendChild(footer);
+
+  weatherPopover.appendChild(body);
+  if(weatherPopoverIsOpen) positionWeatherPopover();
 }
 
 async function fetchWeather(){
   try{
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${AACHEN_LAT}&longitude=${AACHEN_LON}` +
       `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day` +
+      `&hourly=temperature_2m` +
       `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset` +
       `&timezone=Europe%2FBerlin&forecast_days=5`;
     const res = await fetch(url);
@@ -2347,13 +2506,13 @@ async function fetchWeather(){
     btnIcon.style.color = info.color;
     weatherButton.querySelector('.weather-btn-temp').textContent = `${Math.round(data.current.temperature_2m)}°`;
 
-    if(weatherOverlay.style.display === 'block'){
+    if(weatherPopoverIsOpen){
       renderWeatherPopup(data);
     }
   }catch(e){
     weatherButton.querySelector('.weather-btn-icon').className = 'fas fa-cloud weather-btn-icon';
     weatherButton.querySelector('.weather-btn-temp').textContent = '--°';
-    if(weatherOverlay.style.display === 'block' && !weatherLastData){
+    if(weatherPopoverIsOpen && !weatherLastData){
       renderWeatherPopup(null);
     }
   }
@@ -2365,7 +2524,7 @@ weatherButton.addEventListener('click', () => {
   } else {
     renderWeatherSkeleton();
   }
-  openWeatherModal();
+  openWeatherPopover();
   fetchWeather();
 });
 
