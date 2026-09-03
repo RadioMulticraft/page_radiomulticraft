@@ -2244,6 +2244,58 @@ footer.player::before {
   }
   .playlist-item-title{ font-size: .82rem; }
 }
+
+
+/* ---------- Playlist Header: clean editorial treatment ---------- */
+.modal-overlay.modal-fade .modal-popup.modal-popup--wide h2{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:0 !important;
+  margin:0 0 24px !important;
+  padding:2px 0 18px 18px !important;
+  border-bottom:1px solid rgba(255,255,255,.09) !important;
+  color:#fff !important;
+  font-size:clamp(2.15rem,4vw,3.25rem) !important;
+  line-height:.92 !important;
+  letter-spacing:-.05em !important;
+  font-weight:900 !important;
+  text-transform:uppercase !important;
+  text-shadow:0 4px 24px rgba(0,0,0,.45) !important;
+}
+
+/* Remove the red music-note box completely. */
+.modal-overlay.modal-fade .modal-popup.modal-popup--wide h2 i{
+  display:none !important;
+}
+
+/* Minimal red editorial marker instead of a boxed icon. */
+.modal-overlay.modal-fade .modal-popup.modal-popup--wide h2::before{
+  content:'' !important;
+  position:absolute !important;
+  left:0 !important;
+  top:4px !important;
+  width:5px !important;
+  height:42px !important;
+  border-radius:999px !important;
+  background:linear-gradient(180deg,#ff5555 0%,#d71920 100%) !important;
+  box-shadow:0 0 18px rgba(255,59,59,.28) !important;
+}
+
+@media (max-width:768px){
+  .modal-overlay.modal-fade .modal-popup.modal-popup--wide h2{
+    padding-left:14px !important;
+    padding-bottom:14px !important;
+    margin-bottom:18px !important;
+    font-size:1.9rem !important;
+  }
+  .modal-overlay.modal-fade .modal-popup.modal-popup--wide h2::before{
+    width:4px !important;
+    height:31px !important;
+    top:3px !important;
+  }
+}
+
 </style>
 
 <script>
