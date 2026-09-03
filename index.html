@@ -828,13 +828,14 @@ footer.player::before {
 .weather-error { color: #ccc; font-size: 0.9rem; padding: 18px 20px; }
 .weather-error + .wx-refresh-btn { margin: 0 20px 16px; }
 
+/* ---------- Playlist-Popup: modernisiert ---------- */
 .playlist-modal-subtitle-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin: -4px 0 20px;
+  margin: -4px 0 22px;
 }
 .playlist-live-dot {
   display: inline-flex;
@@ -859,69 +860,92 @@ footer.player::before {
 .playlist-list {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 12px;
   text-align: left;
   min-width: 0;
 }
 .playlist-item {
-  background: rgba(255,255,255,0.03);
-  padding: 12px 15px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.06);
-  border-left: 3px solid transparent;
+  background: linear-gradient(135deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 14px;
   position: relative;
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
   cursor: default;
   min-width: 0;
 }
 .playlist-item:hover {
-  border-left-color: var(--brand-red-accent);
-  background: rgba(255,59,59,0.08);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  border-color: rgba(255,59,59,0.45);
+  background: linear-gradient(135deg, rgba(255,59,59,0.12), rgba(255,59,59,0.03));
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
   transform: translateY(-2px);
 }
 .playlist-item.is-latest {
-  border-left-color: var(--brand-red-accent);
-  background: rgba(255,59,59,0.1);
+  border-color: rgba(255,59,59,0.55);
+  background: linear-gradient(135deg, rgba(255,59,59,0.16), rgba(255,59,59,0.04));
 }
 .playlist-item.is-latest::after {
   content: 'ZULETZT';
   position: absolute;
-  top: -8px;
-  left: 14px;
+  top: -9px;
+  left: 46px;
   background: var(--brand-red-accent);
   color: #121212;
   font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.05em;
-  padding: 2px 8px;
+  padding: 2px 9px;
   border-radius: 20px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 }
-.playlist-item-main { display: flex; align-items: center; min-width: 0; gap: 10px; flex: 1 1 auto; }
-.playlist-item-icon { color: var(--brand-red-accent); font-size: 0.8rem; flex-shrink: 0; }
-.playlist-item-title { font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.playlist-rank {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #ff5252, #b31313);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 3px 8px rgba(0,0,0,0.35);
+}
+.playlist-item.is-latest .playlist-rank {
+  background: linear-gradient(150deg, #ffd452, #ff8a00);
+  color: #2a1500;
+}
+.playlist-item-body { min-width: 0; flex: 1 1 auto; padding-top: 2px; }
+.playlist-item-title {
+  font-weight: 650;
+  color: #fff;
+  line-height: 1.4;
+  font-size: 0.98rem;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
 .playlist-item-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.72rem;
-  color: #c9c9c9;
-  flex: 0 0 auto;
-  white-space: nowrap;
-  background: rgba(255,255,255,0.08);
-  padding: 4px 10px;
-  border-radius: 20px;
+  color: #a8a8a8;
+  margin-top: 7px;
 }
+.playlist-item-time i { font-size: 0.66rem; color: var(--brand-red-accent); }
 .playlist-empty, .playlist-error { text-align: left; color: #ccc; }
 
 .playlist-skeleton-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 15px;
+  gap: 14px;
+  padding: 14px 16px;
   background: rgba(255,255,255,0.03);
-  border-radius: 10px;
+  border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.06);
 }
 
@@ -2104,9 +2128,11 @@ function renderPlaylistSkeleton(){
     const row = document.createElement('div');
     row.className = 'playlist-skeleton-item';
     row.innerHTML = `
-      <div class="weather-skeleton-block" style="width:14px; height:14px; border-radius:4px; flex-shrink:0;"></div>
-      <div class="weather-skeleton-block" style="flex:1 1 auto; height:14px; max-width:${60 - i * 5}%;"></div>
-      <div class="weather-skeleton-block" style="width:62px; height:20px; border-radius:20px; flex-shrink:0;"></div>
+      <div class="weather-skeleton-block" style="width:34px; height:34px; border-radius:50%; flex-shrink:0;"></div>
+      <div style="flex:1 1 auto; display:flex; flex-direction:column; gap:8px;">
+        <div class="weather-skeleton-block" style="height:14px; max-width:${70 - i * 5}%;"></div>
+        <div class="weather-skeleton-block" style="height:10px; width:82px;"></div>
+      </div>
     `;
     wrap.appendChild(row);
   }
@@ -2157,25 +2183,28 @@ async function loadLastSongs() {
     const card = document.createElement('div');
     card.className = 'playlist-item' + (index === 0 ? ' is-latest' : '');
 
-    const main = document.createElement('div');
-    main.className = 'playlist-item-main';
-    main.innerHTML = '<i class="fas fa-music playlist-item-icon"></i>';
+    const rank = document.createElement('div');
+    rank.className = 'playlist-rank';
+    rank.textContent = String(index + 1);
 
-    const songText = document.createElement('span');
+    const body = document.createElement('div');
+    body.className = 'playlist-item-body';
+
+    const songText = document.createElement('div');
     songText.className = 'playlist-item-title';
     const songArtist = song.artist?.name?.trim();
     const songTitle = song.title?.trim();
     const songHasValidArtist = songArtist && !/^-+$/.test(songArtist);
     songText.textContent = songHasValidArtist && songTitle ? `${songArtist} - ${songTitle}` : (songTitle || 'Dein Sound | Dein Stream');
-    songText.title = songText.textContent;
-    main.appendChild(songText);
+    body.appendChild(songText);
 
-    const songTime = document.createElement('span');
+    const songTime = document.createElement('div');
     songTime.className = 'playlist-item-time';
-    songTime.textContent = formatRelativeTime(song.started_at);
+    songTime.innerHTML = '<i class="fas fa-clock"></i>' + escapeHtml(formatRelativeTime(song.started_at));
+    body.appendChild(songTime);
 
-    card.appendChild(main);
-    card.appendChild(songTime);
+    card.appendChild(rank);
+    card.appendChild(body);
     songContainer.appendChild(card);
 });
 
@@ -2294,6 +2323,7 @@ weatherPopoverOverlay.appendChild(weatherPopover);
 
 let weatherLastData = null;
 let weatherPopoverIsOpen = false;
+let weatherCloseTimeoutId = null;
 
 function positionWeatherPopover(){
   const btnRect = weatherButton.getBoundingClientRect();
@@ -2315,6 +2345,14 @@ function weatherEscHandler(e){ if(e.key === 'Escape') closeWeatherPopover(); }
 
 function openWeatherPopover(){
   openModals.forEach(other => other.close());
+  /* Falls das Panel gerade schon offen war (Klick auf den Button während es sichtbar
+     ist), gibt es noch einen laufenden "verstecken"-Timeout aus closeWeatherPopover().
+     Den müssen wir hier canceln - sonst schließt sich das frisch geöffnete Panel
+     190ms später wieder von selbst. */
+  if(weatherCloseTimeoutId){
+    clearTimeout(weatherCloseTimeoutId);
+    weatherCloseTimeoutId = null;
+  }
   weatherPopoverOverlay.style.display = 'block';
   positionWeatherPopover();
   requestAnimationFrame(() => requestAnimationFrame(() => weatherPopoverOverlay.classList.add('is-visible')));
@@ -2325,7 +2363,10 @@ function openWeatherPopover(){
 function closeWeatherPopover(){
   if(!weatherPopoverIsOpen) return;
   weatherPopoverOverlay.classList.remove('is-visible');
-  setTimeout(() => { weatherPopoverOverlay.style.display = 'none'; }, 220);
+  weatherCloseTimeoutId = setTimeout(() => {
+    weatherPopoverOverlay.style.display = 'none';
+    weatherCloseTimeoutId = null;
+  }, 220);
   weatherPopoverIsOpen = false;
   document.removeEventListener('keydown', weatherEscHandler);
   window.removeEventListener('resize', positionWeatherPopover);
@@ -2392,7 +2433,17 @@ function renderWeatherPopup(data){
   let sparkHtml = '';
   const hourly = data.hourly;
   if(hourly && Array.isArray(hourly.temperature_2m) && hourly.time){
-    const nowIso = new Date().toISOString().slice(0, 13);
+    /* Wichtig: hourly.time kommt von Open-Meteo in der angeforderten Zeitzone
+       (Europe/Berlin), NICHT in UTC. new Date().toISOString() liefert dagegen
+       immer UTC - ein direkter String-Vergleich würde den "Jetzt"-Punkt der
+       Sparkline je nach Sommer-/Winterzeit um 1-2 Stunden verschieben. Deshalb
+       bauen wir hier stattdessen die lokale Wanduhrzeit des Browsers, so wie
+       es die Sendungs-Anzeige (updateCurrentShow) an anderer Stelle auch tut. */
+    const nowD = new Date();
+    const nowIso = nowD.getFullYear() + '-' +
+      String(nowD.getMonth() + 1).padStart(2, '0') + '-' +
+      String(nowD.getDate()).padStart(2, '0') + 'T' +
+      String(nowD.getHours()).padStart(2, '0');
     let startIdx = hourly.time.findIndex(t => t.slice(0, 13) === nowIso);
     if(startIdx < 0) startIdx = 0;
     const temps = hourly.temperature_2m.slice(startIdx, startIdx + 9);
