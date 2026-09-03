@@ -828,100 +828,124 @@ footer.player::before {
 .weather-error { color: #ccc; font-size: 0.9rem; padding: 18px 20px; }
 .weather-error + .wx-refresh-btn { margin: 0 20px 16px; }
 
-/* ---------- Playlist-Popup: modernisiert ---------- */
-.playlist-modal-subtitle-row {
+/* ---------- Playlist-Popup: editorische Chart-Liste ----------
+   Bewusst kein Kachel/Card-Raster: große "Geister"-Rangzahlen, Trennlinien
+   statt Boxen, linksbündiger Hero-Kopf mit Icon-Badge (analog zum
+   Wetter-Panel), damit es wie ein durchdachtes Feature wirkt statt wie ein
+   generisches Popup. */
+
+.pl-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 2px 46px 20px 2px;
+  margin: -6px 0 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.pl-hero-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(150deg, #ff5252, #7a0c0c);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #fff;
+  font-size: 1.35rem;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 8px 18px rgba(142,14,14,0.45);
+}
+.pl-hero-text { min-width: 0; text-align: left; }
+.modal-popup .pl-hero h2 {
+  margin: 0 0 5px;
+  font-size: 1.3rem;
+  text-align: left;
+  justify-content: flex-start;
+  display: block;
+}
+.pl-hero-meta {
+  display: flex;
+  align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  margin: -4px 0 22px;
+  font-size: 0.78rem;
+  color: #999;
 }
 .playlist-live-dot {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: #ff6a6a;
-  text-transform: uppercase;
 }
 .playlist-live-dot::before {
   content: '';
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #ff3b3b;
   box-shadow: 0 0 6px 1px rgba(255,59,59,0.7);
   animation: pulse 1.5s infinite;
 }
+.pl-hero-meta-sep { opacity: 0.4; }
 
 .playlist-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
   text-align: left;
   min-width: 0;
 }
 .playlist-item {
-  background: linear-gradient(135deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.07);
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  position: relative;
-  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-  cursor: default;
-  min-width: 0;
-}
-.playlist-item:hover {
-  border-color: rgba(255,59,59,0.45);
-  background: linear-gradient(135deg, rgba(255,59,59,0.12), rgba(255,59,59,0.03));
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-  transform: translateY(-2px);
-}
-.playlist-item.is-latest {
-  border-color: rgba(255,59,59,0.55);
-  background: linear-gradient(135deg, rgba(255,59,59,0.16), rgba(255,59,59,0.04));
-}
-.playlist-item.is-latest::after {
-  content: 'ZULETZT';
-  position: absolute;
-  top: -9px;
-  left: 46px;
-  background: var(--brand-red-accent);
-  color: #121212;
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  padding: 2px 9px;
-  border-radius: 20px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
-}
-.playlist-rank {
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(150deg, #ff5252, #b31313);
-  color: #fff;
-  font-weight: 800;
-  font-size: 0.95rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 3px 8px rgba(0,0,0,0.35);
+  gap: 18px;
+  padding: 15px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+  min-width: 0;
+  transition: background-color 0.2s ease, padding-left 0.2s ease;
+}
+.playlist-item:last-child { border-bottom: none; }
+.playlist-item:hover {
+  background: rgba(255,255,255,0.028);
+  padding-left: 9px;
+}
+.playlist-item.is-latest {
+  padding-left: 13px;
+}
+.playlist-item.is-latest::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--brand-red-accent);
+  box-shadow: 0 0 8px 1px rgba(255,59,59,0.5);
+}
+
+.playlist-rank {
+  flex-shrink: 0;
+  width: 44px;
+  text-align: center;
+  font-family: 'Archivo Black', 'Segoe UI', sans-serif;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.4px rgba(255,255,255,0.22);
+  transition: color 0.2s ease;
 }
 .playlist-item.is-latest .playlist-rank {
-  background: linear-gradient(150deg, #ffd452, #ff8a00);
-  color: #2a1500;
+  -webkit-text-stroke: 0;
+  color: var(--brand-red-accent);
 }
-.playlist-item-body { min-width: 0; flex: 1 1 auto; padding-top: 2px; }
+
+.playlist-item-body { min-width: 0; flex: 1 1 auto; }
 .playlist-item-title {
-  font-weight: 650;
+  font-weight: 600;
   color: #fff;
   line-height: 1.4;
   font-size: 0.98rem;
@@ -929,25 +953,41 @@ footer.player::before {
   overflow-wrap: anywhere;
 }
 .playlist-item-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #8c8c8c;
+  margin-top: 5px;
+}
+.playlist-item.is-latest .playlist-item-time { color: #ff8a8a; }
+.playlist-item-now-tag {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.72rem;
-  color: #a8a8a8;
-  margin-top: 7px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--brand-red-accent);
 }
-.playlist-item-time i { font-size: 0.66rem; color: var(--brand-red-accent); }
-.playlist-empty, .playlist-error { text-align: left; color: #ccc; }
+.playlist-item-now-tag::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brand-red-accent);
+  box-shadow: 0 0 6px 1px rgba(255,59,59,0.7);
+  animation: pulse 1.5s infinite;
+}
+.playlist-empty, .playlist-error { text-align: left; color: #ccc; padding: 4px 4px 6px; }
 
 .playlist-skeleton-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.06);
+  gap: 18px;
+  padding: 15px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
+.playlist-skeleton-item:last-child { border-bottom: none; }
 
 .modal-overlay {
   position: fixed;
@@ -2119,8 +2159,22 @@ function formatRelativeTime(dateStr){
   return `vor ${diffH} Stunden`;
 }
 
+function buildPlaylistHero(metaHtml){
+  const hero = document.createElement('div');
+  hero.className = 'pl-hero';
+  hero.innerHTML = `
+    <div class="pl-hero-icon"><i class="fas fa-compact-disc"></i></div>
+    <div class="pl-hero-text">
+      <h2>Playlist</h2>
+      <div class="pl-hero-meta">${metaHtml}</div>
+    </div>
+  `;
+  return hero;
+}
+
 function renderPlaylistSkeleton(){
-  playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:4px;"><i class="fas fa-music"></i>Playlist</h2><p class="modal-subtitle">Die letzten gespielten Songs</p>';
+  playlistPopup.innerHTML = '';
+  playlistPopup.appendChild(buildPlaylistHero('<span class="weather-skeleton-block" style="display:inline-block; width:120px; height:12px; vertical-align:middle;"></span>'));
   playlistPopup.appendChild(closeBtn);
   const wrap = document.createElement('div');
   wrap.className = 'playlist-list';
@@ -2128,9 +2182,9 @@ function renderPlaylistSkeleton(){
     const row = document.createElement('div');
     row.className = 'playlist-skeleton-item';
     row.innerHTML = `
-      <div class="weather-skeleton-block" style="width:34px; height:34px; border-radius:50%; flex-shrink:0;"></div>
+      <div class="weather-skeleton-block" style="width:26px; height:30px; border-radius:6px; flex-shrink:0;"></div>
       <div style="flex:1 1 auto; display:flex; flex-direction:column; gap:8px;">
-        <div class="weather-skeleton-block" style="height:14px; max-width:${70 - i * 5}%;"></div>
+        <div class="weather-skeleton-block" style="height:14px; max-width:${72 - i * 5}%;"></div>
         <div class="weather-skeleton-block" style="height:10px; width:82px;"></div>
       </div>
     `;
@@ -2160,13 +2214,11 @@ async function loadLastSongs() {
         const res = await fetch('https://api.laut.fm/station/radioms990/last_songs?_=' + Date.now(), { cache: 'no-store' });
         const data = await res.json();
 
-        playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:4px;"><i class="fas fa-music"></i>Playlist</h2>';
+        const trackCount = Array.isArray(data) ? Math.min(data.length, 10) : 0;
+        const metaHtml = `<span class="playlist-live-dot">Live</span><span class="pl-hero-meta-sep">·</span><span>${trackCount} zuletzt gespielt</span>`;
+        playlistPopup.innerHTML = '';
+        playlistPopup.appendChild(buildPlaylistHero(metaHtml));
         playlistPopup.appendChild(closeBtn);
-
-        const subtitleRow = document.createElement('div');
-        subtitleRow.className = 'playlist-modal-subtitle-row';
-        subtitleRow.innerHTML = '<span class="modal-subtitle" style="margin:0;">Die letzten gespielten Songs</span><span class="playlist-live-dot">Live</span>';
-        playlistPopup.appendChild(subtitleRow);
 
         if (!data || !Array.isArray(data) || data.length === 0) {
             const empty = document.createElement('p');
@@ -2180,8 +2232,8 @@ async function loadLastSongs() {
         songContainer.className = 'playlist-list';
 
         data.slice(0, 10).forEach((song, index) => {
-    const card = document.createElement('div');
-    card.className = 'playlist-item' + (index === 0 ? ' is-latest' : '');
+    const row = document.createElement('div');
+    row.className = 'playlist-item' + (index === 0 ? ' is-latest' : '');
 
     const rank = document.createElement('div');
     rank.className = 'playlist-rank';
@@ -2200,17 +2252,22 @@ async function loadLastSongs() {
 
     const songTime = document.createElement('div');
     songTime.className = 'playlist-item-time';
-    songTime.innerHTML = '<i class="fas fa-clock"></i>' + escapeHtml(formatRelativeTime(song.started_at));
+    if(index === 0){
+      songTime.innerHTML = '<span class="playlist-item-now-tag">Läuft gerade</span>';
+    } else {
+      songTime.innerHTML = '<i class="fas fa-clock"></i>' + escapeHtml(formatRelativeTime(song.started_at));
+    }
     body.appendChild(songTime);
 
-    card.appendChild(rank);
-    card.appendChild(body);
-    songContainer.appendChild(card);
+    row.appendChild(rank);
+    row.appendChild(body);
+    songContainer.appendChild(row);
 });
 
         playlistPopup.appendChild(songContainer);
     } catch (e) {
-        playlistPopup.innerHTML = '<h2 style="color:#ff3b3b; margin-bottom:4px;"><i class="fas fa-music"></i>Playlist</h2><p class="modal-subtitle">Die letzten gespielten Songs</p>';
+        playlistPopup.innerHTML = '';
+        playlistPopup.appendChild(buildPlaylistHero('<span>Zuletzt gespielte Songs</span>'));
         playlistPopup.appendChild(closeBtn);
         const err = document.createElement('p');
         err.className = 'playlist-error';
