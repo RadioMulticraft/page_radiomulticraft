@@ -1291,13 +1291,20 @@ footer.player::before {
     top:auto;
     left:0;
     bottom:0;
+    transform:translateY(18px);
     width:100%;
     max-width:none;
-    max-height:min(86dvh,760px);
+    height:min(86dvh,760px);
+    max-height:calc(100dvh - env(safe-area-inset-top,0px));
     padding:24px 16px calc(18px + env(safe-area-inset-bottom,0px));
+    overflow:hidden;
     border-radius:24px 24px 0 0;
     border-bottom:0;
     box-shadow:0 -20px 70px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.05);
+  }
+
+  .modal-overlay.modal-fade.is-visible .modal-popup.modal-popup--wide{
+    transform:translateY(0);
   }
 
   .modal-overlay.modal-fade .modal-popup.modal-popup--wide::after{
@@ -1351,6 +1358,8 @@ footer.player::before {
 
   .playlist-list{
     gap:7px;
+    flex:1 1 auto;
+    min-height:0;
     overflow-y:auto;
     overscroll-behavior:contain;
     scrollbar-width:thin;
@@ -1804,6 +1813,147 @@ footer.player::before {
   .playlist-item-title{font-size:.8rem;}
 }
 
+
+/* FINAL MOBILE FIX – Playlist sheet nutzt den echten Viewport und bleibt vollständig sichtbar */
+@media (max-width:768px){
+  .modal-overlay.modal-fade .modal-popup.modal-popup--wide{
+    position:absolute !important;
+    top:auto !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    width:100vw !important;
+    max-width:100vw !important;
+    height:min(92dvh,760px) !important;
+    max-height:92dvh !important;
+    margin:0 !important;
+    padding:0 0 calc(12px + env(safe-area-inset-bottom,0px)) !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+    transform:translateY(24px) !important;
+    border-radius:26px 26px 0 0 !important;
+  }
+
+  .modal-overlay.modal-fade.is-visible .modal-popup.modal-popup--wide{
+    transform:translateY(0) !important;
+  }
+
+  .modal-overlay.modal-fade .modal-popup.modal-popup--wide h2{
+    flex:0 0 auto;
+    width:auto;
+    max-width:100%;
+    margin:0 !important;
+    padding:38px 58px 4px 20px !important;
+    font-size:clamp(1.65rem,8vw,2.15rem) !important;
+    line-height:.98;
+  }
+
+  .modal-overlay.modal-fade .modal-popup.modal-popup--wide h2::after{
+    left:21px !important;
+    bottom:-18px !important;
+    font-size:.47rem !important;
+  }
+
+  .modal-overlay.modal-fade .modal-popup.modal-popup--wide h2 i{
+    width:38px !important;
+    height:38px !important;
+    flex-basis:38px !important;
+  }
+
+  .modal-overlay.modal-fade .modal-close-btn{
+    top:17px !important;
+    right:15px !important;
+    width:36px !important;
+    height:36px !important;
+    z-index:5;
+  }
+
+  .playlist-modal-subtitle-row{
+    flex:0 0 auto;
+    min-width:0;
+    margin:28px 20px 12px !important;
+    padding:0 !important;
+    gap:8px;
+  }
+
+  .playlist-modal-subtitle-row .modal-subtitle{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:.7rem;
+  }
+
+  .playlist-list{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    margin:0 10px 8px !important;
+    padding:4px 2px 12px 0 !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+  }
+
+  .playlist-list::before{left:47px !important;}
+
+  .playlist-item{
+    grid-template-columns:50px minmax(0,1fr) auto !important;
+    gap:8px !important;
+    min-width:0;
+    min-height:64px;
+    padding:9px 7px 9px 0 !important;
+  }
+
+  .playlist-item-main{min-width:0 !important; overflow:hidden;}
+
+  .playlist-item-title{
+    min-width:0 !important;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:.84rem !important;
+  }
+
+  .playlist-item-time{
+    min-width:44px !important;
+    max-width:54px;
+    overflow:hidden;
+    white-space:nowrap;
+    font-size:.55rem !important;
+  }
+
+  .playlist-item.is-latest::after{
+    left:58px !important;
+    top:8px !important;
+    font-size:.4rem !important;
+  }
+}
+
+@media (max-width:390px){
+  .modal-overlay.modal-fade .modal-popup.modal-popup--wide{
+    height:94dvh !important;
+    max-height:94dvh !important;
+    border-radius:22px 22px 0 0 !important;
+  }
+
+  .modal-overlay.modal-fade .modal-popup.modal-popup--wide h2{
+    padding-left:16px !important;
+    font-size:1.58rem !important;
+  }
+
+  .playlist-modal-subtitle-row{margin-left:16px !important;margin-right:16px !important;}
+  .playlist-list{margin-left:7px !important;margin-right:7px !important;}
+  .playlist-item{grid-template-columns:45px minmax(0,1fr) 42px !important;gap:7px !important;}
+  .playlist-list::before{left:43px !important;}
+  .playlist-item-title{font-size:.78rem !important;}
+}
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
@@ -1852,6 +2002,93 @@ footer.player::before {
     transform: translateY(110vh);
     opacity: 0.2;
   }
+}
+
+
+/* ---------- Playlist Artwork: Cover statt Nummer/Icon ---------- */
+.playlist-item-main{
+  gap: 14px;
+}
+.playlist-item-artwork{
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #202020;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.38);
+  border: 1px solid rgba(255,255,255,0.10);
+  position: relative;
+}
+.playlist-item-artwork::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.10), transparent 45%, rgba(0,0,0,0.20));
+  pointer-events: none;
+}
+.playlist-item-artwork img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity .25s ease, transform .35s ease;
+}
+.playlist-item:hover .playlist-item-artwork img{
+  transform: scale(1.04);
+}
+.playlist-item-artwork.is-fallback img{
+  object-fit: contain;
+  padding: 9px;
+}
+.playlist-item-icon{ display:none !important; }
+
+.playlist-skeleton-item{
+  gap: 12px;
+}
+.playlist-skeleton-item::before{
+  content: '';
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 10px;
+  background: linear-gradient(100deg, rgba(255,255,255,0.04) 20%, rgba(255,255,255,0.10) 40%, rgba(255,255,255,0.04) 60%);
+  background-size: 200% 100%;
+  animation: playlistCoverShimmer 1.25s linear infinite;
+}
+@keyframes playlistCoverShimmer{
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (max-width:768px){
+  .playlist-item-main{ gap: 11px; }
+  .playlist-item-artwork{
+    width: 50px;
+    height: 50px;
+    flex-basis: 50px;
+    border-radius: 9px;
+  }
+  .playlist-item-title{ font-size: .88rem; }
+  .playlist-skeleton-item::before{
+    width: 50px;
+    height: 50px;
+    flex-basis: 50px;
+  }
+}
+@media (max-width:390px){
+  .playlist-item-artwork{
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+  }
+  .playlist-skeleton-item::before{
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+  }
+  .playlist-item-title{ font-size: .82rem; }
 }
 </style>
 
@@ -2882,6 +3119,33 @@ function stopPlaylistAutoRefresh(){
   }
 }
 
+const playlistArtworkCache = new Map();
+
+async function resolvePlaylistArtwork(artist, title, album, fallbackUrl){
+  const key = `${artist}||${title}`.toLowerCase();
+  if(playlistArtworkCache.has(key)) return playlistArtworkCache.get(key);
+
+  if(!artist && !title){
+    const fallback = fallbackUrl || logoFallback;
+    playlistArtworkCache.set(key, fallback);
+    return fallback;
+  }
+
+  try{
+    const term = encodeURIComponent(`${artist} ${title}`.trim());
+    const res = await fetch(`https://itunes.apple.com/search?term=${term}&media=music&limit=1`, { cache: 'force-cache' });
+    const json = await res.json();
+    const artwork = json.results?.[0]?.artworkUrl100;
+    const url = artwork ? artwork.replace('100x100bb','600x600bb') : (fallbackUrl || logoFallback);
+    playlistArtworkCache.set(key, url);
+    return url;
+  }catch(e){
+    const url = fallbackUrl || logoFallback;
+    playlistArtworkCache.set(key, url);
+    return url;
+  }
+}
+
 async function loadLastSongs() {
     try {
         const res = await fetch('https://api.laut.fm/station/radioms990/last_songs?_=' + Date.now(), { cache: 'no-store' });
@@ -2912,7 +3176,20 @@ async function loadLastSongs() {
 
     const main = document.createElement('div');
     main.className = 'playlist-item-main';
-    main.innerHTML = '<i class="fas fa-music playlist-item-icon"></i>';
+    const artworkWrap = document.createElement('div');
+    artworkWrap.className = 'playlist-item-artwork';
+    const artworkImg = document.createElement('img');
+    artworkImg.alt = '';
+    artworkImg.loading = 'lazy';
+    artworkImg.decoding = 'async';
+    artworkImg.src = song.artist?.image || logoFallback;
+    artworkImg.onerror = () => {
+      artworkImg.onerror = null;
+      artworkImg.src = logoFallback;
+      artworkWrap.classList.add('is-fallback');
+    };
+    artworkWrap.appendChild(artworkImg);
+    main.appendChild(artworkWrap);
 
     const songText = document.createElement('span');
     songText.className = 'playlist-item-title';
@@ -2922,6 +3199,15 @@ async function loadLastSongs() {
     songText.textContent = songHasValidArtist && songTitle ? `${songArtist} - ${songTitle}` : (songTitle || 'Dein Sound | Dein Stream');
     songText.title = songText.textContent;
     main.appendChild(songText);
+
+    const artworkArtist = song.artist?.name?.trim() || '';
+    const artworkTitle = song.title?.trim() || '';
+    resolvePlaylistArtwork(artworkArtist, artworkTitle, song.album, song.artist?.image).then(url => {
+      if(url && artworkImg.src !== url) {
+        artworkImg.src = url;
+        artworkWrap.classList.remove('is-fallback');
+      }
+    });
 
     const songTime = document.createElement('span');
     songTime.className = 'playlist-item-time';
