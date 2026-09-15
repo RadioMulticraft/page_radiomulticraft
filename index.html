@@ -1919,24 +1919,28 @@ footer.player::before {
 
 /* ==========================================================
    KOOPERATION / SPONSOREN
-   Helle Kacheln, damit dunkle Partnerlogos gut lesbar bleiben.
+   Feste Kartenbreite statt Streckung uebers ganze Raster,
+   damit auch ein einzelner Partner bewusst platziert wirkt.
+   Helle Karten, damit dunkle Partnerlogos gut lesbar bleiben.
    ========================================================== */
 .sponsor-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-  gap:22px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:26px;
   max-width:900px;
   margin:0 auto 50px;
 }
 .sponsor-card{
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
-  min-height:150px;
-  padding:26px;
+  width:240px;
+  padding:30px 26px 22px;
   background:#fff;
   border:1px solid rgba(255,255,255,.08);
-  border-radius:16px;
+  border-radius:18px;
   box-shadow:var(--shadow-md);
   text-decoration:none;
   transition:transform .25s ease, box-shadow .25s ease;
@@ -1945,22 +1949,45 @@ footer.player::before {
   transform:translateY(-6px);
   box-shadow:0 14px 34px rgba(0,0,0,.45), 0 0 0 2px rgba(255,59,59,.45);
 }
+.sponsor-card--dark{
+  background:#0a0a0a;
+  border:1px solid rgba(255,255,255,.12);
+}
+.sponsor-card--dark .sponsor-name{
+  border-top-color:rgba(255,255,255,.12);
+  color:#bbb;
+}
+.sponsor-card-logo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:64px;
+}
 .sponsor-card img{
   max-width:100%;
-  max-height:72px;
+  max-height:64px;
   object-fit:contain;
   display:block;
 }
 .sponsor-name{
-  margin-top:10px;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid rgba(0,0,0,.08);
+  width:100%;
   text-align:center;
-  font-size:.85rem;
-  color:#cfcfcf;
+  font-size:.8rem;
+  font-weight:600;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  color:#555;
 }
 @media (max-width:768px){
-  .sponsor-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:36px;}
-  .sponsor-card{min-height:118px;padding:18px;}
-  .sponsor-card img{max-height:56px;}
+  .sponsor-grid{gap:18px;margin-bottom:36px;}
+  .sponsor-card{width:160px;padding:22px 16px 16px;border-radius:14px;}
+  .sponsor-card-logo{height:48px;}
+  .sponsor-card img{max-height:48px;}
+  .sponsor-name{margin-top:10px;padding-top:8px;font-size:.7rem;}
 }
 </style>
 
@@ -2549,22 +2576,32 @@ const links=document.querySelectorAll("[data-link]");
    name : Name des Partners (fuer den Alt-Text des Logos)
    logo : Pfad zur Logodatei im img-Ordner
    url  : Ziel-Link, oder '' wenn die Kachel nicht klickbar sein soll
+   dark : optional true, wenn das Logo selbst einen dunklen/
+          schwarzen Hintergrund mitbringt (dann wird die Karte
+          dunkel statt weiss, damit es nicht wie ein Fleck wirkt)
    ========================================================== */
 const SPONSOREN = [
   {
     name: 'Esslinger',
     logo: 'img/esslinger.png',
     url: 'https://esslingerlife.de/?gad_source=1&gad_campaignid=23563605278&gbraid=0AAAABCtC5XtvVe3EtqVdSN55Mqt7ZAe8y&gclid=CjwKCAjw2aPVBhBkEiwA0Cptt8r4ijEvvK3KbiTEyJmPKw4MZFwktSA3vkmfDI6Yt6apD5sBAq0AjBoCu2sQAvD_BwE'
+  },
+  {
+    name: 'PlayItRadio',
+    logo: 'img/playitradio.png',
+    url: 'https://www.playitsoftware.com/Products/Live',
+    dark: true
   }
 ];
 
 function renderSponsoren(){
   return SPONSOREN.map(s => {
-    const img = `<img src="${escapeHtml(s.logo)}" alt="${escapeHtml(s.name)}" loading="lazy">`;
+    const inner = `<div class="sponsor-card-logo"><img src="${escapeHtml(s.logo)}" alt="${escapeHtml(s.name)}" loading="lazy"></div><span class="sponsor-name">${escapeHtml(s.name)}</span>`;
+    const cls = 'sponsor-card' + (s.dark ? ' sponsor-card--dark' : '');
     if(s.url){
-      return `<a class="sponsor-card" href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(s.name)}">${img}</a>`;
+      return `<a class="${cls}" href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(s.name)}">${inner}</a>`;
     }
-    return `<div class="sponsor-card">${img}</div>`;
+    return `<div class="${cls}">${inner}</div>`;
   }).join('\n');
 }
 
@@ -2673,8 +2710,6 @@ kooperation:`<h1>KOOPERATION</h1>
 <div class="sponsor-grid">
 ${renderSponsoren()}
 </div>
-
-<img src="img/supportedbyfull.jpg" class="centered-banner" loading="lazy" alt="Radio Multicraft wird unterstützt von unseren Partnern">
 
 <div class="card card--spaced">
 <h2>Partner werden?</h2>
