@@ -1915,6 +1915,53 @@ footer.player::before {
     height:29px !important;
   }
 }
+
+
+/* ==========================================================
+   KOOPERATION / SPONSOREN
+   Helle Kacheln, damit dunkle Partnerlogos gut lesbar bleiben.
+   ========================================================== */
+.sponsor-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:22px;
+  max-width:900px;
+  margin:0 auto 50px;
+}
+.sponsor-card{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:150px;
+  padding:26px;
+  background:#fff;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  box-shadow:var(--shadow-md);
+  text-decoration:none;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.sponsor-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 14px 34px rgba(0,0,0,.45), 0 0 0 2px rgba(255,59,59,.45);
+}
+.sponsor-card img{
+  max-width:100%;
+  max-height:72px;
+  object-fit:contain;
+  display:block;
+}
+.sponsor-name{
+  margin-top:10px;
+  text-align:center;
+  font-size:.85rem;
+  color:#cfcfcf;
+}
+@media (max-width:768px){
+  .sponsor-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:36px;}
+  .sponsor-card{min-height:118px;padding:18px;}
+  .sponsor-card img{max-height:56px;}
+}
 </style>
 
 <script>
@@ -1960,6 +2007,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <a href="#" data-link="home">STARTSEITE</a>
       <a href="#" data-link="team">DAS TEAM</a>
       <a href="#" data-link="werbung">WERBUNG</a>
+      <a href="#" data-link="kooperation">KOOPERATION</a>
       <a href="#" data-link="impressum">IMPRESSUM</a>
       <a href="#" data-link="datenschutz">DATENSCHUTZ</a>
       <a href="#" data-link="jobs">JOBS</a>
@@ -2491,6 +2539,35 @@ window.addEventListener('focus', () => fetchCurrentSong());
 
 const content=document.getElementById("main-content");
 const links=document.querySelectorAll("[data-link]");
+
+/* ==========================================================
+   SPONSOREN-LISTE
+   Hier neue Partner eintragen - einfach einen weiteren Block
+   nach dem Muster unten ergaenzen (Komma zwischen den Bloecken
+   nicht vergessen). Das Raster ordnet sich automatisch.
+
+   name : Name des Partners (fuer den Alt-Text des Logos)
+   logo : Pfad zur Logodatei im img-Ordner
+   url  : Ziel-Link, oder '' wenn die Kachel nicht klickbar sein soll
+   ========================================================== */
+const SPONSOREN = [
+  {
+    name: 'Esslinger',
+    logo: 'img/esslinger.png',
+    url: 'https://esslingerlife.de/?gad_source=1&gad_campaignid=23563605278&gbraid=0AAAABCtC5XtvVe3EtqVdSN55Mqt7ZAe8y&gclid=CjwKCAjw2aPVBhBkEiwA0Cptt8r4ijEvvK3KbiTEyJmPKw4MZFwktSA3vkmfDI6Yt6apD5sBAq0AjBoCu2sQAvD_BwE'
+  }
+];
+
+function renderSponsoren(){
+  return SPONSOREN.map(s => {
+    const img = `<img src="${escapeHtml(s.logo)}" alt="${escapeHtml(s.name)}" loading="lazy">`;
+    if(s.url){
+      return `<a class="sponsor-card" href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(s.name)}">${img}</a>`;
+    }
+    return `<div class="sponsor-card">${img}</div>`;
+  }).join('\n');
+}
+
 const pages={
 
 home:`<h1>HERZLICH WILLKOMMEN</h1>
@@ -2585,6 +2662,23 @@ werbung:`<h1>WERBUNG</h1>
 <div class="werbung-text">
 <p>
 Für Anfragen schreiben Sie uns eine Email an: <a href="mailto:werbung@radiomulticraft.de">werbung@radiomulticraft.de</a></p>
+</div>`,
+
+kooperation:`<h1>KOOPERATION</h1>
+<h2>Unsere Partner stehen an unserer Seite</h2>
+<p class="lead-text">Radio Multicraft wird verschiedenartig unterstützt und gefördert. Ohne unsere Partner wäre unsere Arbeit nicht möglich und wir bedanken uns herzlich bei Ihnen.</p>
+
+<hr class="separator">
+
+<div class="sponsor-grid">
+${renderSponsoren()}
+</div>
+
+<img src="img/supportedbyfull.jpg" class="centered-banner" loading="lazy" alt="Radio Multicraft wird unterstützt von unseren Partnern">
+
+<div class="card card--spaced">
+<h2>Partner werden?</h2>
+<p>Sie möchten Radio Multicraft unterstützen oder mit uns zusammenarbeiten? Schreiben Sie uns an <a href="mailto:werbung@radiomulticraft.de">werbung@radiomulticraft.de</a> – wir melden uns zeitnah bei Ihnen.</p>
 </div>`,
 
 impressum:`<h1>Impressum</h1>
@@ -2784,7 +2878,7 @@ function initScrollReveal(){
       }
     });
   }, { threshold: 0.15 });
-  const revealTargets = content.querySelectorAll('.card, .centered-banner, .hero-banner, .team-member, .news-article');
+  const revealTargets = content.querySelectorAll('.card, .centered-banner, .hero-banner, .team-member, .news-article, .sponsor-card');
   revealTargets.forEach(el=>{
     el.classList.add('reveal-init');
     revealObserver.observe(el);
