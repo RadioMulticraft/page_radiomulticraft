@@ -2417,7 +2417,7 @@ updateMediaSessionMetadata(coverImage.src);
 const songKey = `${hasValidArtist?artist:''}|${title||''}`;
 if(songKey !== lastSongKey){
   lastSongKey = songKey;
-  if(hasValidArtist || title){
+  if(hasValidArtist && title){
     updateCoverForSong(hasValidArtist?artist:null, title, coverImageUrl);
   } else {
     coverRequestId++;
@@ -3069,7 +3069,10 @@ async function loadLastSongs() {
     artworkImg.alt = '';
     artworkImg.loading = 'lazy';
     artworkImg.decoding = 'async';
-    const initialArt = song.artist?.image || logoFallback;
+    const cArtist = song.artist?.name?.trim();
+    const cTitle = song.title?.trim();
+    const coverOk = !!(cArtist && !/^-+$/.test(cArtist) && cTitle);
+    const initialArt = coverOk ? (song.artist?.image || logoFallback) : logoFallback;
     artworkImg.src = initialArt;
     artworkWrap.classList.toggle('is-fallback', initialArt === logoFallback);
     artworkImg.onerror = () => {
@@ -3091,7 +3094,7 @@ async function loadLastSongs() {
 
     const artworkArtist = song.artist?.name?.trim() || '';
     const artworkTitle = song.title?.trim() || '';
-    resolvePlaylistArtwork(artworkArtist, artworkTitle, song.artist?.image).then(url => {
+    if(coverOk) resolvePlaylistArtwork(artworkArtist, artworkTitle, song.artist?.image).then(url => {
       if(!url) return;
       artworkWrap.classList.toggle('is-fallback', url === logoFallback);
       if(artworkImg.getAttribute('src') !== url) artworkImg.src = url;
