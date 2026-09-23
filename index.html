@@ -782,8 +782,8 @@ footer.player::before {
 .wx-refresh-btn:hover { background: rgba(255,59,59,0.18); }
 .wx-refresh-btn.is-spinning i { animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.weather-error { color: #ccc; font-size: 0.9rem; padding: 18px 20px; }
-.weather-error + .wx-refresh-btn { margin: 0 20px 16px; }
+.weather-error { color: #ccc; font-size: 0.9rem; padding: 8px 0 14px; margin: 0; }
+.weather-error + .wx-refresh-btn { margin: 0 0 6px; }
 
 .playlist-list {
   display: grid;
@@ -3385,8 +3385,11 @@ function renderWeatherPopup(data){
       </div>
       <div class="wx-hero" style="background:linear-gradient(135deg, #3d3d3d, #1e1e1e);">
         <div class="wx-hero-top"><span class="wx-place">Aachen</span></div>
-      <p class="weather-error">Wetterdaten konnten gerade nicht geladen werden.</p>
-      <button class="wx-refresh-btn"><i class="fas fa-rotate"></i> Erneut versuchen</button>
+      </div>
+      <div class="wx-body">
+        <p class="weather-error">Wetterdaten konnten gerade nicht geladen werden.</p>
+        <button class="wx-refresh-btn"><i class="fas fa-rotate"></i> Erneut versuchen</button>
+      </div>
     `;
     weatherPopover.querySelector('.modal-close-btn').addEventListener('click', closeWeatherPopover);
     weatherPopover.querySelector('.wx-refresh-btn').addEventListener('click', () => { renderWeatherSkeleton(); fetchWeather(); });
