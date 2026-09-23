@@ -200,14 +200,15 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
 
 .news-article {
   text-align: left;
-  margin-bottom: 45px;
-  padding-bottom: 35px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 26px 26px 30px;
+  margin-bottom: 26px;
+  background: linear-gradient(160deg,rgba(38,38,40,.55),rgba(22,22,24,.55));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
 }
 .news-article:last-of-type {
-  border-bottom: none;
   margin-bottom: 0;
-  padding-bottom: 0;
 }
 .news-article h2 { text-align: left; margin-top: 0; }
 .news-article .centered-banner {
@@ -623,6 +624,7 @@ footer.player::before {
 
   .team-grid { grid-template-columns:1fr; gap:20px; }
   .card { padding:20px; margin:15px auto; }
+  .news-article { padding: 18px 18px 22px; border-radius: 16px; }
 }
 
 @media (max-width: 360px) {
@@ -1170,6 +1172,92 @@ footer.player::before {
   .playlist-item-title{ font-size:.76rem !important; }
   .playlist-item-time{ min-width:52px !important; font-size:.55rem !important; }
 }
+
+/* ==========================================================
+   STARTSEITE – im gleichen editorialen Look wie KOOPERATION
+   ========================================================== */
+
+.content-wrap{
+  max-width:1000px;
+  margin:0 auto;
+  padding:28px 0 10px;
+}
+
+.page-hero{
+  max-width:760px;
+  margin:0 auto;
+  padding:26px 0 6px;
+  text-align:center;
+  animation:coopHeroIn .8s ease both;
+}
+@keyframes coopHeroIn{
+  from{ opacity:0; transform:translateY(14px); }
+  to{ opacity:1; transform:none; }
+}
+.page-eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 16px; border-radius:20px;
+  background:rgba(255,59,59,.12);
+  border:1px solid rgba(255,59,59,.3);
+  color:#ff6666; font-size:.78rem; font-weight:700;
+  letter-spacing:.04em;
+  margin-bottom:20px;
+}
+.page-eyebrow i{ font-size:.72rem; }
+.page-hero h1{
+  margin:0 0 14px;
+  font-size:clamp(2.6rem,6.5vw,4.4rem);
+  line-height:.95;
+  letter-spacing:-.035em;
+  text-shadow:0 6px 30px rgba(0,0,0,.5);
+}
+.page-hero h2{
+  margin:0 0 20px;
+  font-family:'Segoe UI',sans-serif;
+  font-size:1.2rem;
+  font-weight:600;
+  letter-spacing:.01em;
+  color:#ff6666;
+}
+.page-hero .lead-text{ margin:0 auto; color:#d0d0d0; }
+
+.page-section{ margin:72px 0 0; }
+.page-section-head{
+  position:relative;
+  padding:2px 0 0 18px;
+  margin:0 0 28px;
+  text-align:left;
+}
+.page-section-head::before{
+  content:'';
+  position:absolute; left:0; top:4px;
+  width:5px; height:100%;
+  max-height:60px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#ff5555,#d71920);
+  box-shadow:0 0 18px rgba(255,59,59,.28);
+}
+.page-section-head h2{
+  margin:0;
+  text-align:left;
+  color:#fff;
+  font-size:clamp(1.45rem,3vw,2rem);
+  line-height:1.1;
+  letter-spacing:-.02em;
+}
+.page-section-head p{
+  margin:8px 0 0;
+  max-width:600px;
+  color:#a8a8a8;
+  font-size:.95rem;
+  line-height:1.6;
+}
+
+@media (max-width:768px){
+  .content-wrap{ padding-top:6px; }
+  .page-section{ margin-top:52px; }
+  .page-section-head{ margin-bottom:22px; }
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
@@ -1599,10 +1687,6 @@ footer.player::before {
   padding:26px 0 6px;
   text-align:center;
   animation:coopHeroIn .8s ease both;
-}
-@keyframes coopHeroIn{
-  from{ opacity:0; transform:translateY(14px); }
-  to{ opacity:1; transform:none; }
 }
 .coop-eyebrow{
   display:inline-flex; align-items:center; gap:8px;
@@ -2503,56 +2587,75 @@ function renderSponsoren(){
 
 const pages={
 
-home:`<h1>HERZLICH WILLKOMMEN</h1>
-<h2>Hier findest Du alles rund um unser Programm</h2>
-<p class="lead-text">Du möchtest uns direkt im Studio erreichen?<br>
-Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Nachricht!</p>
+home:`<div class="content-wrap">
 
-<div class="contact-circles">
-  <a href="tel:+4915755966472" title="Anrufen" class="contact-circle">
-    <i class="fas fa-phone"></i>
-  </a>
+<header class="page-hero">
+  <span class="page-eyebrow"><i class="fas fa-broadcast-tower"></i>Willkommen bei RMC</span>
+  <h1>DEIN SOUND<br>DEIN STREAM</h1>
+  <h2>Radio Multicraft – Immer live, immer für Dich da</h2>
+  <p class="lead-text">Du möchtest uns direkt im Studio erreichen?<br>
+  Ganz gleich, ob als Text, Audio, Foto oder Video – wir freuen uns auf Deine Nachricht!</p>
 
-  <a href="https://wa.me/4915755966472" target="_blank" rel="noopener noreferrer" title="WhatsApp Nachricht senden" class="contact-circle">
-    <i class="fab fa-whatsapp"></i>
-  </a>
+  <div class="contact-circles">
+    <a href="tel:+4915755966472" title="Anrufen" class="contact-circle">
+      <i class="fas fa-phone"></i>
+    </a>
+    <a href="https://wa.me/4915755966472" target="_blank" rel="noopener noreferrer" title="WhatsApp Nachricht senden" class="contact-circle">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+    <a href="https://www.instagram.com/radiomulticraft.de/" target="_blank" rel="noopener noreferrer" title="Instagram" class="contact-circle">
+      <i class="fab fa-instagram"></i>
+    </a>
+    <a href="mailto:info@radiomulticraft.de" title="E-Mail schreiben" class="contact-circle">
+      <i class="fas fa-envelope"></i>
+    </a>
+  </div>
+</header>
 
-  <a href="https://www.instagram.com/radiomulticraft.de/" target="_blank" rel="noopener noreferrer" title="Instagram" class="contact-circle">
-    <i class="fab fa-instagram"></i>
-  </a>
+<section class="page-section">
+  <div class="page-section-head">
+    <h2>Unser Sound</h2>
+    <p>Der beste Mix, live moderiert und rund um die Uhr für Dich im Stream.</p>
+  </div>
+  <img src="img/deinsounddeinstream032026.jpg" class="hero-banner" loading="lazy" alt="Radio Multicraft – Dein Sound, Dein Stream">
+</section>
 
-  <a href="mailto:info@radiomulticraft.de" title="E-Mail schreiben" class="contact-circle">
-    <i class="fas fa-envelope"></i>
-  </a>
-</div>
+<section class="page-section">
+  <div class="page-section-head">
+    <h2>Nachrichten</h2>
+    <p>Immer stündlich, immer aktuell – bleib mit RMC auf dem Laufenden.</p>
+  </div>
+  <img src="img/Newsbanner.jpg" class="hero-banner" loading="lazy" alt="Aktuelle Nachrichten bei Radio Multicraft">
+</section>
 
-<hr class="separator">
-<img src="img/deinsounddeinstream032026.jpg" class="hero-banner" loading="lazy" alt="Radio Multicraft – Dein Sound, Dein Stream">
-<hr class="separator">
-<img src="img/Newsbanner.jpg" class="hero-banner" loading="lazy" alt="Aktuelle Nachrichten bei Radio Multicraft">
-
-<br>
-<br>
-
-<div class="card">
-
-<a href="https:///" target="_blank" rel="noopener noreferrer">
+<section class="page-section">
+  <div class="page-section-head">
+    <h2>Sendekalender</h2>
+    <p>Behalte unser Programm im Blick, damit Du keine Show verpasst.</p>
+  </div>
+  <a href="https:///" target="_blank" rel="noopener noreferrer">
     <img src="img/KalenderRMC.png" alt="Sendekalender von Radio Multicraft" class="centered-banner" loading="lazy">
-</a>
+  </a>
+</section>
 
-<h2>STARNEWS</h2>
+<section class="page-section">
+  <div class="page-section-head">
+    <h2>Starnews</h2>
+    <p>Die aktuellsten Meldungen aus der Welt der Stars, für Dich zusammengefasst.</p>
+  </div>
+  <div id="starnews-container">
+    <p style="text-align:center; color:#999;">Meldungen werden geladen...</p>
+  </div>
+</section>
 
-<div id="starnews-container">
-  <p style="text-align:center; color:#999;">Meldungen werden geladen...</p>
-</div>
+<section class="page-section">
+  <div class="page-section-head">
+    <h2>Unsere Partner</h2>
+    <p>Radio Multicraft wird unterstützt von starken Partnern an unserer Seite.</p>
+  </div>
+  <img src="img/supportedbyfull.jpg" alt="Radio Multicraft wird unterstützt von unseren Partnern" class="centered-banner" loading="lazy">
+</section>
 
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<img src="img/supportedbyfull.jpg" alt="Radio Multicraft wird unterstützt von unseren Partnern" class="centered-banner" loading="lazy">
 </div>`,
 team:`<h1>Unser Team</h1>
 <div class="team-grid">
