@@ -2078,7 +2078,7 @@ let lastSongKey='';
 let lastMarqueeText='';
 let coverRequestId=0;
 let lastMediaTitle='Radio Multicraft';
-let lastMediaArtist='Dein Sound | Dein Stream';
+let lastMediaArtist='RMC - DEIN SOUND | DEIN STREAM';
 
 let stationLogoReady = null;
 function getStationLogoImage(){
@@ -2488,14 +2488,14 @@ const hasValidArtist=artist && !/^-+$/.test(artist);
 let newSongText;
 if(hasValidArtist && title){newSongText=`${artist} - ${title}`;}
 else if(title){newSongText=title;}
-else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);return;}else{newSongText="Dein Sound | Dein Stream";}}
+else{if(!retry){setTimeout(()=>fetchCurrentSong(true),1000);return;}else{newSongText="RMC - DEIN SOUND | DEIN STREAM";}}
 
 if(newSongText !== lastMarqueeText){
   setSongTitle(newSongText);
 }
 
 lastMediaTitle = title || 'Radio Multicraft';
-lastMediaArtist = hasValidArtist ? artist : 'Dein Sound | Dein Stream';
+lastMediaArtist = hasValidArtist ? artist :'RMC - DEIN SOUND | DEIN STREAM';
 updateMediaSessionMetadata(coverImage.src);
 
 const songKey = `${hasValidArtist?artist:''}|${title||''}`;
