@@ -3182,11 +3182,25 @@ setInterval(() => {
   if(document.getElementById('starnews-container')) loadStarnews(true);
 }, NEWS_POLL_MS);
 
+function initJobsVideo(){
+  const v = content.querySelector('.jobs-hero-video');
+  if(!v) return;
+  /* per innerHTML eingesetzte Videos: stumm-Status explizit setzen, sonst blockt der Browser Autoplay */
+  v.muted = true;
+  v.defaultMuted = true;
+  v.setAttribute('muted', '');
+  v.playsInline = true;
+  if(prefersReducedMotion) return;
+  const p = v.play();
+  if(p && typeof p.catch === 'function') p.catch(function(){ /* Autoplay blockiert: Standbild bleibt sichtbar */ });
+}
+
 function loadPage(page){
   if(prefersReducedMotion){
     content.innerHTML = pages[page];
     window.scrollTo({top:0, behavior:"auto"});
     initScrollReveal();
+    initJobsVideo();
     if(page === 'home') loadStarnews();
     return;
   }
@@ -3196,6 +3210,7 @@ function loadPage(page){
     window.scrollTo({top:0, behavior:"auto"});
     content.style.opacity = 1;
     initScrollReveal();
+    initJobsVideo();
     if(page === 'home') loadStarnews();
   }, 180);
 }
