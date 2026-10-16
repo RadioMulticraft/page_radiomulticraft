@@ -2004,6 +2004,149 @@ a.sponsor-card:hover .sponsor-name i{ opacity:1; transform:none; }
 @media (prefers-reduced-motion: reduce) {
   .rmc-waves path { animation: none; opacity: 1; }
 }
+
+/* ==========================================================
+   JOBS – Redesign v4 (ruhig, Karriereseiten-Stil, Video-Header)
+   ========================================================== */
+.jobs-page{ max-width:900px; margin:0 auto; padding:10px 0 10px; }
+
+/* Kopfbereich mit Video-Loop im Hintergrund */
+.jobs-hero{
+  position:relative; isolation:isolate; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  min-height:clamp(260px,38vw,380px);
+  margin:0 auto 32px; padding:40px 24px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#0d0d0d url('img/jobs-onair-poster.jpg') center / cover no-repeat;
+  box-shadow:var(--shadow-md);
+  text-align:center;
+}
+.jobs-hero-video{
+  position:absolute; inset:0; z-index:-2;
+  width:100%; height:100%; object-fit:cover; object-position:center;
+}
+.jobs-hero::after{
+  content:''; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg,rgba(18,18,18,.55) 0%,rgba(18,18,18,.62) 55%,rgba(18,18,18,.88) 100%);
+}
+.jobs-hero-inner{ max-width:620px; }
+.jobs-hero h1{
+  margin:0 0 14px;
+  font-size:clamp(2.6rem,7vw,4.4rem);
+  line-height:.95; letter-spacing:-.035em;
+  text-shadow:0 6px 30px rgba(0,0,0,.6);
+}
+.jobs-lead{ margin:0; color:#e4e4e4; font-size:1.08rem; line-height:1.7; text-shadow:0 2px 14px rgba(0,0,0,.6); }
+@media (prefers-reduced-motion:reduce){ .jobs-hero-video{ display:none; } }
+
+/* Banner: Originalformat, nie verzerrt oder beschnitten */
+.jobs-banner{
+  margin:0 auto;
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--bg-panel);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:var(--shadow-md);
+}
+.jobs-banner img{ display:block; width:100%; height:auto; }
+
+/* Kopfzeile der Liste */
+.jobs-section{ margin-top:56px; }
+.jobs-section-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  margin:0 0 18px; padding:0 4px;
+}
+.jobs-section-head h2{
+  margin:0; text-align:left;
+  font-size:clamp(1.4rem,3vw,1.75rem);
+  letter-spacing:-.01em;
+}
+.jobs-count{ color:#8f8f8f; font-size:.92rem; white-space:nowrap; }
+
+/* Stellenliste: ein Panel, getrennte Zeilen */
+.jobs-list{
+  background:var(--bg-panel);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:15px;
+  box-shadow:var(--shadow-md);
+  overflow:hidden;
+}
+.jobs-job{
+  display:grid;
+  grid-template-columns:52px 1fr auto;
+  column-gap:24px;
+  align-items:start;
+  padding:30px 32px;
+  text-align:left;
+}
+.jobs-job + .jobs-job{ border-top:1px solid rgba(255,255,255,.07); }
+.jobs-job-icon{
+  display:flex; align-items:center; justify-content:center;
+  width:52px; height:52px;
+  border-radius:12px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  color:#ff5a5a; font-size:1.15rem;
+}
+.jobs-job-title{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:2px 0 10px; }
+.jobs-job h3{
+  margin:0; text-align:left;
+  font-size:1.3rem; font-weight:700; line-height:1.25;
+}
+.jobs-job h3 span{ color:#8f8f8f; font-size:.75em; font-weight:400; }
+.jobs-tag{
+  padding:3px 10px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:20px;
+  color:#b5b5b5; font-size:.78rem; font-weight:600;
+}
+.jobs-job p{ margin:0 0 16px; max-width:560px; color:#d2d2d2; font-size:.97rem; line-height:1.7; }
+.jobs-points{ display:flex; flex-wrap:wrap; gap:8px 26px; list-style:none; margin:0; padding:0; }
+.jobs-points li{ display:flex; align-items:center; gap:9px; color:#a9a9a9; font-size:.9rem; }
+.jobs-points li::before{
+  content:'\f00c';
+  font-family:'Font Awesome 5 Free','Font Awesome 6 Free'; font-weight:900;
+  color:#ff5a5a; font-size:.68rem;
+}
+.jobs-apply{
+  align-self:center;
+  display:inline-flex; align-items:center; gap:9px;
+  padding:11px 22px;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.2);
+  color:#fff; font-weight:600; font-size:.95rem; text-decoration:none; white-space:nowrap;
+  transition:background-color .2s ease, border-color .2s ease;
+}
+.jobs-apply:hover{ background-color:var(--brand-red); border-color:var(--brand-red); }
+.jobs-apply:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+
+.jobs-footnote{ margin:14px 4px 0; color:#9a9a9a; font-size:.85rem; line-height:1.6; text-align:left; }
+
+/* Kontakt */
+.jobs-contact{
+  display:flex; align-items:center; gap:18px;
+  margin-top:44px; padding:24px 30px;
+  border:1px solid rgba(255,255,255,.08);
+  border-left:3px solid var(--brand-red-accent);
+  border-radius:12px;
+  background:rgba(255,255,255,.025);
+  text-align:left;
+}
+.jobs-contact > i{ color:#ff5a5a; font-size:1.3rem; }
+.jobs-contact h2{ margin:0 0 4px; text-align:left; font-size:1.2rem; }
+.jobs-contact p{ margin:0; color:#cfcfcf; font-size:.97rem; line-height:1.6; }
+.jobs-contact p a{ color:#ff7a7a; text-decoration:none; }
+.jobs-contact p a:hover{ text-decoration:underline; }
+
+@media (max-width:768px){
+  .jobs-hero{ padding:32px 18px; }
+  .jobs-section{ margin-top:42px; }
+  .jobs-job{ grid-template-columns:44px 1fr; column-gap:16px; padding:24px 20px; }
+  .jobs-job-icon{ width:44px; height:44px; font-size:1rem; }
+  .jobs-apply{ grid-column:1 / -1; justify-content:center; margin-top:20px; }
+  .jobs-contact{ padding:20px; }
+}
 </style>
 
 <script>
@@ -2923,15 +3066,74 @@ E-Mail: <a href="mailto:info@radiomulticraft.de">info@radiomulticraft.de</a>
 </p>
 </div>`,
 
-jobs:`<h1>JOBS</h1>
-<img src="img/Aufruf_BewerbungRMC.jpg" class="centered-banner" loading="lazy" alt="Aufruf zur Bewerbung bei Radio Multicraft">
-<div class="card">
-<h2>Moderatoren (m/w/d)</h2>
+jobs:`<div class="jobs-page">
+<header class="jobs-hero">
+<video class="jobs-hero-video" autoplay muted loop playsinline preload="auto" poster="img/jobs-onair-poster.jpg" aria-hidden="true" disablepictureinpicture>
+<source src="img/jobs-onair.mp4" type="video/mp4">
+</video>
+<div class="jobs-hero-inner">
+<h1>JOBS</h1>
+<p class="jobs-lead">Du möchtest Radio mit uns gestalten? Bei Radio Multicraft suchen wir Menschen, die Lust haben, Teil unseres Teams zu werden.</p>
+</div>
+</header>
+
+<figure class="jobs-banner">
+<img src="img/Aufruf_BewerbungRMC.jpg" loading="lazy" alt="Aufruf zur Bewerbung bei Radio Multicraft">
+</figure>
+
+<section class="jobs-section">
+<div class="jobs-section-head">
+<h2>Offene Positionen</h2>
+<span class="jobs-count">2 Positionen</span>
+</div>
+
+<div class="jobs-list">
+<article class="jobs-job">
+<div class="jobs-job-icon"><i class="fas fa-microphone"></i></div>
+<div>
+<div class="jobs-job-title">
+<h3>Moderatoren <span>(m/w/d)</span></h3>
+<span class="jobs-tag">Unentgeltlich*</span>
+</div>
 <p>Du liebst Musik, bist kommunikativ und möchtest Teil eines dynamischen Teams werden? Wir suchen engagierte Moderatoren, die mit Leidenschaft unser Programm bereichern.</p>
-<h2>Praktikanten (m/w/d)</h2>
+<ul class="jobs-points">
+<li>Liebe zur Musik</li>
+<li>Kommunikationsstärke</li>
+<li>Teamgeist</li>
+</ul>
+</div>
+<a class="jobs-apply" href="mailto:info@radiomulticraft.de?subject=Bewerbung%20Moderator">Bewerben</a>
+</article>
+
+<article class="jobs-job">
+<div class="jobs-job-icon"><i class="fas fa-graduation-cap"></i></div>
+<div>
+<div class="jobs-job-title">
+<h3>Praktikanten <span>(m/w/d)</span></h3>
+<span class="jobs-tag">Unentgeltlich*</span>
+</div>
 <p>Du möchtest erste Erfahrungen in der Radiowelt sammeln? Wir bieten dir spannende Einblicke hinter die Kulissen eines modernen Webradios.</p>
-<h3>*Hinweis: Sämtliche auf dieser Seite ausgeschriebenen Stellen sind unentgeltlich und begründen kein vergütungspflichtiges Arbeitsverhältnis.</h3>
-<p><strong>Interesse geweckt?</strong> Schreib uns an: <a href="mailto:info@radiomulticraft.de">jobs@radiomulticraft.de</a></p>
+<ul class="jobs-points">
+<li>Interesse an Radio und Medien</li>
+<li>Neugier</li>
+<li>Lernbereitschaft</li>
+</ul>
+</div>
+<a class="jobs-apply" href="mailto:info@radiomulticraft.de?subject=Bewerbung%20Praktikum">Bewerben</a>
+</article>
+</div>
+
+<p class="jobs-footnote">*Hinweis: Sämtliche auf dieser Seite ausgeschriebenen Stellen sind unentgeltlich und begründen kein vergütungspflichtiges Arbeitsverhältnis.</p>
+</section>
+
+<aside class="jobs-contact">
+<i class="fas fa-envelope"></i>
+<div>
+<h2>Interesse geweckt?</h2>
+<p>Schreib uns an: <a href="mailto:info@radiomulticraft.de">jobs@radiomulticraft.de</a></p>
+</div>
+</aside>
+
 </div>`
 };
 
