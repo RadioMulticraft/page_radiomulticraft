@@ -2147,6 +2147,140 @@ a.sponsor-card:hover .sponsor-name i{ opacity:1; transform:none; }
   .jobs-apply{ grid-column:1 / -1; justify-content:center; margin-top:20px; }
   .jobs-contact{ padding:20px; }
 }
+/* ==========================================================
+   WERBUNG – Redesign (gleicher Stil wie Jobs)
+   ========================================================== */
+.werbung-page{ max-width:900px; margin:0 auto; padding:10px 0 10px; }
+
+.werbung-hero{
+  position:relative; isolation:isolate; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  min-height:clamp(260px,38vw,380px);
+  margin:0 auto 32px; padding:40px 24px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#0d0d0d url('img/Show Banner in Blue Light Style.jpg') center / cover no-repeat;
+  box-shadow:var(--shadow-md);
+  text-align:center;
+}
+.werbung-hero::after{
+  content:''; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg,rgba(18,18,18,.55) 0%,rgba(18,18,18,.62) 55%,rgba(18,18,18,.88) 100%);
+}
+.werbung-hero-inner{ max-width:620px; }
+.werbung-hero h1{
+  margin:0 0 14px;
+  font-size:clamp(2.6rem,7vw,4.4rem);
+  line-height:.95; letter-spacing:-.035em;
+  text-shadow:0 6px 30px rgba(0,0,0,.6);
+}
+.werbung-lead{ margin:0; color:#e4e4e4; font-size:1.08rem; line-height:1.7; text-shadow:0 2px 14px rgba(0,0,0,.6); }
+
+.werbung-section{ margin-top:56px; }
+.werbung-section-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  margin:0 0 18px; padding:0 4px;
+}
+.werbung-section-head h2{
+  margin:0; text-align:left;
+  font-size:clamp(1.4rem,3vw,1.75rem);
+  letter-spacing:-.01em;
+}
+.werbung-sub{ color:#8f8f8f; font-size:.92rem; }
+
+.werbung-list{
+  background:var(--bg-panel);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:15px;
+  box-shadow:var(--shadow-md);
+  overflow:hidden;
+}
+.werbung-item{
+  display:grid;
+  grid-template-columns:52px 1fr;
+  column-gap:24px;
+  align-items:start;
+  padding:28px 32px;
+  text-align:left;
+}
+.werbung-item + .werbung-item{ border-top:1px solid rgba(255,255,255,.07); }
+.werbung-item-icon{
+  display:flex; align-items:center; justify-content:center;
+  width:52px; height:52px;
+  border-radius:12px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  color:#ff5a5a; font-size:1.15rem; font-weight:700;
+}
+.werbung-item h3{ margin:2px 0 8px; text-align:left; font-size:1.2rem; font-weight:700; line-height:1.25; }
+.werbung-item p{ margin:0; max-width:580px; color:#d2d2d2; font-size:.97rem; line-height:1.7; }
+
+.werbung-contact{
+  display:flex; align-items:center; justify-content:space-between; gap:24px;
+  margin-top:44px; padding:24px 30px;
+  border:1px solid rgba(255,255,255,.08);
+  border-left:3px solid var(--brand-red-accent);
+  border-radius:12px;
+  background:rgba(255,255,255,.025);
+  text-align:left;
+}
+.werbung-contact-text{ display:flex; align-items:center; gap:18px; }
+.werbung-contact-text > i{ color:#ff5a5a; font-size:1.3rem; }
+.werbung-contact h2{ margin:0 0 4px; text-align:left; font-size:1.2rem; }
+.werbung-contact p{ margin:0; color:#cfcfcf; font-size:.97rem; line-height:1.6; }
+.werbung-contact p a{ color:#ff7a7a; text-decoration:none; }
+.werbung-contact p a:hover{ text-decoration:underline; }
+.werbung-btn{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:11px 22px;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.2);
+  color:#fff; font-weight:600; font-size:.95rem; text-decoration:none; white-space:nowrap;
+  transition:background-color .2s ease, border-color .2s ease;
+}
+.werbung-btn:hover{ background-color:var(--brand-red); border-color:var(--brand-red); }
+.werbung-btn:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+
+/* Werbung: Info-Blöcke mit Foto, abwechselnd links/rechts */
+.werbung-section--first{ margin-top:0; }
+.werbung-feature-list{
+  background:var(--bg-panel);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:15px;
+  box-shadow:var(--shadow-md);
+  overflow:hidden;
+}
+.werbung-feature{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  column-gap:36px;
+  align-items:center;
+  padding:32px;
+  text-align:left;
+}
+.werbung-feature + .werbung-feature{ border-top:1px solid rgba(255,255,255,.07); }
+.werbung-feature:nth-child(even){ grid-template-columns:1fr 280px; }
+.werbung-feature:nth-child(even) img{ order:2; }
+.werbung-feature img{
+  display:block; width:100%; height:auto;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.08);
+}
+.werbung-feature h3{ margin:0 0 12px; text-align:left; font-size:1.35rem; font-weight:700; line-height:1.25; }
+.werbung-feature p{ margin:0; color:#d2d2d2; font-size:.97rem; line-height:1.7; }
+@media (max-width:768px){
+  .werbung-feature, .werbung-feature:nth-child(even){ grid-template-columns:1fr; row-gap:18px; padding:22px 20px; }
+  .werbung-feature:nth-child(even) img{ order:0; }
+}
+
+@media (max-width:768px){
+  .werbung-hero{ padding:32px 18px; }
+  .werbung-section{ margin-top:42px; }
+  .werbung-item{ grid-template-columns:44px 1fr; column-gap:16px; padding:22px 20px; }
+  .werbung-item-icon{ width:44px; height:44px; font-size:1rem; }
+  .werbung-contact{ flex-direction:column; align-items:stretch; padding:20px; }
+  .werbung-btn{ justify-content:center; }
+}
 </style>
 
 <script>
@@ -2874,12 +3008,91 @@ team:`<h1>Unser Team</h1>
 <h3>Tobias</h3><p>Moderation & Int. Koordination</p>
 </div>`,
 
-werbung:`<h1>WERBUNG</h1>
-<img src="img/Show Banner in Blue Light Style.jpg" class="hero-banner" loading="lazy" alt="Werbebanner Radio Multicraft im Blue-Light-Stil">
-<img src="img/3spaltensytemRMC.png" class="centered-banner" loading="lazy" alt="Übersicht der Werbeformate von Radio Multicraft">
-<div class="werbung-text">
-<p>
-Für Anfragen schreiben Sie uns eine Email an: <a href="mailto:werbung@radiomulticraft.de">werbung@radiomulticraft.de</a></p>
+werbung:`<div class="werbung-page">
+<header class="werbung-hero">
+<div class="werbung-hero-inner">
+<h1>WERBUNG</h1>
+<p class="werbung-lead">Machen Sie Ihr Angebot hörbar. Mit Radio Multicraft erreichen Sie eine aktive Hörerschaft – persönlich, fair und auf Augenhöhe.</p>
+</div>
+</header>
+
+<section class="werbung-section werbung-section--first">
+<div class="werbung-section-head">
+<h2>Ihre Werbung bei Radio Multicraft</h2>
+<span class="werbung-sub">Montag bis Samstag</span>
+</div>
+
+<div class="werbung-feature-list">
+<article class="werbung-feature">
+<img src="img/werbung-reichweite.jpg" loading="lazy" alt="Mikrofon im Radiostudio">
+<div>
+<h3>Reichweite, die ankommt</h3>
+<p>Wer erfolgreich werben möchte, muss seine Zielgruppe zur richtigen Zeit erreichen.<br>Genau das macht Radio Multicraft möglich. Unternehmen haben hier die Chance, ihre Werbebotschaften zuverlässig und wirkungsvoll zu platzieren – direkt bei den Menschen aus der Region.</p>
+</div>
+</article>
+
+<article class="werbung-feature">
+<img src="img/werbung-sendezeit.jpg" loading="lazy" alt="Lächelnder Autofahrer am Steuer">
+<div>
+<h3>Werbung zur besten Sendezeit</h3>
+<p>Von Montag bis Samstag wird jede Werbeschaltung sechsmal täglich zu den attraktivsten Sendezeiten ausgestrahlt – zwischen 6 Uhr morgens und 20 Uhr abends. So hören die Menschen Ihre Botschaft genau dann, wenn sie besonders aufmerksam sind.<br>Ob auf dem Weg zur Arbeit, in der Mittagspause oder am Abend: Ihre Werbung ist präsent.</p>
+</div>
+</article>
+
+<article class="werbung-feature">
+<img src="img/werbung-planung.jpg" loading="lazy" alt="Terminplanung mit Kalender">
+<div>
+<h3>Flexibel planen – gezielt werben</h3>
+<p>Mit diesem Angebot spricht Radio Multicraft gezielt die passende Zielgruppe an – über den Tag verteilt und zu unterschiedlichen Zeiten. Unternehmen können den Wunschtermin selbst festlegen, während das Team von Radio Multicraft die optimale Platzierung und Ausstrahlung übernimmt.<br>So wird Radiowerbung zu einem effizienten Instrument, um Kundinnen und Kunden direkt zu erreichen – klar, wirkungsvoll und mit hoher Reichweite.</p>
+</div>
+</article>
+</div>
+</section>
+
+<section class="werbung-section">
+<div class="werbung-section-head">
+<h2>So läuft die Zusammenarbeit</h2>
+<span class="werbung-sub">In 3 Schritten</span>
+</div>
+
+<div class="werbung-list">
+<article class="werbung-item">
+<div class="werbung-item-icon">1</div>
+<div>
+<h3>Kontakt aufnehmen</h3>
+<p>Schreiben Sie uns kurz, wer Sie sind und was Sie sich vorstellen.</p>
+</div>
+</article>
+
+<article class="werbung-item">
+<div class="werbung-item-icon">2</div>
+<div>
+<h3>Gemeinsam abstimmen</h3>
+<p>Wir melden uns zeitnah und besprechen Möglichkeiten und Konditionen.</p>
+</div>
+</article>
+
+<article class="werbung-item">
+<div class="werbung-item-icon">3</div>
+<div>
+<h3>Zusammen starten</h3>
+<p>Sobald alles passt, setzen wir die Werbung gemeinsam um.</p>
+</div>
+</article>
+</div>
+</section>
+
+<aside class="werbung-contact">
+<div class="werbung-contact-text">
+<i class="fas fa-envelope"></i>
+<div>
+<h2>Interesse an Werbung?</h2>
+<p>Für Anfragen schreiben Sie uns eine E-Mail an: <a href="mailto:werbung@radiomulticraft.de">werbung@radiomulticraft.de</a></p>
+</div>
+</div>
+<a class="werbung-btn" href="mailto:werbung@radiomulticraft.de?subject=Werbeanfrage"><i class="fas fa-paper-plane"></i>Anfrage senden</a>
+</aside>
+
 </div>`,
 
 kooperation:`<div class="coop-page">
