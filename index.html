@@ -2155,18 +2155,23 @@ a.sponsor-card:hover .sponsor-name i{ opacity:1; transform:none; }
 .werbung-hero{
   position:relative; isolation:isolate; overflow:hidden;
   display:flex; align-items:center; justify-content:center;
-  min-height:clamp(260px,38vw,380px);
-  margin:0 auto 32px; padding:40px 24px;
+  margin:0 auto 24px; padding:48px 24px;
   border-radius:14px;
   border:1px solid rgba(255,255,255,.08);
-  background:#0d0d0d url('img/Show Banner in Blue Light Style.jpg') center / cover no-repeat;
+  background:linear-gradient(135deg,rgba(142,14,14,.45),rgba(24,24,26,.95) 70%);
   box-shadow:var(--shadow-md);
   text-align:center;
 }
-.werbung-hero::after{
-  content:''; position:absolute; inset:0; z-index:-1;
-  background:linear-gradient(180deg,rgba(18,18,18,.55) 0%,rgba(18,18,18,.62) 55%,rgba(18,18,18,.88) 100%);
+/* Banner: Originalformat, nie verzerrt oder beschnitten */
+.werbung-banner{
+  margin:0 auto;
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--bg-panel);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:var(--shadow-md);
 }
+.werbung-banner img{ display:block; width:100%; height:auto; }
 .werbung-hero-inner{ max-width:620px; }
 .werbung-hero h1{
   margin:0 0 14px;
@@ -2242,7 +2247,7 @@ a.sponsor-card:hover .sponsor-name i{ opacity:1; transform:none; }
 .werbung-btn:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
 
 /* Werbung: Info-Blöcke mit Foto, abwechselnd links/rechts */
-.werbung-section--first{ margin-top:0; }
+.werbung-section--first{ margin-top:48px; }
 .werbung-feature-list{
   background:var(--bg-panel);
   border:1px solid rgba(255,255,255,.06);
@@ -3015,6 +3020,10 @@ werbung:`<div class="werbung-page">
 <p class="werbung-lead">Machen Sie Ihr Angebot hörbar. Mit Radio Multicraft erreichen Sie eine aktive Hörerschaft – persönlich, fair und auf Augenhöhe.</p>
 </div>
 </header>
+
+<figure class="werbung-banner">
+<img src="img/Show Banner in Blue Light Style.jpg" loading="lazy" alt="Werbebanner Radio Multicraft im Blue-Light-Stil">
+</figure>
 
 <section class="werbung-section werbung-section--first">
 <div class="werbung-section-head">
