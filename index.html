@@ -248,6 +248,9 @@ h3 { font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
   border-radius: 14px;
 }
 
+/* Team-GIF hat 16:5 – nicht auf 3:1 zuschneiden, sonst werden Text und Köpfe am Rand abgeschnitten */
+.team-banner { aspect-ratio: 16 / 5; object-fit: contain; }
+
 .werbung-text { max-width: 800px; margin: 0 auto 150px; font-size:1.1rem; line-height:1.6; text-align:center; }
 .werbung-text a { color: #ff3b3b; text-decoration:none; }
 
@@ -2943,6 +2946,14 @@ home:`<div class="content-wrap">
     <p>Der beste Mix, live moderiert und rund um die Uhr für Dich im Stream.</p>
   </div>
   <img src="img/deinsounddeinstream032026.jpg" class="hero-banner" loading="lazy" alt="Radio Multicraft – Dein Sound, Dein Stream">
+</section>
+
+<section class="page-section">
+  <div class="page-section-head">
+    <h2>Das sind wir</h2>
+    <p>Das Team hinter Radio Multicraft – Dein Sound, Dein Stream.</p>
+  </div>
+  <img src="img/RadioMulticraft_Team.gif" class="hero-banner team-banner" loading="lazy" alt="Das Team von Radio Multicraft: Michael, Max, Jennifer, Marlon, Tobias, Vanessa und Timo">
 </section>
 
 <section class="page-section">
