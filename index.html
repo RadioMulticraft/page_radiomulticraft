@@ -2844,19 +2844,48 @@ if(songKey !== lastSongKey){
 }
 }
 
-function updateCurrentShow(){
-const now=new Date(); const hour=now.getHours(); let show="NonStop!";
-if(hour>=6 && hour<11) show="Morningshow";
-else if(hour>=11 && hour<15) show="Vormittagsprogramm";
-else if(hour>=15 && hour<19) show="Nachmittagsshow";
-else if(hour>=19 && hour<22) show="Feierabend Programm";
-else if(hour>=22 && hour<24) show="Abendshow";
-else if(hour>=0 && hour<6) show="NonStop!";
-currentShowTitle.textContent=show;
+let sondersendungen = [];
+
+async function loadSondersendungen(){
+  try{
+    const res = await fetch('sendungen.json?_=' + Date.now(), { cache: 'no-store' });
+    if(!res.ok) throw new Error('sendungen.json nicht erreichbar');
+    const data = await res.json();
+    sondersendungen = Array.isArray(data) ? data : [];
+  }catch(e){
+    sondersendungen = [];
+  }
+  updateCurrentShow();
 }
+
+function updateCurrentShow(){
+  const now = new Date();
+  const heute = now.toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' });
+  const hour = parseInt(new Intl.DateTimeFormat('de-DE', {
+    hour: 'numeric', hourCycle: 'h23', timeZone: 'Europe/Berlin'
+  }).format(now), 10);
+
+  let show = "NonStop!";
+  if(hour>=6 && hour<11) show="Morningshow";
+  else if(hour>=11 && hour<15) show="Vormittagsprogramm";
+  else if(hour>=15 && hour<19) show="Nachmittagsshow";
+  else if(hour>=19 && hour<22) show="Feierabend Programm";
+  else if(hour>=22 && hour<24) show="Abendshow";
+
+  const sonder = sondersendungen.find(s => s.datum === heute && hour >= s.von && hour < s.bis);
+  if(sonder) show = sonder.titel;
+
+  currentShowTitle.textContent = show;
+}
+
 fetchCurrentSong();
 updateMarqueeState();
-updateCurrentShow(); setInterval(updateCurrentShow,60000);
+updateCurrentShow(); setInterval(updateCurrentShow, 10000);
+loadSondersendungen();
+setInterval(loadSondersendungen, 10 * 1000);
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible') loadSondersendungen();
+});
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
