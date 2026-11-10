@@ -3927,7 +3927,7 @@ if(aktionIstAktiv()){
 
   /* Pro Gerät merken wir uns nur die verwendeten E-Mail-Adressen:
      mehrere Anmeldungen am selben Gerät sind möglich, aber jede Adresse nur einmal. */
-  const EMAIL_KEY = 'rmcAktionEmails';
+  const EMAIL_KEY = 'rmcAktionEmails0';
   function aEmails(){
     try{ const l = JSON.parse(localStorage.getItem(EMAIL_KEY) || '[]'); return Array.isArray(l) ? l : []; }catch(e){ return []; }
   }
