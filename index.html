@@ -3039,22 +3039,23 @@ function renderSponsoren(){
 }
 
 const AKTION = {
-  titel: 'Der Radio Multicraft HoHoHit',
-  eyebrow: 'Gewinne mit etwas Glück das Buch: Weihnachtszauber für Erwachsene: 24 zauberhafte Kurzgeschichten',
+  titel: 'Aktion 06.12.',
+  eyebrow: 'Mach mit am 06.12.',
   intro: 'Trag dich mit Vornamen und E-Mail-Adresse ein und beantworte danach ein kurzes Quiz. Mit dem Abschluss ist deine Anmeldung bei uns eingegangen.',
   start: '2026-12-06T00:00:00+01:00',  // ab hier ist die Aktion für alle sichtbar
   ende: '2026-12-06T23:59:59+01:00',   // danach verschwindet sie wieder
   bild: 'img/gewinnspiel.jpg',   // Dein Gewinnspiel-Bild (in den img-Ordner legen)
   bildAlt: 'Gewinnspiel am 06.12. – jetzt anmelden und mitmachen',
-  endpoint: 'anmeldung.php',
+  endpoint: 'https://api.web3forms.com/submit',
+  accessKey: '504b6256-56af-4bc1-8fc7-0de70e002cae',   // kostenlos auf web3forms.com holen (Mail: info@radiomulticraft.de)
   mailFallback: 'info@radiomulticraft.de',
   fragen: [
-    { frage: 'Frage 1: In welchem Jahr wurde „Driving Home for Christmas“ erstmals veröffentlicht??',
-      antworten: ['1982', '1986', '1988', '1991'], richtig: 1 },
-    { frage: 'Frage 2: Welches Instrument spielt Chris Rea neben dem Gesang besonders häufig?',
-      antworten: ['Klavier', 'Saxophon', 'Gitarre', 'Trompete'], richtig: 2 },
-    { frage: 'Frage 3: Was inspirierte Chris Rea ursprünglich zu „Driving Home for Christmas“?',
-      antworten: ['Eine Reise im Zug zu seiner Familie', 'Eine Autofahrt im Weihnachtsverkehr', 'Ein Urlaub in den Schweizer Alpen', 'Ein Weihnachtsbesuch bei Freunden'], richtig: 1 }
+    { frage: 'Platzhalter-Frage 1: Wie heißt unser Sender?',
+      antworten: ['Radio Multicraft', 'Radio Mineraft', 'Radio Multikult', 'Radio Metacraft'], richtig: 0 },
+    { frage: 'Platzhalter-Frage 2: Wie lautet unser Slogan?',
+      antworten: ['Dein Sound | Dein Stream', 'Nur die Hits', 'Musik für alle', 'Radio ohne Pause'], richtig: 0 },
+    { frage: 'Platzhalter-Frage 3: Wann ist die Aktion?',
+      antworten: ['01.12.', '06.12.', '24.12.', '31.12.'], richtig: 1 }
   ]
 };
 
@@ -3424,6 +3425,7 @@ Auf unserer Website sind Inhalte und Dienste von externen Anbietern eingebunden:
 <li>Howler.js (Audio-Player Bibliothek)</li>
 <li>laut.fm API (Titel- & Playlist-Anzeige)</li>
 <li>Open-Meteo (Wetterdaten für die Wetteranzeige)</li>
+<li>Web3Forms (Formularversand bei Aktionen, Web3Forms, USA)</li>
 <li>OpenStreetMap (Kartenansicht in der Wetteranzeige)</li>
 <li>Verlinkungen zu Instagram, WhatsApp und E-Mail</li>
 </ul>
@@ -3460,7 +3462,7 @@ Du hast jederzeit das Recht auf:
 <h2>9. Teilnahme an Aktionen (Anmeldung & Quiz)</h2>
 <p>
 Wenn du an einer Aktion von Radio Multicraft teilnimmst, erheben wir deinen Vornamen, deine E-Mail-Adresse
-und dein Quiz-Ergebnis. Die Daten werden per E-Mail an uns übermittelt und ausschließlich zur Durchführung
+und dein Quiz-Ergebnis. Die Daten werden über den Formular-Dienst Web3Forms per E-Mail an uns übermittelt und ausschließlich zur Durchführung
 und Abwicklung der Aktion verwendet. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO),
 die du jederzeit mit Wirkung für die Zukunft per E-Mail an info@radiomulticraft.de widerrufen kannst.
 Nach Abschluss der Aktion werden die Daten gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten bestehen.
@@ -4029,18 +4031,26 @@ if(aktionIstAktiv()){
     aState.sending = true;
     aRender('<div class="aktion-center"><i class="fas fa-circle-notch aktion-spin"></i><h3>Einen Moment …</h3><p>Deine Anmeldung wird übermittelt.</p></div>');
     const sum = aBuildSummary();
+    if(!AKTION.accessKey || AKTION.accessKey.indexOf('HIER-') === 0){
+      console.warn('Web3Forms-Schluessel fehlt: AKTION.accessKey in der index.html eintragen.');
+      aShowSendError(sum);
+      aState.sending = false;
+      return;
+    }
     const fd = new FormData();
-    fd.append('vorname', aState.vorname);
+    fd.append('access_key', AKTION.accessKey);
+    fd.append('subject', 'Neue Anmeldung: ' + AKTION.titel + (aktionIstVorschau() ? ' (TEST)' : '') + ' – ' + aState.vorname);
+    fd.append('from_name', 'Radio Multicraft Gewinnspiel');
+    fd.append('name', aState.vorname);
     fd.append('email', aState.email);
-    fd.append('punkte', sum.punkte);
-    fd.append('gesamt', AKTION.fragen.length);
+    fd.append('punkte', sum.punkte + ' von ' + AKTION.fragen.length + ' richtig');
     fd.append('antworten', sum.text);
     fd.append('aktion', AKTION.titel + (aktionIstVorschau() ? ' (TEST)' : ''));
-    fd.append('website', '');
+    fd.append('botcheck', '');
     try{
       const res = await fetch(AKTION.endpoint, { method: 'POST', body: fd });
       const json = await res.json();
-      if(!res.ok || !json.ok) throw new Error('send failed');
+      if(!res.ok || !json.success) throw new Error('send failed');
       aMarkDone();
       aShowDone(sum.punkte);
     }catch(e){
