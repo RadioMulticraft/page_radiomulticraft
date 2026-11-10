@@ -2289,6 +2289,102 @@ a.sponsor-card:hover .sponsor-name i{ opacity:1; transform:none; }
   .werbung-contact{ flex-direction:column; align-items:stretch; padding:20px; }
   .werbung-btn{ justify-content:center; }
 }
+
+/* ==========================================================
+   AKTION 06.12. – Anmeldung + Quiz (Modal im Playlist-Look)
+   ========================================================== */
+#aktionButton{
+  background:linear-gradient(150deg,#ff5252,#e21f1f);
+  box-shadow:0 4px 14px rgba(255,59,59,.45);
+  animation:aktionPulse 2.6s ease-in-out infinite;
+}
+#aktionButton:hover{ background:linear-gradient(150deg,#ff6a6a,#d31c1c); }
+@keyframes aktionPulse{
+  0%,100%{ box-shadow:0 4px 14px rgba(255,59,59,.35); }
+  50%{ box-shadow:0 4px 22px rgba(255,59,59,.75); }
+}
+@media (max-width:768px){ #aktionButton span{ display:none; } #aktionButton{ padding:8px 11px; } }
+
+.aktion-body{ text-align:left; overflow-y:auto; padding:2px 2px 4px; }
+@media (max-width:768px){ .aktion-body{ max-height:calc(86dvh - 140px); } }
+.aktion-eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:5px 14px; border-radius:20px;
+  background:rgba(255,59,59,.12); border:1px solid rgba(255,59,59,.3);
+  color:#ff6666; font-size:.74rem; font-weight:700; letter-spacing:.04em;
+  margin-bottom:14px;
+}
+.aktion-text{ margin:0 0 18px; color:#d0d0d0; font-size:.97rem; line-height:1.65; }
+.aktion-field{ display:block; margin-bottom:14px; }
+.aktion-field > span{ display:block; margin-bottom:6px; font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#aaa; }
+.aktion-field input[type=text],
+.aktion-field input[type=email]{
+  width:100%; padding:13px 14px;
+  border-radius:12px; border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05); color:#fff; font-size:1rem; font-family:inherit;
+  transition:border-color .2s ease, background .2s ease;
+}
+.aktion-field input:focus{ outline:none; border-color:#ff3b3b; background:rgba(255,255,255,.08); }
+.aktion-hp{ position:absolute !important; left:-9999px; width:1px; height:1px; opacity:0; }
+.aktion-consent{ display:flex; gap:10px; align-items:flex-start; margin:4px 0 18px; color:#bdbdbd; font-size:.85rem; line-height:1.5; cursor:pointer; }
+.aktion-consent input{ margin-top:3px; accent-color:#ff3b3b; flex-shrink:0; width:17px; height:17px; }
+.aktion-consent a{ color:#ff6666; text-decoration:underline; cursor:pointer; }
+.aktion-error{ margin:0 0 14px; padding:10px 14px; border-radius:10px; background:rgba(255,59,59,.12); border:1px solid rgba(255,59,59,.3); color:#ff9a9a; font-size:.88rem; }
+.aktion-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  width:100%; padding:14px 24px; border:none; border-radius:30px;
+  background:linear-gradient(150deg,#ff5252,#e21f1f); color:#fff;
+  font-size:1rem; font-weight:700; font-family:inherit; cursor:pointer;
+  box-shadow:0 6px 18px rgba(255,59,59,.35);
+  transition:transform .15s ease, filter .2s ease;
+}
+.aktion-btn:hover{ filter:brightness(1.1); }
+.aktion-btn:active{ transform:scale(.97); }
+.aktion-btn:disabled{ opacity:.6; cursor:default; }
+.aktion-btn--ghost{ background:rgba(255,255,255,.07); box-shadow:none; border:1px solid rgba(255,255,255,.15); margin-top:10px; }
+
+.aktion-progress{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:.8rem; font-weight:700; color:#ff6666; letter-spacing:.06em; text-transform:uppercase; }
+.aktion-bar{ height:5px; border-radius:99px; background:rgba(255,255,255,.1); overflow:hidden; margin-bottom:22px; }
+.aktion-bar > div{ height:100%; border-radius:99px; background:linear-gradient(90deg,#ff5555,#d71920); transition:width .3s ease; }
+.aktion-question{ margin:0 0 18px; color:#fff; font-size:1.25rem; font-weight:700; line-height:1.35; }
+.aktion-options{ display:flex; flex-direction:column; gap:10px; }
+.aktion-option{
+  display:flex; align-items:center; gap:12px;
+  width:100%; padding:14px 16px; text-align:left;
+  border-radius:14px; border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04); color:#f0f0f0;
+  font-size:.97rem; font-family:inherit; cursor:pointer;
+  transition:background .2s ease, border-color .2s ease, transform .15s ease;
+}
+.aktion-option:hover{ background:rgba(255,59,59,.1); border-color:rgba(255,59,59,.4); }
+.aktion-option:active{ transform:scale(.985); }
+.aktion-option.is-picked{ background:rgba(255,59,59,.2); border-color:#ff3b3b; }
+.aktion-option b{
+  display:grid; place-items:center; flex:0 0 30px; height:30px; border-radius:50%;
+  background:rgba(255,255,255,.08); color:#ff6666; font-size:.8rem;
+}
+.aktion-center{ text-align:center; padding:10px 0 4px; }
+.aktion-center i{ font-size:2.6rem; color:#ff5b5b; margin-bottom:14px; }
+.aktion-center h3{ margin:0 0 10px; font-size:1.4rem; }
+.aktion-center p{ margin:0 0 8px; color:#cfcfcf; line-height:1.6; }
+.aktion-spin{ animation:spin .9s linear infinite; }
+/* Gewinnspiel-Bild auf der Startseite */
+.aktion-banner-section{ margin-top:40px; }
+.aktion-banner{
+  display:block; width:100%; padding:0; border:1px solid rgba(255,255,255,.1);
+  border-radius:14px; overflow:hidden; cursor:pointer; background:none;
+  box-shadow:var(--shadow-md); transition:transform .25s ease, box-shadow .25s ease;
+}
+.aktion-banner:hover{ transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,.5),0 0 0 1px rgba(255,59,59,.45); }
+.aktion-banner:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+.aktion-banner img{ display:block; width:100%; height:auto; }
+.aktion-banner-fallback{ display:none; }
+.aktion-banner.no-img{ background:linear-gradient(135deg,rgba(142,14,14,.7),rgba(24,24,26,.95)); }
+.aktion-banner.no-img .aktion-banner-fallback{
+  display:block; padding:46px 24px; color:#fff; font-family:'Archivo Black','Segoe UI',sans-serif;
+  font-size:clamp(1.3rem,4vw,2rem); text-align:center;
+}
+.aktion-banner.no-img .aktion-banner-fallback i{ margin-right:10px; color:#ff6666; }
 </style>
 
 <script>
@@ -2942,6 +3038,45 @@ function renderSponsoren(){
   }).join('\n');
 }
 
+const AKTION = {
+  titel: 'Aktion 06.12.',
+  eyebrow: 'Mach mit am 06.12.',
+  intro: 'Trag dich mit Vornamen und E-Mail-Adresse ein und beantworte danach ein kurzes Quiz. Mit dem Abschluss ist deine Anmeldung bei uns eingegangen.',
+  start: '2026-12-06T00:00:00+01:00',  // ab hier ist die Aktion für alle sichtbar
+  ende: '2026-12-06T23:59:59+01:00',   // danach verschwindet sie wieder
+  bild: 'img/gewinnspiel.jpg',   // Dein Gewinnspiel-Bild (in den img-Ordner legen)
+  bildAlt: 'Gewinnspiel am 06.12. – jetzt anmelden und mitmachen',
+  endpoint: 'anmeldung.php',
+  mailFallback: 'info@radiomulticraft.de',
+  fragen: [
+    { frage: 'Platzhalter-Frage 1: Wie heißt unser Sender?',
+      antworten: ['Radio Multicraft', 'Radio Mineraft', 'Radio Multikult', 'Radio Metacraft'], richtig: 0 },
+    { frage: 'Platzhalter-Frage 2: Wie lautet unser Slogan?',
+      antworten: ['Dein Sound | Dein Stream', 'Nur die Hits', 'Musik für alle', 'Radio ohne Pause'], richtig: 0 },
+    { frage: 'Platzhalter-Frage 3: Wann ist die Aktion?',
+      antworten: ['01.12.', '06.12.', '24.12.', '31.12.'], richtig: 1 }
+  ]
+};
+
+/* Vorschau nur für dich: Seite mit  ?vorschau=aktion  aufrufen, z.B. radiomulticraft.de/?vorschau=aktion */
+function aktionIstVorschau(){
+  try{ return new URLSearchParams(location.search).get('vorschau') === 'aktion'; }catch(e){ return false; }
+}
+function aktionIstAktiv(){
+  if(aktionIstVorschau()) return true;
+  const t = Date.now();
+  return t >= new Date(AKTION.start).getTime() && t < new Date(AKTION.ende).getTime();
+}
+
+function aktionBannerHtml(){
+  if(!aktionIstAktiv()) return '';
+  return '<section class="page-section aktion-banner-section">'
+    + '<button type="button" class="aktion-banner" data-aktion-open aria-label="' + escapeHtml(AKTION.bildAlt) + '">'
+    + '<img src="' + escapeHtml(AKTION.bild) + '" alt="' + escapeHtml(AKTION.bildAlt) + '" onerror="this.parentNode.classList.add(\'no-img\');this.remove();">'
+    + '<span class="aktion-banner-fallback"><i class="fas fa-gift"></i> Gewinnspiel am 06.12. – jetzt mitmachen</span>'
+    + '</button></section>';
+}
+
 const pages={
 
 home:`<div class="content-wrap">
@@ -2968,6 +3103,8 @@ home:`<div class="content-wrap">
     </a>
   </div>
 </header>
+
+${aktionBannerHtml()}
 
 <section class="page-section">
   <div class="page-section-head">
@@ -3320,7 +3457,16 @@ Du hast jederzeit das Recht auf:
 <li>Widerspruch gegen die Verarbeitung</li>
 </ul>
 
-<h2>9. Verantwortliche Stelle</h2>
+<h2>9. Teilnahme an Aktionen (Anmeldung & Quiz)</h2>
+<p>
+Wenn du an einer Aktion von Radio Multicraft teilnimmst, erheben wir deinen Vornamen, deine E-Mail-Adresse
+und dein Quiz-Ergebnis. Die Daten werden per E-Mail an uns übermittelt und ausschließlich zur Durchführung
+und Abwicklung der Aktion verwendet. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO),
+die du jederzeit mit Wirkung für die Zukunft per E-Mail an info@radiomulticraft.de widerrufen kannst.
+Nach Abschluss der Aktion werden die Daten gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten bestehen.
+</p>
+
+<h2>10. Verantwortliche Stelle</h2>
 <p>
 <strong>Radio Multicraft</strong><br>
 Webradio<br>
@@ -3752,6 +3898,203 @@ playlistButton.addEventListener('click', () => {
     fetchCurrentSong();
     startPlaylistAutoRefresh();
 });
+
+/* ==========================================================
+   AKTION 06.12. – Anmeldung + Quiz
+   Hier Texte, Fragen und Antworten pflegen.
+
+   fragen: je Frage 'frage', 'antworten' (Liste) und 'richtig'
+           (Nummer der richtigen Antwort, ZAEHLUNG BEGINNT BEI 0:
+           0 = erste Antwort, 1 = zweite, ...).
+   Die Fragen unten sind nur Platzhalter.
+   Der Button verschwindet automatisch nach dem Ende-Datum.
+   ========================================================== */
+
+if(aktionIstAktiv()){
+  const aktionModal = createModal({ wide: true, fade: true, scrollable: true });
+  const aPopup = aktionModal.popup;
+  const aClose = aktionModal.closeBtn;
+  const aState = { vorname: '', email: '', idx: 0, antworten: [], sending: false };
+  const LETTERS = ['A','B','C','D','E','F'];
+
+  function aRender(html){
+    aPopup.innerHTML = '<h2>' + escapeHtml(AKTION.titel) + '</h2><div class="aktion-body">' + html + '</div>';
+    aPopup.appendChild(aClose);
+  }
+
+  function aAlreadyDone(){
+    try{ return localStorage.getItem('rmcAktionDone') === AKTION.titel; }catch(e){ return false; }
+  }
+  function aMarkDone(){
+    try{ localStorage.setItem('rmcAktionDone', AKTION.titel); }catch(e){}
+  }
+
+  function aShowForm(errorMsg){
+    aRender(`
+      <span class="aktion-eyebrow"><i class="fas fa-gift"></i>${escapeHtml(AKTION.eyebrow)}</span>
+      <p class="aktion-text">${escapeHtml(AKTION.intro)}</p>
+      ${errorMsg ? '<p class="aktion-error">' + escapeHtml(errorMsg) + '</p>' : ''}
+      <form id="aktionForm" novalidate>
+        <label class="aktion-field"><span>Vorname</span>
+          <input type="text" name="vorname" autocomplete="given-name" maxlength="60" required value="${escapeHtml(aState.vorname)}">
+        </label>
+        <label class="aktion-field"><span>E-Mail</span>
+          <input type="email" name="email" autocomplete="email" maxlength="120" required value="${escapeHtml(aState.email)}">
+        </label>
+        <input class="aktion-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="aktion-consent">
+          <input type="checkbox" name="consent" required>
+          <span>Ich bin damit einverstanden, dass Radio Multicraft meinen Vornamen und meine E-Mail-Adresse zur Durchführung der Aktion speichert und verarbeitet. Mehr dazu in der <a id="aktionPrivacy">Datenschutzerklärung</a>.</span>
+        </label>
+        <button type="submit" class="aktion-btn">Weiter zum Quiz <i class="fas fa-arrow-right"></i></button>
+      </form>
+    `);
+    const form = aPopup.querySelector('#aktionForm');
+    aPopup.querySelector('#aktionPrivacy').addEventListener('click', () => {
+      aktionModal.close();
+      loadPage('datenschutz');
+      setActiveLink('datenschutz');
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const vorname = form.vorname.value.trim();
+      const email = form.email.value.trim();
+      if(form.website.value) return;
+      if(vorname.length < 2) return aShowFormKeep(form, 'Bitte gib deinen Vornamen ein.');
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return aShowFormKeep(form, 'Bitte gib eine gültige E-Mail-Adresse ein.');
+      if(!form.consent.checked) return aShowFormKeep(form, 'Bitte stimme der Verarbeitung deiner Daten zu.');
+      aState.vorname = vorname;
+      aState.email = email;
+      aState.idx = 0;
+      aState.antworten = [];
+      aShowQuestion();
+    });
+  }
+  function aShowFormKeep(form, msg){
+    aState.vorname = form.vorname.value.trim();
+    aState.email = form.email.value.trim();
+    aShowForm(msg);
+  }
+
+  function aShowQuestion(){
+    const q = AKTION.fragen[aState.idx];
+    const total = AKTION.fragen.length;
+    aRender(`
+      <div class="aktion-progress"><span>Frage ${aState.idx + 1} von ${total}</span></div>
+      <div class="aktion-bar"><div style="width:${(aState.idx / total) * 100}%"></div></div>
+      <h3 class="aktion-question" style="text-align:left;margin-bottom:18px;">${escapeHtml(q.frage)}</h3>
+      <div class="aktion-options">
+        ${q.antworten.map((a, i) => `<button type="button" class="aktion-option" data-i="${i}"><b>${LETTERS[i] || i + 1}</b><span>${escapeHtml(a)}</span></button>`).join('')}
+      </div>
+    `);
+    aPopup.querySelectorAll('.aktion-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        aPopup.querySelectorAll('.aktion-option').forEach(b => b.disabled = true);
+        btn.classList.add('is-picked');
+        aState.antworten[aState.idx] = parseInt(btn.dataset.i, 10);
+        setTimeout(() => {
+          aState.idx++;
+          if(aState.idx < total) aShowQuestion(); else aShowSubmit();
+        }, 350);
+      });
+    });
+  }
+
+  function aShowSubmit(){
+    aRender(`
+      <div class="aktion-center">
+        <i class="fas fa-flag-checkered"></i>
+        <h3>Geschafft, ${escapeHtml(aState.vorname)}!</h3>
+        <p>Du hast alle Fragen beantwortet. Mit einem Klick auf „Abschicken“ ist deine Teilnahme bei uns eingegangen.</p>
+        <p style="color:#999;font-size:.88rem;">Angemeldet mit: ${escapeHtml(aState.email)}</p>
+      </div>
+      <button type="button" class="aktion-btn" id="aktionSubmit"><i class="fas fa-paper-plane"></i> Abschicken</button>
+    `);
+    aPopup.querySelector('#aktionSubmit').addEventListener('click', aSend);
+  }
+
+  function aBuildSummary(){
+    let punkte = 0;
+    const lines = AKTION.fragen.map((q, i) => {
+      const gew = aState.antworten[i];
+      const ok = gew === q.richtig;
+      if(ok) punkte++;
+      return `${i + 1}. ${q.frage}\n   Antwort: ${q.antworten[gew] ?? '-'} (${ok ? 'richtig' : 'falsch, richtig wäre: ' + q.antworten[q.richtig]})`;
+    });
+    return { punkte, text: lines.join('\n') };
+  }
+
+  async function aSend(){
+    if(aState.sending) return;
+    aState.sending = true;
+    aRender('<div class="aktion-center"><i class="fas fa-circle-notch aktion-spin"></i><h3>Einen Moment …</h3><p>Deine Anmeldung wird übermittelt.</p></div>');
+    const sum = aBuildSummary();
+    const fd = new FormData();
+    fd.append('vorname', aState.vorname);
+    fd.append('email', aState.email);
+    fd.append('punkte', sum.punkte);
+    fd.append('gesamt', AKTION.fragen.length);
+    fd.append('antworten', sum.text);
+    fd.append('aktion', AKTION.titel + (aktionIstVorschau() ? ' (TEST)' : ''));
+    fd.append('website', '');
+    try{
+      const res = await fetch(AKTION.endpoint, { method: 'POST', body: fd });
+      const json = await res.json();
+      if(!res.ok || !json.ok) throw new Error('send failed');
+      aMarkDone();
+      aShowDone(sum.punkte);
+    }catch(e){
+      aShowSendError(sum);
+    }finally{
+      aState.sending = false;
+    }
+  }
+
+  function aShowDone(punkte){
+    aRender(`
+      <div class="aktion-center">
+        <i class="fas fa-circle-check"></i>
+        <h3>Danke, ${escapeHtml(aState.vorname)}!</h3>
+        <p>Deine Anmeldung ist bei uns eingegangen.</p>
+        <p>Du hast <strong>${punkte} von ${AKTION.fragen.length}</strong> Fragen richtig beantwortet.</p>
+        <p>Wir drücken dir die Daumen und melden uns bei dir per E-Mail.</p>
+      </div>
+    `);
+  }
+
+  function aShowSendError(sum){
+    const subject = encodeURIComponent('Anmeldung ' + AKTION.titel);
+    const body = encodeURIComponent(`Vorname: ${aState.vorname}\nE-Mail: ${aState.email}\nPunkte: ${sum.punkte} von ${AKTION.fragen.length}\n\n${sum.text}`);
+    aRender(`
+      <div class="aktion-center">
+        <i class="fas fa-triangle-exclamation"></i>
+        <h3>Das hat leider nicht geklappt</h3>
+        <p>Deine Anmeldung konnte nicht übermittelt werden. Bitte versuche es noch einmal.</p>
+      </div>
+      <button type="button" class="aktion-btn" id="aktionRetry"><i class="fas fa-rotate"></i> Erneut senden</button>
+      <a class="aktion-btn aktion-btn--ghost" style="text-decoration:none;" href="mailto:${AKTION.mailFallback}?subject=${subject}&body=${body}"><i class="fas fa-envelope"></i> Per E-Mail-Programm senden</a>
+    `);
+    aPopup.querySelector('#aktionRetry').addEventListener('click', aSend);
+  }
+
+  document.addEventListener('click', (ev) => {
+    if(!ev.target.closest('[data-aktion-open]')) return;
+    if(aAlreadyDone()){
+      aRender(`
+        <div class="aktion-center">
+          <i class="fas fa-circle-check"></i>
+          <h3>Du bist schon dabei!</h3>
+          <p>Von diesem Gerät aus wurde bereits eine Anmeldung abgeschickt.</p>
+        </div>
+      `);
+    } else {
+      aState.idx = 0;
+      aState.antworten = [];
+      aShowForm();
+    }
+    aktionModal.open();
+  });
+}
 
 const AACHEN_LAT = 50.7753;
 const AACHEN_LON = 6.0839;
