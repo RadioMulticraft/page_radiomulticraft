@@ -3047,7 +3047,7 @@ const AKTION = {
   bild: 'img/gewinnspiel.jpg',   // Dein Gewinnspiel-Bild (in den img-Ordner legen)
   bildAlt: 'Gewinnspiel am 06.12. – jetzt anmelden und mitmachen',
   endpoint: 'https://api.web3forms.com/submit',
-  accessKey: '504b6256-56af-4bc1-8fc7-0de70e002cae',   // kostenlos auf web3forms.com holen (Mail: info@radiomulticraft.de)
+  accessKey: '504b6256-56af-4bc1-8fc7-0de70e002cae',
   mailFallback: 'info@radiomulticraft.de',
   fragen: [
     { frage: 'Frage 1: In welchem Jahr wurde „Driving Home for Christmas“ erstmals veröffentlicht?',
@@ -3924,11 +3924,21 @@ if(aktionIstAktiv()){
     aPopup.appendChild(aClose);
   }
 
-  function aAlreadyDone(){
-    try{ return localStorage.getItem('rmcAktionDone') === AKTION.titel; }catch(e){ return false; }
+  /* Pro Gerät merken wir uns nur die verwendeten E-Mail-Adressen:
+     mehrere Anmeldungen am selben Gerät sind möglich, aber jede Adresse nur einmal. */
+  const EMAIL_KEY = 'rmcAktionEmails';
+  function aEmails(){
+    try{ const l = JSON.parse(localStorage.getItem(EMAIL_KEY) || '[]'); return Array.isArray(l) ? l : []; }catch(e){ return []; }
   }
-  function aMarkDone(){
-    try{ localStorage.setItem('rmcAktionDone', AKTION.titel); }catch(e){}
+  function aEmailBekannt(email){
+    return aEmails().indexOf(email.toLowerCase()) !== -1;
+  }
+  function aMerkeEmail(email){
+    try{
+      const l = aEmails();
+      if(l.indexOf(email.toLowerCase()) === -1) l.push(email.toLowerCase());
+      localStorage.setItem(EMAIL_KEY, JSON.stringify(l));
+    }catch(e){}
   }
 
   function aShowForm(errorMsg){
@@ -3964,6 +3974,7 @@ if(aktionIstAktiv()){
       if(form.website.value) return;
       if(vorname.length < 2) return aShowFormKeep(form, 'Bitte gib deinen Vornamen ein.');
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return aShowFormKeep(form, 'Bitte gib eine gültige E-Mail-Adresse ein.');
+      if(aEmailBekannt(email)) return aShowFormKeep(form, 'Mit dieser E-Mail-Adresse wurde bereits teilgenommen.');
       if(!form.consent.checked) return aShowFormKeep(form, 'Bitte stimme der Verarbeitung deiner Daten zu.');
       aState.vorname = vorname;
       aState.email = email;
@@ -4051,7 +4062,7 @@ if(aktionIstAktiv()){
       const res = await fetch(AKTION.endpoint, { method: 'POST', body: fd });
       const json = await res.json();
       if(!res.ok || !json.success) throw new Error('send failed');
-      aMarkDone();
+      aMerkeEmail(aState.email);
       aShowDone(sum.punkte);
     }catch(e){
       aShowSendError(sum);
@@ -4089,19 +4100,11 @@ if(aktionIstAktiv()){
 
   document.addEventListener('click', (ev) => {
     if(!ev.target.closest('[data-aktion-open]')) return;
-    if(aAlreadyDone()){
-      aRender(`
-        <div class="aktion-center">
-          <i class="fas fa-circle-check"></i>
-          <h3>Du bist schon dabei!</h3>
-          <p>Von diesem Gerät aus wurde bereits eine Anmeldung abgeschickt.</p>
-        </div>
-      `);
-    } else {
-      aState.idx = 0;
-      aState.antworten = [];
-      aShowForm();
-    }
+    aState.vorname = '';
+    aState.email = '';
+    aState.idx = 0;
+    aState.antworten = [];
+    aShowForm();
     aktionModal.open();
   });
 }
