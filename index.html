@@ -2329,6 +2329,7 @@ a.sponsor-card:hover .sponsor-name i{ opacity:1; transform:none; }
 .aktion-consent{ display:flex; gap:10px; align-items:flex-start; margin:4px 0 18px; color:#bdbdbd; font-size:.85rem; line-height:1.5; cursor:pointer; }
 .aktion-consent input{ margin-top:3px; accent-color:#ff3b3b; flex-shrink:0; width:17px; height:17px; }
 .aktion-consent a{ color:#ff6666; text-decoration:underline; cursor:pointer; }
+.aktion-error[hidden]{ display:none; }
 .aktion-error{ margin:0 0 14px; padding:10px 14px; border-radius:10px; background:rgba(255,59,59,.12); border:1px solid rgba(255,59,59,.3); color:#ff9a9a; font-size:.88rem; }
 .aktion-btn{
   display:inline-flex; align-items:center; justify-content:center; gap:10px;
@@ -3945,15 +3946,14 @@ if(aktionIstAktiv()){
     aRender(`
       <span class="aktion-eyebrow"><i class="fas fa-gift"></i>${escapeHtml(AKTION.eyebrow)}</span>
       <p class="aktion-text">${escapeHtml(AKTION.intro)}</p>
-      ${errorMsg ? '<p class="aktion-error">' + escapeHtml(errorMsg) + '</p>' : ''}
+      <p class="aktion-error" id="aktionErr" role="alert" hidden></p>
       <form id="aktionForm" novalidate>
         <label class="aktion-field"><span>Vorname</span>
-          <input type="text" name="vorname" autocomplete="given-name" maxlength="60" required value="${escapeHtml(aState.vorname)}">
+          <input type="text" name="vorname" id="aktionVorname" autocomplete="given-name" autocapitalize="words" maxlength="60" required value="${escapeHtml(aState.vorname)}">
         </label>
         <label class="aktion-field"><span>E-Mail</span>
-          <input type="email" name="email" autocomplete="email" maxlength="120" required value="${escapeHtml(aState.email)}">
+          <input type="email" name="email" id="aktionEmail" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" maxlength="120" required value="${escapeHtml(aState.email)}">
         </label>
-        <input class="aktion-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <label class="aktion-consent">
           <input type="checkbox" name="consent" required>
           <span>Ich bin damit einverstanden, dass Radio Multicraft meinen Vornamen und meine E-Mail-Adresse zur Durchführung der Aktion speichert und verarbeitet. Mehr dazu in der <a id="aktionPrivacy">Datenschutzerklärung</a>.</span>
@@ -3962,6 +3962,13 @@ if(aktionIstAktiv()){
       </form>
     `);
     const form = aPopup.querySelector('#aktionForm');
+    const errBox = aPopup.querySelector('#aktionErr');
+    function zeigeFehler(msg){
+      errBox.textContent = msg;
+      errBox.hidden = false;
+      errBox.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+    if(errorMsg) zeigeFehler(errorMsg);
     aPopup.querySelector('#aktionPrivacy').addEventListener('click', () => {
       aktionModal.close();
       loadPage('datenschutz');
@@ -3969,13 +3976,13 @@ if(aktionIstAktiv()){
     });
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const vorname = form.vorname.value.trim();
-      const email = form.email.value.trim();
-      if(form.website.value) return;
-      if(vorname.length < 2) return aShowFormKeep(form, 'Bitte gib deinen Vornamen ein.');
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return aShowFormKeep(form, 'Bitte gib eine gültige E-Mail-Adresse ein.');
-      if(aEmailBekannt(email)) return aShowFormKeep(form, 'Mit dieser E-Mail-Adresse wurde bereits teilgenommen.');
-      if(!form.consent.checked) return aShowFormKeep(form, 'Bitte stimme der Verarbeitung deiner Daten zu.');
+      errBox.hidden = true;
+      const vorname = form.elements['vorname'].value.trim();
+      const email = form.elements['email'].value.trim().replace(/\s+/g, '');
+      if(vorname.length < 2) return zeigeFehler('Bitte gib deinen Vornamen ein.');
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return zeigeFehler('Bitte gib eine gültige E-Mail-Adresse ein.');
+      if(aEmailBekannt(email)) return zeigeFehler('Mit dieser E-Mail-Adresse wurde bereits teilgenommen.');
+      if(!form.elements['consent'].checked) return zeigeFehler('Bitte stimme der Verarbeitung deiner Daten zu.');
       aState.vorname = vorname;
       aState.email = email;
       aState.idx = 0;
@@ -3983,12 +3990,6 @@ if(aktionIstAktiv()){
       aShowQuestion();
     });
   }
-  function aShowFormKeep(form, msg){
-    aState.vorname = form.vorname.value.trim();
-    aState.email = form.email.value.trim();
-    aShowForm(msg);
-  }
-
   function aShowQuestion(){
     const q = AKTION.fragen[aState.idx];
     const total = AKTION.fragen.length;
